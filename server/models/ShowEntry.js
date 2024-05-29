@@ -1,12 +1,13 @@
-const mongoose = require("mongoose");
-const schema = mongoose.Schema;
+import { Schema as schema, model} from "mongoose";
 
 const showEntrySchema = new schema({
-    showId: {type: Number, required: true, unique: true},
+    showId: {type: Number, required: true, default: -1},
     showDate: {type: Date, required: true},
-    showDescritption: {type: String},
-    showLink: {type: String, required: true},
-    songsList: {type: schema.Types.ObjectId, ref: "SongEntry"}
+    showDescription: {type: String},
+    showLink: {type: String, required: false},
+    songsList: {type: [schema.Types.ObjectId], ref: "SongEntry", default: []}
 })
 
-module.exports.ShowEntry = mongoose.model("ShowEntry", showEntrySchema);
+const ShowEntry = model("ShowEntry", showEntrySchema);
+
+export default ShowEntry;

@@ -1,17 +1,23 @@
-const express = require("express");
-const mongoose = require("mongoose");
-const path = require("path");
-const session = require("express-session");
-const MongoStore = require("connect-mongo");
-require("dotenv").config();
-const { addSong } = require("./dbMethods");
+import express from "express";
+import mongoose  from "mongoose";
+import { join } from "path";
+import session from "express-session";
+import MongoStore from "connect-mongo";
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+import 'dotenv/config';
+import * as dbMethods from "./dbMethods.js";
+import { sampleSong, sampleShow } from "./sampleData.js";
 
 mongoose.connect(process.env.MONGODB_URI);
 const db = mongoose.connection;
 const app = express();
 
-app.use(express.static(path.join(__dirname, "public")));
-app.use(express.static(path.join(__dirname, "../client/build")));
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+app.use(express.static(join(__dirname, "public")));
+app.use(express.static(join(__dirname, "../client/build")));
 
 app.use(
     session({
@@ -31,42 +37,12 @@ app.listen(3000, () => {
 });
 
 db.on("error", console.error.bind(console, "connection error:"));
-db.once("open", function () {
+db.once("open", async function () {
     console.log("Connected to MongoDB");
     db.dropDatabase();
-    addSong({
-        songId: "0311508",
-        artist: "Magnolia Cacophony",
-        title: "Magnolia",
-        origTitle: "マグノリア",
-        album: "(come in alone) with you",
-        albumImageLoc: "https://thecore.fm/albumart/031150-front-500.jpg",
-        genres: ["Shoegaze", "Vocaloid", "Doujin"],
-        specialNote: "M3-53",
-        songReleaseLoc: [
-            {
-                service: "Apple Music",
-                link: "https://music.apple.com/jp/album/come-in-alone-with-you/1744123607?l=en-US",
-            },
-            {
-                service: "Purchase",
-                link: "https://pictureblue.bandcamp.com/album/come-in-alone-with-you",
-                description: "Bandcamp"
-            },
-            {
-                service: "Download",
-                link: "https://mega.nz/folder/CQVUGIRb#zF7y9GxrlUc4my7JLgCbUw",
-                description: "Flac/Lossless"
-            }
-        ]
-    }).then((song) => {
-        
-        // console.log(song);
-        console.log("Song added!")
-    }).catch((err) => {
-        console.log(err);
-        console.log("Error adding song");
-        
-    });
+    await dbMethods.initializeCounters();
+    await dbMethods.addSong(sampleSong);
+    await dbMethods.addShow(sampleShow);
+    const song = await dbMethods.findSong("Magnolia");
+    dbMethods.addSongToShow(1, song._id).then((show) => console.log(show));
 });
-

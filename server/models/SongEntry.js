@@ -1,5 +1,4 @@
-const mongoose = require("mongoose");
-const schema = mongoose.Schema;
+import { Schema as schema, model} from "mongoose";
 
 
 /**
@@ -28,5 +27,6 @@ const songEntrySchema = new schema({
         required: false,
     },
 });
+const SongEntry = model("SongEntry", songEntrySchema);
 
-module.exports.SongEntry = mongoose.model("SongEntry", songEntrySchema);
+export default SongEntry;
