@@ -1,5 +1,5 @@
 const sampleSong = {
-    songId: "0311508",
+    elcroId: "0311508",
     artist: "Magnolia Cacophony",
     title: "Magnolia",
     origTitle: "マグノリア",
@@ -31,7 +31,7 @@ const sampleShow = {
     showId: 1,
     showDate: new Date("2024-05-27"),
     showDescription: "Test Show :D",
-    showLink: "https://thecore.fm/public/shows/people/eastern-sky.php",
+    
 };
 
 export { sampleSong, sampleShow}

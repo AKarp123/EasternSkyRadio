@@ -1,13 +1,16 @@
 import express from "express";
-import mongoose  from "mongoose";
-import { join } from "path";
+import mongoose from "mongoose";
 import session from "express-session";
 import MongoStore from "connect-mongo";
-import { fileURLToPath } from 'url';
-import { dirname } from 'path';
-import 'dotenv/config';
-import * as dbMethods from "./dbMethods.js";
-import { sampleSong, sampleShow } from "./sampleData.js";
+import passport from "passport";
+import LocalStrategy from "passport-local";
+import { join } from "path";
+import { fileURLToPath } from "url";
+import { dirname } from "path";
+import { initializeTestData } from "./dbMethods.js";
+import User from "./models/UserModel.js";
+import apiRouter from "./routes/index.js";
+import "dotenv/config";
 
 mongoose.connect(process.env.MONGODB_URI);
 const db = mongoose.connection;
@@ -19,18 +22,33 @@ const __dirname = dirname(__filename);
 app.use(express.static(join(__dirname, "public")));
 app.use(express.static(join(__dirname, "../client/build")));
 
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(passport.initialize());
+
+
 app.use(
     session({
         secret: "super secret",
         resave: false,
-        saveUninitialized: true,
+        saveUninitialized: false,
         cookie: { maxAge: 3600 * 3 * 1000 },
         rolling: true,
         store: MongoStore.create({ mongoUrl: process.env.MONGODB_URI }),
     })
 );
 
-// Define your routes and middleware here
+
+app.use(passport.session());
+passport.use(new LocalStrategy(User.authenticate()));
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+    
+
+
+
+
+app.use("/api", apiRouter);
 
 app.listen(3000, () => {
     console.log("Server is running on port 3000");
@@ -39,10 +57,5 @@ app.listen(3000, () => {
 db.on("error", console.error.bind(console, "connection error:"));
 db.once("open", async function () {
     console.log("Connected to MongoDB");
-    db.dropDatabase();
-    await dbMethods.initializeCounters();
-    await dbMethods.addSong(sampleSong);
-    await dbMethods.addShow(sampleShow);
-    const song = await dbMethods.findSong("Magnolia");
-    dbMethods.addSongToShow(1, song._id).then((show) => console.log(show));
+    initializeTestData();
 });

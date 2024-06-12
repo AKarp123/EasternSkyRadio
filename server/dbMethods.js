@@ -1,50 +1,82 @@
 import  SongEntry  from './models/SongEntry.js';
 import ShowEntry  from './models/ShowEntry.js';
 import Increment from './models/IncrementModel.js';
+import SiteData from './models/SiteData.js';
+import * as sD from './sampleData.js';
+import mongoose from 'mongoose';
+import User from './models/UserModel.js';
 
-const addSong = async(songData) => {
 
+export const addSong = async(songData) => {
 
-    const newSong = new SongEntry(songData);
+    const nextSongId = await Increment.findOneAndUpdate({model: "SongEntry"}, {$inc: {counter: 1}}, {new: true});
+    const newSong = new SongEntry({...songData, songId: nextSongId.counter});
     try {
         await newSong.save();
 
     }
     catch(err) {
-        throw new Error(err);
+        console.log("Error Adding Song: %s - %s", newSong.artist, newSong.title);
+        await Increment.findOneAndUpdate({model: "SongEntry"}, {$inc: {counter: -1}});
+        throw new Error("Error adding song");
     }
-    console.log("New song added: %s - %s", newSong.artist, newSong.title);
+    // console.log("New song added: %s - %s", newSong.artist, newSong.title);
 }
 
-const addShow = async(showData, songsList) => {
+export const addShow = async(showData, songsList) => {
     const nextShowId = await Increment.findOneAndUpdate({model: "ShowEntry"}, {$inc: {counter: 1}}, {new: true});
     const newShow = new ShowEntry({...showData, songsList: songsList, showId: nextShowId.counter});
     try {
         await newShow.save();
     }
     catch(err) {
-        throw new Error(err);
+        console.log("Error Adding Show: %s", newShow.showDescription)
         
     }
-    console.log("New show added! id: " + newShow.showId);
+    // console.log("New show added! id: " + newShow.showId);
 }
 
-const findSong = async (songName) => {
+export const findSong = async (songName) => {
     return SongEntry.findOne({title: { $regex: songName, $options: 'i' }});
 }
 
-const initializeCounters = async () => {
+export const initializeCounters = async () => {
     let increment = new Increment({ model: "SongEntry" });
     await increment.save();
     increment = new Increment({ model: "ShowEntry" });
     await increment.save();
-    console.log("Counters Initialized!");
+    // console.log("Counters Initialized!");
 };
 
-const addSongToShow = async (showId, songId) => {
+export const addSongToShow = async (showId, songId) => {
     const show = await ShowEntry.findOne({showId: showId});
     show.songsList.push(songId);
     return (await show.save());
 }
 
-export { addSong, initializeCounters, addShow, findSong, addSongToShow};
+const createAdminAccount = async() => {
+    const user = new User({ username: "admin" });
+    User.register(user, process.env.ADMIN_PASSWORD, (err, user) => {
+        if (err) {
+            console.log(err);
+        } else {
+            console.log("User created");
+        }
+    });
+}
+
+export const initializeTestData = async () => {
+    mongoose.connection.dropDatabase();
+    await new SiteData({showDay: 2, showHour: 0}).save();
+    await createAdminAccount();
+    await initializeCounters();
+    await addSong(sD.sampleSong);
+    await addShow(sD.sampleShow);
+    await addShow(sD.sampleShow);
+    
+    const song = await findSong("Magnolia");
+    addSongToShow(1, song._id)
+    console.log("Test data initialized!");
+
+}
+
