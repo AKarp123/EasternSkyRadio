@@ -1,10 +1,10 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, memo } from "react";
 import Particles, { initParticlesEngine } from "@tsparticles/react";
 import { loadSlim } from "@tsparticles/slim";
 import { loadStarsPreset } from "@tsparticles/preset-stars";
 import { FullScreen } from "@tsparticles/engine";
 
-const StarParticles = ({children}) => {
+const StarParticles = memo(({children}) => {
     const [init, setInit] = useState(false);
 
     useEffect(() => {
@@ -21,16 +21,16 @@ const StarParticles = ({children}) => {
 
     const options = useMemo(
         () => ({
-            preset: "stars",
             fullScreen: {
                 enable: true,
-                zIndex: -10,
+                zIndex: -1,
             },
             background: {
                 color: {
                     value: "#000",
                 },
             },
+            preset: "stars",
         }),
         []
     );
@@ -47,6 +47,6 @@ const StarParticles = ({children}) => {
     }
 
     return <>{children}</>;
-};
+});
 
 export default StarParticles;

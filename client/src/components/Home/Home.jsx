@@ -12,8 +12,7 @@ import axios from "axios";
 import HomeButton from "./HomeButton";
 import ErrorContext from "../../providers/ErrorContext";
 
-
-export default function Home() {
+const Home = React.memo(() => {
     const [siteData, setSiteData] = useState({});
     const setError = useContext(ErrorContext);
     useEffect(() => {
@@ -51,13 +50,15 @@ export default function Home() {
             </Typography>
             <Paper
                 sx={{
-                    height: "450px",
-                    width: "450px",
+                    height: { xs: "55%", sm: "450px" },
+                    width: { xs: "90%", sm: "450px" },
                     margin: "0 auto",
-                    border: "1px solid white",
+                    border: "1.5px solid #495057",
                     borderRadius: "10px",
+                    backgroundColor: "rgba(56, 56, 56, 0.5)",
+                    " -webkit-backdrop-filter": "blur(3px)",
+                    "backdrop-filter": "blur(3px)",
                 }}
-                elevation={24}
             >
                 <Typography
                     variant="h3"
@@ -70,17 +71,21 @@ export default function Home() {
                 <Container>
                     <Stack spacing={2} sx={{ mt: 2 }}>
                         <HomeButton link="/shows" text="Shows" />
-                        <HomeButton />
+                        <HomeButton link="/blog" text="Blog" />
+                        <HomeButton link="/stats" text="Stats" />
+                        <HomeButton link="/blog" text="Listen live!" />
                     </Stack>
                 </Container>
             </Paper>
             <Typography
                 variant="p"
-                align="center"
-                sx={{ fontFamily: "Tiny5, Roboto" }}
+                align="left"
+                sx={{ fontFamily: "Tiny5, Roboto", color: "white", }}
             >
                 Exploring music from across the Pacific! Only on 90.3 The Core!
             </Typography>
         </Container>
     );
-}
+});
+
+export default Home;

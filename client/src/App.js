@@ -27,10 +27,10 @@ function App() {
     };
 
     return (
-        <ErrorContext.Provider value={displayError}>
-            <ThemeProvider theme={darkTheme}>
-                <CssBaseline />
-                <StarParticles />
+        <ThemeProvider theme={darkTheme}>
+            <CssBaseline />
+            <StarParticles />
+            <ErrorContext.Provider value={displayError}>
                 <div className="App">
                     {error && (
                         <Snackbar
@@ -50,8 +50,8 @@ function App() {
                         <Route exact path="/" component={Home} />
                     </Switch>
                 </div>
-            </ThemeProvider>
-        </ErrorContext.Provider>
+            </ErrorContext.Provider>
+        </ThemeProvider>
     );
 }
 
