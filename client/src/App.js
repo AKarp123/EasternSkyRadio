@@ -2,6 +2,7 @@ import logo from "./logo.svg";
 import "./App.css";
 import { Route, Switch } from "react-router-dom";
 import Home from "./components/Home/Home";
+import ShowPage from "./components/Shows/ShowPage";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { CssBaseline, Alert, Snackbar } from "@mui/material";
 import axios from "axios";
@@ -48,6 +49,7 @@ function App() {
                     )}
                     <Switch>
                         <Route exact path="/" component={Home} />
+                        <Route exact path="/shows" component={ShowPage} />
                     </Switch>
                 </div>
             </ErrorContext.Provider>

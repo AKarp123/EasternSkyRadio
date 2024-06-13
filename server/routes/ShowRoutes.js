@@ -35,20 +35,24 @@ showRouter.get("/getShows", async (req, res) => {
         const shows = await ShowEntry.find({}, { _id: 0, __v: 0 })
             .sort({ showId: "desc" })
             .skip(offset)
-            .limit(10)
-            .select("-songsList");
-        res.json(shows);
+            .limit(10);
+
+        // Remove songsList and id from each show object
+        let s2 = shows.map((show) => show.toObject());
+        s2 = s2.map(({ songsList, id, ...rest }) => rest);
+        res.json(s2);
     } else {
         const shows = await ShowEntry.find({}, { _id: 0, __v: 0 })
             .sort({ showId: "desc" })
-            .limit(10)
-            .select("-songsList");
-        res.json(shows);
+            .limit(10);
+        let s2 = shows.map((show) => show.toObject());
+        s2 = s2.map(({ songsList, id, ...rest }) => rest);
+        res.json(s2);
     }
 });
 
 showRouter.post("/addShow", async (req, res) => {
-    const {showData} = req.body;
+    const { showData } = req.body;
     try {
         const newShow = new ShowEntry(showData);
         await newShow.save();
