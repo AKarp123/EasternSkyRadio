@@ -2,7 +2,6 @@ import { Link } from "react-router-dom";
 import { SvgIcon } from "@mui/material";
 import { styled, unstable_styleFunctionSx } from "@mui/system";
 
-
 const StyledLink = styled(Link)(unstable_styleFunctionSx);
 
 const BackButton = () => {
@@ -18,11 +17,19 @@ const BackButton = () => {
                 // position: "absolute",
                 left: "2%",
                 top: "7%",
+                "&:hover .svgIcon": {
+                    transform: "translateX(-5px)",
+                    transition: "transform 300ms ease-in-out",
+                },
             }}
         >
             <SvgIcon
                 sx={{
-                    fontSize: "6rem",
+                    fontSize: {
+                        xs: "4rem",
+                        sm: "6rem",
+                    },
+                    transition: "transform 300ms ease-in-out",
                 }}
             >
                 <svg
@@ -30,6 +37,7 @@ const BackButton = () => {
                     width="1em"
                     height="1em"
                     viewBox="0 0 24 24"
+                    className="svgIcon"
                 >
                     <path
                         fill="currentColor"

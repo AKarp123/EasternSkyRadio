@@ -6,6 +6,7 @@ import {
     Paper,
     Typography,
     Divider,
+    Fade,
 } from "@mui/material";
 import { useState, useEffect } from "react";
 import axios from "axios";
@@ -14,6 +15,7 @@ import ErrorContext from "../../providers/ErrorContext";
 
 const Home = React.memo(() => {
     const [siteData, setSiteData] = useState({});
+    const [loading, setLoading] = useState(true);
     const setError = useContext(ErrorContext);
     useEffect(() => {
         axios
@@ -39,15 +41,17 @@ const Home = React.memo(() => {
                 flexDirection: "column",
             }}
         >
-            <Typography
-                variant="p"
-                align="center"
-                sx={{ fontFamily: "Tiny5, Roboto" }}
-            >
-                {siteData.onBreak
-                    ? "On break for the semester"
-                    : `Next show: ${date.toDateString()} at ${date.toLocaleTimeString()}`}
-            </Typography>
+            <Fade in={loading} timeout={500}>
+                <Typography
+                    variant="p"
+                    align="center"
+                    sx={{ fontFamily: "Tiny5, Roboto" }}
+                >
+                    {siteData.onBreak
+                        ? "On break for the semester"
+                        : `Next show: ${date.toDateString()} at ${date.toLocaleTimeString()}`}
+                </Typography>
+            </Fade>
             <Paper
                 sx={{
                     height: { xs: "55%", sm: "450px" },
@@ -56,8 +60,8 @@ const Home = React.memo(() => {
                     border: "1.5px solid #495057",
                     borderRadius: "10px",
                     backgroundColor: "rgba(56, 56, 56, 0.5)",
-                    " -webkit-backdrop-filter": "blur(3px)",
-                    "backdrop-filter": "blur(3px)",
+                    WebkitBackdropFilter: "blur(3px)",
+                    backdropFilter: "blur(3px)",
                 }}
             >
                 <Typography
@@ -69,7 +73,7 @@ const Home = React.memo(() => {
                 </Typography>
                 <Divider sx={{ mt: 2 }} />
                 <Container>
-                    <Stack spacing={2} sx={{ mt: 2 }}>
+                    <Stack spacing={3} sx={{ mt: 2 }}>
                         <HomeButton link="/shows" text="Shows" />
                         <HomeButton link="/blog" text="Blog" />
                         <HomeButton link="/stats" text="Stats" />
@@ -80,7 +84,7 @@ const Home = React.memo(() => {
             <Typography
                 variant="p"
                 align="left"
-                sx={{ fontFamily: "Tiny5, Roboto", color: "white", }}
+                sx={{ fontFamily: "Tiny5, Roboto", color: "white" }}
             >
                 Exploring music from across the Pacific! Only on 90.3 The Core!
             </Typography>

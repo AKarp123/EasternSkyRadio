@@ -42,7 +42,7 @@ const HomeButton = ({ link, text }) => {
             >
                 <Typography
                     variant="h3"
-                    align="center"
+                    align="left"
                     sx={{
                         fontFamily: "Tiny5, Roboto",
                     }}

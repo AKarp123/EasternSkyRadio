@@ -19,8 +19,8 @@ const PageBackdrop = ({ children }) => {
                     border: "1.5px solid #495057",
                     borderRadius: "10px",
                     backgroundColor: "rgba(56, 56, 56, 0.5)",
-                    " -webkit-backdrop-filter": "blur(3px)",
-                    "backdrop-filter": "blur(3px)",
+                    WebkitBackdropFilter: "blur(3px)",
+                    backdropFilter: "blur(3px)",
                 }}
             >
                 {children}

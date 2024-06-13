@@ -46,23 +46,22 @@ const siteDataSchema = new Schema(
                     );
                     let daysUntilNextShow = (this.showDay - now.getDay() + 7) % 7;
 
-                    console.log(
-                        daysUntilNextShow,
-                        now.getHours(),
-                        this.showHour
-                    );
+                    
                     if (
                         daysUntilNextShow === 0 &&
                         now.getHours() > this.showHour
                     ) {
                         daysUntilNextShow = 7;
                     }
-                  
+                    nextShow.setDate(now.getDate() + daysUntilNextShow);
                     return nextShow;
                 },
             },
         },
         toJSON: {
+            virtuals: true,
+        },
+        toObject: {
             virtuals: true,
         },
         id: false,

@@ -3,7 +3,7 @@ import "./App.css";
 import { Route, Switch } from "react-router-dom";
 import Home from "./components/Home/Home";
 import ShowPage from "./components/Shows/ShowPage";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { createTheme, ThemeProvider, responsiveFontSizes } from "@mui/material/styles";
 import { CssBaseline, Alert, Snackbar } from "@mui/material";
 import axios from "axios";
 import { useEffect, useState, useMemo } from "react";
@@ -11,14 +11,17 @@ import { useEffect, useState, useMemo } from "react";
 import ErrorContext from "./providers/ErrorContext";
 import StarParticles from "./components/StarParticles";
 
-const darkTheme = createTheme({
+let darkTheme = createTheme({
     palette: {
         mode: "dark",
         background: {
             default: "#27282b",
         },
     },
+    
 });
+
+darkTheme = responsiveFontSizes(darkTheme);
 
 function App() {
     const [error, setError] = useState(null);
@@ -30,7 +33,7 @@ function App() {
     return (
         <ThemeProvider theme={darkTheme}>
             <CssBaseline />
-            <StarParticles />
+            {/* <StarParticles /> */}
             <ErrorContext.Provider value={displayError}>
                 <div className="App">
                     {error && (
