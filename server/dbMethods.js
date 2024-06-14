@@ -71,8 +71,9 @@ export const initializeTestData = async () => {
     await createAdminAccount();
     await initializeCounters();
     await addSong(sD.sampleSong);
-    await addShow(sD.sampleShow);
-    await addShow(sD.sampleShow);
+    for(let i = 0; i< 3; i++) {
+        await addShow(sD.sampleShow);
+    }
     
     const song = await findSong("Magnolia");
     addSongToShow(1, song._id)

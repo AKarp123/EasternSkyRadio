@@ -15,7 +15,7 @@ let darkTheme = createTheme({
     palette: {
         mode: "dark",
         background: {
-            default: "#27282b",
+            default: "#000000",
         },
     },
     
