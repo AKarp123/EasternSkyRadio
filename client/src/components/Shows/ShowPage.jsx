@@ -68,7 +68,7 @@ const ShowPage = ({ parentRef }) => {
     );
 };
 
-const ShowPageMain = ({ showList, setShowList, parentRef }) => {
+const ShowPageMain = ({ showList, setShowList, parentref }) => {
     if (showList === undefined) {
         return (
             <Typography
@@ -107,7 +107,7 @@ const ShowPageMain = ({ showList, setShowList, parentRef }) => {
                 hasMore={showList[showList.length - 1].showId > 1}
                 loader={<CircularProgress key={0} />}
                 useWindow={false}
-                getScrollParent={() => parentRef.current}
+                getScrollParent={() => parentref.current}
                 threshold={1}
             >
                 {showList.map((show, index) => (
@@ -123,7 +123,7 @@ const ShowListItem = ({ show }) => {
     return (
         <MUILink
             component={Link}
-            to={`/show/${show.showId}`}
+            to={`/shows/${show.showId}`}
             sx={{
                 textDecoration: "none",
                 color: "white",
@@ -160,13 +160,11 @@ const ShowListItem = ({ show }) => {
                     {showDate.getDate()}/{showDate.getFullYear()}
                 </Typography>
                 <SvgIcon
-                    sx={{
-                        fontSize: "3rem",
-                        transition: "transform 300ms ease-in-out",
-                    }}
+                    sx={{ fontSize: "3rem", transition: "transform 300ms ease-in-out", }}
                     viewBox="0 0 24 24"
                     fill="currentColor"
                     className="svgIcon"
+                    
                 >
                     <path
                         fill="currentColor"

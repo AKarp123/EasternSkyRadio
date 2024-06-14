@@ -2,7 +2,7 @@ import { Paper, Container } from "@mui/material";
 import React, {useRef} from "react";
 
 const PageBackdrop = ({ children }) => {
-    const parentRef = useRef(null);
+    const parentref = useRef(null);
     return (
         <Container
             sx={{
@@ -26,11 +26,11 @@ const PageBackdrop = ({ children }) => {
                     overflow: "hidden",
                     overflowY: "auto",
                 }}
-                ref={parentRef}
+                ref={parentref}
             >
                 {React.Children.map(children, (child) => {
                     // Pass the parentRef to each child
-                    return React.cloneElement(child, { parentRef });
+                    return React.cloneElement(child, { parentref });
                 })}
             </Paper>
         </Container>

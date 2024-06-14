@@ -1,15 +1,15 @@
-import logo from "./logo.svg";
 import "./App.css";
 import { Route, Switch } from "react-router-dom";
-import Home from "./components/Home/Home";
-import ShowPage from "./components/Shows/ShowPage";
 import { createTheme, ThemeProvider, responsiveFontSizes } from "@mui/material/styles";
 import { CssBaseline, Alert, Snackbar } from "@mui/material";
 import axios from "axios";
 import { useEffect, useState, useMemo } from "react";
-
 import ErrorContext from "./providers/ErrorContext";
+import Home from "./components/Home/Home";
+import ShowPage from "./components/Shows/ShowPage";
 import StarParticles from "./components/StarParticles";
+import SetList from "./components/Shows/SetList";
+
 
 let darkTheme = createTheme({
     palette: {
@@ -51,8 +51,15 @@ function App() {
                         </Snackbar>
                     )}
                     <Switch>
-                        <Route exact path="/" component={Home} />
-                        <Route exact path="/shows" component={ShowPage} />
+                        <Route exact path="/">
+                            <Home />
+                        </Route>
+                        <Route exact path="/shows">
+                            <ShowPage />
+                        </Route>
+                        <Route exact path="/shows/:showId">
+                            <SetList />
+                        </Route>
                     </Switch>
                 </div>
             </ErrorContext.Provider>

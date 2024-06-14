@@ -1,13 +1,14 @@
-import { Link } from "react-router-dom";
-import { SvgIcon } from "@mui/material";
+import { SvgIcon, Link } from "@mui/material";
 import { styled, unstable_styleFunctionSx } from "@mui/system";
+import { useHistory } from "react-router-dom";
 
-const StyledLink = styled(Link)(unstable_styleFunctionSx);
+
 
 const BackButton = () => {
+    const { goBack } = useHistory();
+
     return (
-        <StyledLink
-            to="/"
+        <Link
             sx={{
                 color: "white",
                 position: {
@@ -22,6 +23,7 @@ const BackButton = () => {
                     transition: "transform 300ms ease-in-out",
                 },
             }}
+            onClick={() => goBack()}
         >
             <SvgIcon
                 sx={{
@@ -45,7 +47,7 @@ const BackButton = () => {
                     ></path>
                 </svg>
             </SvgIcon>
-        </StyledLink>
+        </Link>
     );
 };
 
