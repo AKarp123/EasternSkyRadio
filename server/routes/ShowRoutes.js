@@ -3,7 +3,7 @@ import ShowEntry from "../models/ShowEntry.js";
 
 const showRouter = Router();
 
-showRouter.get("/getShowInfo", async (req, res) => {
+showRouter.get("/getShowData", async (req, res) => {
     if (req.query.showId === undefined) {
         res.json({ success: false, message: "No Show ID provided." });
     } else {
@@ -12,20 +12,20 @@ showRouter.get("/getShowInfo", async (req, res) => {
             { _id: 0, __v: 0 }
         ).populate({ path: "songsList", select: "-__v " });
 
-        const nextShow = await ShowEntry.findOne(
-            { showId: { $gt: req.query.showId } },
-            { _id: 0, __v: 0 }
-        )
-            .sort({ showId: "asc" })
-            .select("showId");
-        const prevShow = await ShowEntry.findOne(
-            { showId: { $lt: req.query.showId } },
-            { _id: 0, __v: 0 }
-        )
-            .sort({ showId: "desc" })
-            .select("showId showDate");
+        // const nextShow = await ShowEntry.findOne(
+        //     { showId: { $gt: req.query.showId } },
+        //     { _id: 0, __v: 0 }
+        // )
+        //     .sort({ showId: "asc" })
+        //     .select("showId");
+        // const prevShow = await ShowEntry.findOne(
+        //     { showId: { $lt: req.query.showId } },
+        //     { _id: 0, __v: 0 }
+        // )
+        //     .sort({ showId: "desc" })
+        //     .select("showId showDate");
 
-        res.json({ showData, nextShow, prevShow });
+        res.json({ showData });
     }
 });
 

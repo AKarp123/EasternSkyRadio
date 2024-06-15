@@ -9,6 +9,7 @@ import Home from "./components/Home/Home";
 import ShowPage from "./components/Shows/ShowPage";
 import StarParticles from "./components/StarParticles";
 import SetList from "./components/Shows/SetList";
+import BlogPage from "./components/Blog/BlogPage";
 
 
 let darkTheme = createTheme({
@@ -59,6 +60,9 @@ function App() {
                         </Route>
                         <Route exact path="/shows/:showId">
                             <SetList />
+                        </Route>
+                        <Route exact path="/blog">
+                            <BlogPage />
                         </Route>
                     </Switch>
                 </div>

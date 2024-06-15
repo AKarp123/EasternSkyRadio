@@ -67,11 +67,12 @@ const createAdminAccount = async() => {
 
 export const initializeTestData = async () => {
     mongoose.connection.dropDatabase();
-    await new SiteData({showDay: 2, showHour: 0}).save();
+    await new SiteData({showDay: 2, showHour: 0, onBreak: true}).save();
     await createAdminAccount();
     await initializeCounters();
     await addSong(sD.sampleSong);
     for(let i = 0; i< 3; i++) {
+       
         await addShow(sD.sampleShow);
     }
     

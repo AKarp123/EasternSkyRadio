@@ -14,6 +14,7 @@ import { Link } from "react-router-dom";
 import BackButton from "../BackButton";
 import ErrorContext from "../../providers/ErrorContext";
 import axios from "axios";
+import PageHeader from "../PageHeader";
 
 const ShowPage = ({ parentRef }) => {
     const [showList, setShowList] = useState([]);
@@ -34,26 +35,7 @@ const ShowPage = ({ parentRef }) => {
 
     return (
         <PageBackdrop>
-            <Container
-                sx={{
-                    textDecoration: "none",
-                    color: "white",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    position: "relative",
-                }}
-            >
-                <BackButton />
-
-                <Typography
-                    variant="h1"
-                    align="center"
-                    sx={{ fontFamily: "Tiny5, Roboto", mx: "auto" }}
-                >
-                    Shows
-                </Typography>
-            </Container>
+            <PageHeader title="Shows" />
             <Divider />
             {loading ? (
                 <CircularProgress />
@@ -160,11 +142,13 @@ const ShowListItem = ({ show }) => {
                     {showDate.getDate()}/{showDate.getFullYear()}
                 </Typography>
                 <SvgIcon
-                    sx={{ fontSize: "3rem", transition: "transform 300ms ease-in-out", }}
+                    sx={{
+                        fontSize: "3rem",
+                        transition: "transform 300ms ease-in-out",
+                    }}
                     viewBox="0 0 24 24"
                     fill="currentColor"
                     className="svgIcon"
-                    
                 >
                     <path
                         fill="currentColor"
