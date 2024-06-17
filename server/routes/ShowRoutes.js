@@ -25,7 +25,7 @@ showRouter.get("/getShowData", async (req, res) => {
         //     .sort({ showId: "desc" })
         //     .select("showId showDate");
 
-        res.json({ showData });
+        res.json({ showData});
     }
 });
 

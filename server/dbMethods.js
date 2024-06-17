@@ -77,7 +77,12 @@ export const initializeTestData = async () => {
     }
     
     const song = await findSong("Magnolia");
-    addSongToShow(1, song._id)
+    
+    for(let i = 0; i< 22; i++) {
+
+        addSongToShow(1, song)
+    }
+    
     console.log("Test data initialized!");
 
 }
