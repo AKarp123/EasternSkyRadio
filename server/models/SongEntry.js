@@ -1,4 +1,3 @@
-
 import { Schema as schema, model } from "mongoose";
 
 /**
@@ -6,8 +5,8 @@ import { Schema as schema, model } from "mongoose";
  *
  **/
 const songEntrySchema = new schema({
-    songId: { type: Number, required: true, unique: true,  },
-    elcroId: { type: String, required: false, unique: true, select: false },
+    songId: { type: Number, required: true, unique: true },
+    elcroId: { type: String, required: false, select: false },
     artist: { type: String, required: true },
     title: { type: String, required: true },
     origTitle: { type: String, required: false },
@@ -38,6 +37,23 @@ const songEntrySchema = new schema({
         required: false,
     },
 });
+
+songEntrySchema.pre("save", async function (next) {
+    if (!this.isModified("albumImageLoc") && !this.isNew) {
+        return next();
+    }
+
+    const album = this.album;
+    const existingSong = await model("SongEntry").findOne({ album });
+
+    if (existingSong) {
+        this.albumImageLoc = existingSong.albumImageLoc;
+        this.songReleaseLoc = existingSong.songReleaseLoc;
+    }
+    next();
+});
+
+
 const SongEntry = model("SongEntry", songEntrySchema);
 
 export default SongEntry;

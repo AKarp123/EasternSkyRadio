@@ -12,13 +12,15 @@ export const addSong = async(songData) => {
     const nextSongId = await Increment.findOneAndUpdate({model: "SongEntry"}, {$inc: {counter: 1}}, {new: true});
     const newSong = new SongEntry({...songData, songId: nextSongId.counter});
     try {
-        await newSong.save();
+        const song = await newSong.save();
+
+        return song;
 
     }
     catch(err) {
         console.log("Error Adding Song: %s - %s", newSong.artist, newSong.title);
         await Increment.findOneAndUpdate({model: "SongEntry"}, {$inc: {counter: -1}});
-        throw new Error("Error adding song");
+        throw new Error(err, "Error adding song");
     }
     // console.log("New song added: %s - %s", newSong.artist, newSong.title);
 }
@@ -67,20 +69,22 @@ const createAdminAccount = async() => {
 
 export const initializeTestData = async () => {
     mongoose.connection.dropDatabase();
-    await new SiteData({showDay: 2, showHour: 0, onBreak: true}).save();
+    await new SiteData({showDay: 2, showHour: 0, onBreak: false}).save();
     await createAdminAccount();
     await initializeCounters();
-    await addSong(sD.sampleSong);
+    const song = await addSong(sD.sampleSong);
+    const song2 = await addSong(sD.sampleSong2);
     for(let i = 0; i< 3; i++) {
        
         await addShow(sD.sampleShow);
     }
     
-    const song = await findSong("Magnolia");
     
-    for(let i = 0; i< 22; i++) {
+    
+    for(let i = 0; i< 1; i++) {
 
         addSongToShow(1, song)
+        addSongToShow(1, song2)
     }
     
     console.log("Test data initialized!");

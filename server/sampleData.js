@@ -25,6 +25,34 @@ const sampleSong = {
     ],
 };
 
+const sampleSong2 = {
+    elcroId: "031150",
+    artist: "Magnolia Cacophony",
+    title: "Sora (album mix)",
+    origTitle: "マグノリア",
+    album: "(come in alone) with you",
+    albumImageLoc: "lalalala",
+    genres: ["Shoegaze", "Vocaloid", "Doujin", "Electronic"],
+    specialNote: "M3-53",
+    songReleaseLoc: [
+        {
+            service: "Apple Music",
+            link: "https://music.apple.com/jp/album/come-in-alone-with-you/1744123607?l=en-US",
+        },
+        {
+            service: "Purchase",
+            link: "https://pictureblue.bandcamp.com/album/come-in-alone-with-you",
+            description: "Bandcamp",
+        },
+        {
+            service: "Download",
+            link: "https://mega.nz/folder/CQVUGIRb#zF7y9GxrlUc4my7JLgCbUw",
+            description: "Flac/Lossless",
+        },
+    ],
+};
+
+
 
 
 const sampleShow = { 
@@ -34,5 +62,5 @@ const sampleShow = {
     
 };
 
-export { sampleSong, sampleShow}
+export { sampleSong, sampleSong2,  sampleShow}
 
