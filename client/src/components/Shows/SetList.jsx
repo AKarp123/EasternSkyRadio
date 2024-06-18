@@ -9,6 +9,7 @@ import {
     Box,
     Stack,
     Chip,
+    Tooltip,
 } from "@mui/material";
 import PageBackdrop from "../PageBackdrop";
 import { useParams } from "react-router-dom";
@@ -62,50 +63,79 @@ const SetList = () => {
 };
 
 const SetListCard = ({ song }) => {
-    return (
-        <Card sx={{ display: "flex", }}>
-            <CardMedia
-                component={"img"}
-                image={song.albumImageLoc}
-                sx={{
-                    width: "125px",
-                    height: "125px",
-                    objectFit: "cover",
-                    padding: "8px",
-                    borderRadius: "10%",
-                }}
-            />
+    const [expanded, setExpanded] = useState(false);
 
-            <CardContent
-                sx={{
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "start",
-                    width: "100%",
-                    justifyContent: "space-between",
-                    overflowX: "auto",
-                }}
-            >
-                <Typography variant="h6">{song.title}</Typography>
-                <Typography variant="body1">{song.artist}</Typography>
-                <Typography variant="body2" sx={{ fontStyle: "italic" }}>
-                    {song.album}
-                </Typography>
-                {/* <Box
+    return (
+        <Card
+            sx={{ display: "flex", flexWrap: "wrap", flexDirection: "column" }}
+        >
+            <Box sx={{ display: "flex", flexWrap: "nowrap" }}>
+                <CardMedia
+                    component={"img"}
+                    image={song.albumImageLoc}
+                    sx={{
+                        width: "125px",
+                        height: "125px",
+                        objectFit: "cover",
+                        padding: "8px",
+                        borderRadius: "10%",
+                    }}
+                />
+
+                <CardContent
                     sx={{
                         display: "flex",
-                        overflow: "auto",
-                        whiteSpace: "nowrap",
-                        width: "100%",
-                        "& > :not(style)": { mr: 1 },
+                        flexDirection: "column",
+                        alignItems: "start",
+                        overflow: "hidden",
+                        justifyContent: "space-between",
+                        overflowX: "auto",
+                        overflowY: "hidden",
+                        // paddingTop: "4px !important",
+                        // paddingBottom: "4px !important",
                     }}
                 >
-                    {song.genres.map((tag, index) => (
-                        <Chip key={index} label={tag} />
-                    ))}
-                </Box> */}
-                
-            </CardContent>
+                    <Tooltip
+                        title={
+                            "Original Title: " +
+                            (song.origTitle === undefined
+                                ? "N/A"
+                                : song.origTitle)
+                        }
+                        placement="top"
+                        arrow
+                    >
+                        <Typography variant="h6">{song.title}</Typography>
+                    </Tooltip>
+
+                    <Typography variant="body1">{song.artist}</Typography>
+                    <Typography variant="body2" sx={{ fontStyle: "italic" }}>
+                        {song.album}
+                    </Typography>
+
+                    
+                </CardContent>
+            </Box>
+            <Divider variant="middle" />
+                <CardContent
+                    sx={{
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "start",
+                        overflow: "hidden",
+                        justifyContent: "space-between",
+                        overflowX: "auto",
+                        overflowY: "hidden",
+                        paddingTop: "4px !important",
+                        // paddingBottom: "4px !important",
+                    }}
+                >
+                    
+                </CardContent>
+
+            {/* <CardContent sx={{ width: "100%", padding: "0px !important" }}>
+                TEST
+            </CardContent> */}
         </Card>
     );
 };

@@ -5,7 +5,7 @@ const sampleSong = {
     origTitle: "マグノリア",
     album: "(come in alone) with you",
     albumImageLoc: "https://thecore.fm/albumart/031150-front-500.jpg",
-    genres: ["Shoegaze", "Vocaloid", "Doujin"],
+    genres: ["Shoegaze", "Vocaloid", "Doujin", "Electronic"],
     specialNote: "M3-53",
     songReleaseLoc: [
         {
