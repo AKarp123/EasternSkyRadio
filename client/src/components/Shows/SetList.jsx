@@ -10,11 +10,19 @@ import {
     Stack,
     Chip,
     Tooltip,
+    IconButton,
+    SvgIcon,
+    Link,
 } from "@mui/material";
 import PageBackdrop from "../PageBackdrop";
 import { useParams } from "react-router-dom";
-import BackButton from "../BackButton";
-import { useState, useEffect, useContext } from "react";
+import DownloadIcon from "@mui/icons-material/Download";
+import ShoppingBagIcon from "@mui/icons-material/ShoppingBag";
+import AppleIcon from "@mui/icons-material/Apple";
+import YouTubeIcon from "@mui/icons-material/YouTube";
+import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
+import { ReactComponent as SpotifyIcon } from "../../icons/spotify.svg";
+import { useState, useEffect, useContext, useRef } from "react";
 import axios from "axios";
 import ErrorContext from "../../providers/ErrorContext";
 import PageHeader from "../PageHeader";
@@ -51,8 +59,8 @@ const SetList = () => {
                         <Typography>Loading...</Typography>
                     ) : (
                         showData.songsList.map((song) => (
-                            <Grid item xs={12} sm={6} md={4} key={song._id}>
-                                <SetListCard song={song} />
+                            <Grid item xs={12} sm={6} md={4}>
+                                <SetListCard song={song} key={song._id} />
                             </Grid>
                         ))
                     )}
@@ -63,13 +71,32 @@ const SetList = () => {
 };
 
 const SetListCard = ({ song }) => {
-    const [expanded, setExpanded] = useState(false);
+    const genreBoxRef = useRef(null);
+
+    const iconSwitch = {
+        Spotify: (
+            <SvgIcon
+                component={SpotifyIcon}
+                viewBox="0 0 24 24"
+                sx={{ height: "25px", width: "25px" }}
+            />
+        ),
+        Purchase: <ShoppingBagIcon sx={{ height: "25px", width: "25px" }} />,
+        Download: <DownloadIcon sx={{ height: "25px", width: "25px" }} />,
+        "Apple Music": <AppleIcon sx={{ height: "25px", width: "25px" }} />,
+        Youtube: <YouTubeIcon sx={{ height: "25px", width: "25px" }} />,
+    };
 
     return (
         <Card
             sx={{ display: "flex", flexWrap: "wrap", flexDirection: "column" }}
         >
-            <Box sx={{ display: "flex", flexWrap: "nowrap" }}>
+            <Box
+                sx={{
+                    display: "flex",
+                    flexWrap: "nowrap",
+                }}
+            >
                 <CardMedia
                     component={"img"}
                     image={song.albumImageLoc}
@@ -90,7 +117,7 @@ const SetListCard = ({ song }) => {
                         overflow: "hidden",
                         justifyContent: "space-between",
                         overflowX: "auto",
-                        overflowY: "hidden",
+
                         // paddingTop: "4px !important",
                         // paddingBottom: "4px !important",
                     }}
@@ -105,37 +132,104 @@ const SetListCard = ({ song }) => {
                         placement="top"
                         arrow
                     >
-                        <Typography variant="h6">{song.title}</Typography>
+                        <Typography
+                            variant="h6"
+                            
+                        >
+                            {song.title}
+                        </Typography>
                     </Tooltip>
 
-                    <Typography variant="body1">{song.artist}</Typography>
+                    <Typography
+                        variant="body1"
+                        
+                    >
+                        {song.artist}
+                    </Typography>
                     <Typography variant="body2" sx={{ fontStyle: "italic" }}>
                         {song.album}
                     </Typography>
-
-                    
                 </CardContent>
             </Box>
-            <Divider variant="middle" />
-                <CardContent
-                    sx={{
-                        display: "flex",
-                        flexDirection: "column",
-                        alignItems: "start",
-                        overflow: "hidden",
-                        justifyContent: "space-between",
-                        overflowX: "auto",
-                        overflowY: "hidden",
-                        paddingTop: "4px !important",
-                        // paddingBottom: "4px !important",
-                    }}
-                >
-                    
-                </CardContent>
+            <Divider variant="middle">Genres</Divider>
 
-            {/* <CardContent sx={{ width: "100%", padding: "0px !important" }}>
-                TEST
-            </CardContent> */}
+            <CardContent
+                sx={{
+                    display: "flex",
+                    flexDirection: "row",
+                    overflow: "hidden",
+                    justifyContent: "center",
+                    overflowX: "auto",
+                    overflowY: "hidden",
+                    paddingTop: "4px !important",
+                    paddingBottom: "4px !important",
+                    width: "100%",
+                    scrollbarWidth: "none",
+                    "&::-webkit-scrollbar": {
+                        display: "none",
+                    },
+                    // paddingBottom: "4px !important",
+                }}
+            >
+                <Stack direction="row" spacing={1}>
+                    {song.genres.map((genre) => {
+                        return (
+                            <Chip
+                                key={genre}
+                                label={genre}
+                                size="small"
+                                sx={{ margin: "2px" }}
+                            />
+                        );
+                    })}
+                </Stack>
+            </CardContent>
+            <Divider variant="middle">Release Locations</Divider>
+            <CardContent
+                sx={{
+                    display: "flex",
+                    flexDirection: "row",
+                    overflow: "hidden",
+                    justifyContent: "center",
+                    overflowX: "auto",
+                    overflowY: "hidden",
+                    paddingTop: "0px !important",
+                    paddingBottom: "0px !important",
+                    width: "100%",
+                    scrollbarWidth: "none",
+                    "&::-webkit-scrollbar": {
+                        display: "none",
+                    },
+                }}
+            >
+                <Stack direction="row" spacing={1}>
+                    {song.songReleaseLoc.map((release) => {
+                        return (
+                            <Tooltip
+                                key={release._id}
+                                title={
+                                    release.service +
+                                    (release.description
+                                        ? " (" + release.description + ")"
+                                        : "")
+                                }
+                                placement="top"
+                                arrow
+                            >
+                                <IconButton
+                                    size="large"
+                                    LinkComponent={Link}
+                                    href={release.link}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                >
+                                    {iconSwitch[release.service]}
+                                </IconButton>
+                            </Tooltip>
+                        );
+                    })}
+                </Stack>
+            </CardContent>
         </Card>
     );
 };

@@ -48,6 +48,7 @@ songEntrySchema.pre("save", async function (next) {
 
     if (existingSong) {
         this.albumImageLoc = existingSong.albumImageLoc;
+        this.origAlbum = existingSong.origAlbum;
         this.songReleaseLoc = existingSong.songReleaseLoc;
     }
     next();
