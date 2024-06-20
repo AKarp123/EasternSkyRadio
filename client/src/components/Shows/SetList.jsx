@@ -89,7 +89,9 @@ const SetListCard = ({ song }) => {
 
     return (
         <Card
-            sx={{ display: "flex", flexWrap: "wrap", flexDirection: "column" }}
+            sx={{ display: "flex", flexWrap: "wrap", flexDirection: "column", backgroundColor: "rgba(22, 22, 22, 0.1)",
+                WebkitBackdropFilter: "blur(3px)",
+                backdropFilter: "blur(3px)", }}
         >
             <Box
                 sx={{

@@ -43,8 +43,8 @@ songRouter.post("/addSong", async (req, res) => {
         res.json({ success: false, message: "No song data provided." });
     }
     addSong(songData)
-        .then(() => {
-            res.json({ success: true, message: "Song added successfully." });
+        .then((newSong) => {
+            res.json({ success: true, message: "Song added successfully.", song: newSong });
         })
         .catch((err) => {
             res.json({ success: false, message: err.message });

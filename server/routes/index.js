@@ -8,15 +8,20 @@ const router = Router();
 
 router.get("/getSiteInfo", async (req, res) => {
     // res.json({ message: "Hello from the server!" });
-    const data = await SiteData.findOne({}, { _id: 0, __v: 0,});
+    const data = await SiteData.findOne({}, { _id: 0, __v: 0 });
     res.json(data);
 });
 
 router.post(
     "/login",
-    passport.authenticate("local", { successRedirect: "/admin" }),
+    passport.authenticate("local", ),
     async (req, res) => {
-        console.log("User logged in");
+        if(req.user) {
+            res.json({ success: true, message: "Login successful", user: req.user });
+        }
+        else {
+            res.json({ success: false, message: "Incorrect Password" });
+        }
     }
 );
 
@@ -25,7 +30,7 @@ router.get("/logout", (req, res) => {
     res.redirect("/");
 });
 
-router.use("/", showRouter); 
+router.use("/", showRouter);
 router.use("/", SongRouter);
 
 export default router;

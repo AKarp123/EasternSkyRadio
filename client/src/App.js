@@ -1,6 +1,10 @@
 import "./App.css";
 import { Route, Switch } from "react-router-dom";
-import { createTheme, ThemeProvider, responsiveFontSizes } from "@mui/material/styles";
+import {
+    createTheme,
+    ThemeProvider,
+    responsiveFontSizes,
+} from "@mui/material/styles";
 import { CssBaseline, Alert, Snackbar } from "@mui/material";
 import axios from "axios";
 import { useEffect, useState, useMemo } from "react";
@@ -10,7 +14,9 @@ import ShowPage from "./components/Shows/ShowPage";
 import StarParticles from "./components/StarParticles";
 import SetList from "./components/Shows/SetList";
 import BlogPage from "./components/Blog/BlogPage";
-
+import Login from "./components/Admin/Login";
+import UserContext from "./providers/UserContext";
+import AdminPage from "./components/Admin/AdminPage";
 
 let darkTheme = createTheme({
     palette: {
@@ -19,16 +25,16 @@ let darkTheme = createTheme({
             default: "#000000",
         },
     },
-    
 });
 
 darkTheme = responsiveFontSizes(darkTheme);
 
 function App() {
     const [error, setError] = useState(null);
+    const [user, setUser] = useState(null);
 
-    const displayError = (errorMessage) => {
-        setError(errorMessage);
+    const displayError = (errorMessage, variant = "error") => {
+        setError({errorMessage, variant});
     };
 
     return (
@@ -36,36 +42,44 @@ function App() {
             <CssBaseline />
             {/* <StarParticles /> */}
             <ErrorContext.Provider value={displayError}>
-                <div className="App">
-                    {error && (
-                        <Snackbar
-                            open={error}
-                            autoHideDuration={2000}
-                            onClose={() => setError(null)}
-                        >
-                            <Alert
-                                severity="error"
+                <UserContext.Provider value={{user, setUser}}>
+                    <div className="App">
+                        {error && (
+                            <Snackbar
+                                open={error}
+                                autoHideDuration={2000}
                                 onClose={() => setError(null)}
                             >
-                                {error}
-                            </Alert>
-                        </Snackbar>
-                    )}
-                    <Switch>
-                        <Route exact path="/">
-                            <Home />
-                        </Route>
-                        <Route exact path="/shows">
-                            <ShowPage />
-                        </Route>
-                        <Route exact path="/shows/:showId">
-                            <SetList />
-                        </Route>
-                        <Route exact path="/blog">
-                            <BlogPage />
-                        </Route>
-                    </Switch>
-                </div>
+                                <Alert
+                                    severity={error.variant}
+                                    onClose={() => setError(null)}
+                                >
+                                    {error.errorMessage}
+                                </Alert>
+                            </Snackbar>
+                        )}
+                        <Switch>
+                            <Route exact path="/">
+                                <Home />
+                            </Route>
+                            <Route exact path="/shows">
+                                <ShowPage />
+                            </Route>
+                            <Route exact path="/shows/:showId">
+                                <SetList />
+                            </Route>
+                            <Route exact path="/blog">
+                                <BlogPage />
+                            </Route>
+                            <Route exact path="/login">
+                                <Login />
+                            </Route>
+                            <Route exact path="/admin"> 
+                                <AdminPage />
+                            </Route>
+                        </Switch>
+                    </div>
+                </UserContext.Provider>
             </ErrorContext.Provider>
         </ThemeProvider>
     );
