@@ -1,6 +1,7 @@
 import { Router } from "express";
 import SongEntry from "../models/SongEntry.js";
 import { addSong } from "../dbMethods.js";
+import requireLogin from "./requireLogin.js";
 
 const songRouter = Router();
 
@@ -17,26 +18,33 @@ songRouter.get("/getSongInfo", async (req, res) => {
 });
 
 songRouter.get("/search", async (req, res) => {
-    const { query } = req.query;
-    if (!query) {
-        res.json({ success: false, message: "No search query provided." });
-    } else if (query.elcroId) {
-        const searchResults = await SongEntry.find({
-            elcroId: query.elcroId,
-        }).select("-__v");
-        res.json(searchResults);
-    } else {
-        const searchResults = await SongEntry.find({
-            $or: [
-                { songName: { $regex: query, $options: "i" } },
-                { artist: { $regex: query, $options: "i" } },
-            ],
-        }).select("-__v");
-        res.json(searchResults);
+
+
+    try {
+
+        if (req.query.query === "") {
+            res.json({ success: false, message: "No search query provided." });
+        } else if (req.query.elcroId) {
+            const searchResults = await SongEntry.find({
+                elcroId: req.query.elcroId,
+            }).select("-__v" +  (req.user ? " +elcroId" : ""));
+            res.json(searchResults);
+        } else {
+            const searchResults = await SongEntry.find({
+                $or: [
+                    { title: { $regex: req.query.query, $options: "i" } },
+                    { artist: { $regex: req.query.query, $options: "i" } },
+                ],
+            }).select("-__v" + (req.user ? " +elcroId" : "") );
+            res.json({success: true, searchResults: searchResults});
+        }
+    }
+    catch (err) {
+        res.json({ success: false, message: err.message });
     }
 });
 
-songRouter.post("/addSong", async (req, res) => {
+songRouter.post("/addSong", requireLogin, async (req, res) => {
     const { songData } = req.body;
 
     if (!songData) {

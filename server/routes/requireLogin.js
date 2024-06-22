@@ -1,10 +1,11 @@
 
 const requireLogin = (req, res, next) => {
     
-    if(!req.isAuthenticated()) {
-        res.json({success: false, message: "User not logged in."})
-    } else {
+    if(req.user) {
         next();
+        
+    } else {
+        res.json({success: false, message: "User not logged in."})
     }
 };
 

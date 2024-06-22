@@ -89,9 +89,14 @@ const SetListCard = ({ song }) => {
 
     return (
         <Card
-            sx={{ display: "flex", flexWrap: "wrap", flexDirection: "column", backgroundColor: "rgba(22, 22, 22, 0.1)",
+            sx={{
+                display: "flex",
+                flexWrap: "wrap",
+                flexDirection: "column",
+                backgroundColor: "rgba(22, 22, 22, 0.1)",
                 WebkitBackdropFilter: "blur(3px)",
-                backdropFilter: "blur(3px)", }}
+                backdropFilter: "blur(3px)",
+            }}
         >
             <Box
                 sx={{
@@ -134,20 +139,10 @@ const SetListCard = ({ song }) => {
                         placement="top"
                         arrow
                     >
-                        <Typography
-                            variant="h6"
-                            
-                        >
-                            {song.title}
-                        </Typography>
+                        <Typography variant="h6">{song.title}</Typography>
                     </Tooltip>
 
-                    <Typography
-                        variant="body1"
-                        
-                    >
-                        {song.artist}
-                    </Typography>
+                    <Typography variant="body1">{song.artist}</Typography>
                     <Typography variant="body2" sx={{ fontStyle: "italic" }}>
                         {song.album}
                     </Typography>
@@ -161,19 +156,26 @@ const SetListCard = ({ song }) => {
                     flexDirection: "row",
                     overflow: "hidden",
                     justifyContent: "center",
-                    overflowX: "auto",
+
                     overflowY: "hidden",
                     paddingTop: "4px !important",
                     paddingBottom: "4px !important",
                     width: "100%",
-                    scrollbarWidth: "none",
-                    "&::-webkit-scrollbar": {
-                        display: "none",
-                    },
+
                     // paddingBottom: "4px !important",
                 }}
             >
-                <Stack direction="row" spacing={1}>
+                <Stack
+                    direction="row"
+                    spacing={1}
+                    sx={{
+                        overflowX: "auto",
+                        scrollbarWidth: "none",
+                        "&::-webkit-scrollbar": {
+                            display: "none",
+                        },
+                    }}
+                >
                     {song.genres.map((genre) => {
                         return (
                             <Chip

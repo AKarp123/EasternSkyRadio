@@ -81,10 +81,10 @@ export const initializeTestData = async () => {
     
     
     
-    for(let i = 0; i< 1; i++) {
+    for(let i = 0; i< 5; i++) {
 
-        addSongToShow(1, song)
-        addSongToShow(1, song2)
+        await addSongToShow(1, song)
+        await addSongToShow(1, song2)
     }
     
     console.log("Test data initialized!");

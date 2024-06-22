@@ -22,6 +22,7 @@ const BackButton = () => {
                     transform: "translateX(-5px)",
                     transition: "transform 300ms ease-in-out",
                 },
+                cursor: "pointer",
             }}
             onClick={() => goBack()}
         >

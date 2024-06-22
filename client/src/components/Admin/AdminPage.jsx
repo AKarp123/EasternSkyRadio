@@ -1,21 +1,40 @@
 import PageBackdrop from "../PageBackdrop";
 import PageHeader from "../PageHeader";
-import { Container, Divider, Typography } from "@mui/material";
-
+import { Box, Container, Divider, Stack, Typography } from "@mui/material";
+import { useContext } from "react";
+import UserContext from "../../providers/UserContext";
+import { Redirect } from "react-router-dom";
+import HomeButton from "../Home/HomeButton";
+import axios from "axios";
 
 const AdminPage = () => {
+    const user = useContext(UserContext);
+    
+    const logout = (e) => {
+        e.preventDefault();
+        axios.post("/api/logout").then((res) => {
+            console.log(res.data)
+            console.log("Logged out")
+            user.setUser(null);
+        });
+    };
+    if (!user.user) {
+        return <Redirect to="/login" />;
+    }
     return (
         <PageBackdrop>
             <PageHeader title="Admin" />
-            <Divider />
+            <Divider sx={{ mt: 2 }} />
             <Container>
-                <Typography variant="h2" sx={{ fontFamily: "Tiny5, Roboto" }}>
-                    Admin page coming soon!
-                </Typography>
+                <Stack spacing={2} sx={{ mt: 2 }}>
+                    <HomeButton text="New Show Log" link="/admin/newshow" />
+                    <Box onClick={(e) => logout(e)}>
+                        <HomeButton text="Logout" link="/login" />
+                    </Box>
+                </Stack>
             </Container>
         </PageBackdrop>
     );
-}
+};
 
 export default AdminPage;
-

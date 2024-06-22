@@ -17,6 +17,7 @@ import BlogPage from "./components/Blog/BlogPage";
 import Login from "./components/Admin/Login";
 import UserContext from "./providers/UserContext";
 import AdminPage from "./components/Admin/AdminPage";
+import NewShow from "./components/Admin/NewShow";
 
 let darkTheme = createTheme({
     palette: {
@@ -46,7 +47,7 @@ function App() {
                     <div className="App">
                         {error && (
                             <Snackbar
-                                open={error}
+                                open={error !== undefined && error !== null}
                                 autoHideDuration={2000}
                                 onClose={() => setError(null)}
                             >
@@ -76,6 +77,9 @@ function App() {
                             </Route>
                             <Route exact path="/admin"> 
                                 <AdminPage />
+                            </Route>
+                            <Route exact path="/admin/newshow">
+                                <NewShow />
                             </Route>
                         </Switch>
                     </div>

@@ -1,5 +1,6 @@
 import { Router } from "express";
 import ShowEntry from "../models/ShowEntry.js";
+import requireLogin from "./requireLogin.js";
 
 const showRouter = Router();
 
@@ -51,7 +52,7 @@ showRouter.get("/getShows", async (req, res) => {
     }
 });
 
-showRouter.post("/addShow", async (req, res) => {
+showRouter.post("/addShow", requireLogin, async (req, res) => {
     const { showData } = req.body;
     try {
         const newShow = new ShowEntry(showData);

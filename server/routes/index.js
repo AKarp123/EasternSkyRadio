@@ -25,9 +25,19 @@ router.post(
     }
 );
 
-router.get("/logout", (req, res) => {
+
+router.get("/getUser", (req, res) => {
+    if(req.user) {
+        res.json({ user: req.user });
+    }
+    else {
+        res.json({ user: null });
+    }
+});
+
+router.post("/logout", (req, res) => {
     req.logout((err) => console.log(err));
-    res.redirect("/");
+    
 });
 
 router.use("/", showRouter);
