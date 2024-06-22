@@ -1,5 +1,5 @@
 const sampleSong = {
-    elcroId: "0311508",
+    elcroId: "031150",
     artist: "Magnolia Cacophony",
     title: "Magnolia",
     origTitle: "マグノリア",
