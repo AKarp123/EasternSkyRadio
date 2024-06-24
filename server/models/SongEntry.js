@@ -14,7 +14,7 @@ const songEntrySchema = new schema({
     origAlbum: { type: String, required: false },
     albumImageLoc: {
         type: String,
-        required: [true, "Missing Album Image field"],
+        required: false,
         default: "placeholder",
     },
     genres: { type: [String], required: [true, "Missing genres field"] },
@@ -53,6 +53,16 @@ songEntrySchema.pre("save", async function (next) {
             genre.substring(0, 1).toUpperCase() +
             genre.substring(1).toLowerCase()
     );
+
+    this.songReleaseLoc.sort((a, b) => {
+        if(a.service > b.service) {
+            return 1;
+        }
+        if(a.service < b.service) {
+            return -1;
+        }
+        return 0;
+    });
     
     const album = this.album;
     const existingSong = await model("SongEntry").findOne({ album });

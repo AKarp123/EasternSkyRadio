@@ -121,6 +121,7 @@ const SetListCard = ({ song }) => {
                         display: "flex",
                         flexDirection: "column",
                         alignItems: "start",
+                        textAlign: "left",
                         overflow: "hidden",
                         justifyContent: "space-between",
                         overflowX: "auto",
@@ -139,7 +140,7 @@ const SetListCard = ({ song }) => {
                         placement="top"
                         arrow
                     >
-                        <Typography variant="h6">{song.title}</Typography>
+                        <Typography variant="h6" >{song.title}</Typography>
                     </Tooltip>
 
                     <Typography variant="body1">{song.artist}</Typography>

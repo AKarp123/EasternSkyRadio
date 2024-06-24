@@ -51,7 +51,7 @@ const ShowPage = ({ parentRef }) => {
 };
 
 const ShowPageMain = ({ showList, setShowList, parentref }) => {
-    if (showList === undefined) {
+    if (showList === undefined || showList.length === 0) {
         return (
             <Typography
                 variant="h2"

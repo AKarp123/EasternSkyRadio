@@ -13,7 +13,6 @@ import {
     Box,
     CardActions,
     Button,
-    Chip,
 } from "@mui/material";
 import PageBackdrop from "../PageBackdrop";
 import PageHeader from "../PageHeader";
@@ -22,8 +21,10 @@ import { useDebounce, useDebouncedCallback } from "use-debounce";
 import axios from "axios";
 import ErrorContext from "../../providers/ErrorContext";
 import { reducer } from "./reducer";
+import { NewSongForm } from "./NewSongForm";
 
 const NewShow = () => {
+    const setError = useContext(ErrorContext);
     const [newShowInput, dispatch] = useReducer(reducer, {
         showDate: new Date(Date.now()).toISOString().split("T")[0],
         showDescription: "",
@@ -42,6 +43,22 @@ const NewShow = () => {
         },
     });
     const [tab, setTab] = useState(0);
+
+    const addShow = () => {
+        
+        axios
+            .post("/api/addShow", { showData: newShowInput})
+            .then((res) => {
+                if (res.data.success === false) {
+                    setError(res.data.message);
+                    return;
+                }
+                setError("Show added successfully", "success");
+            })
+            .catch((err) => {
+                setError(err.message);
+            });
+    }
 
     return (
         <PageBackdrop>
@@ -103,243 +120,18 @@ const NewShow = () => {
                         </Typography>
                         <Stack spacing={1}>
                             {newShowInput.songsList.map((song) => (
-                                <Typography>
+                                <Typography onClick={(e) => {
+                                    
+                                }}>
                                     {song.artist} - {song.title}
                                 </Typography>
                             ))}
+                            <Button onClick={addShow}>Add Show</Button>
                         </Stack>
                     </Grid>
                 </Grid>
             </Container>
         </PageBackdrop>
-    );
-};
-
-const NewSongForm = ({ newShowInput, dispatch }) => {
-    const setError = useContext(ErrorContext);
-    const [genreInput, setGenreInput] = useState("");
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        axios
-            .post("/api/addSong", { songData: newShowInput.song })
-            .then((res) => {
-                if (res.data.success) {
-                    setError("Song added successfully!", "success");
-                    dispatch({
-                        type: "addSong",
-                        payload: res.data.song,
-                    });
-                } else {
-                    setError(res.data.message);
-                }
-            })
-            .catch((err) => {
-                console.log(err);
-            });
-    };
-
-    const fillElcroId = useDebouncedCallback((elcroId) => {
-        axios
-            .get("/api/search", { params: { elcroId } })
-            .then((res) => {
-                if (res.data.length > 0) {
-                    dispatch({
-                        type: "fill",
-                        payload: res.data[0],
-                    });
-                    dispatch({
-                        type: "title",
-                        payload: "",
-                    });
-                } else {
-                    setError("No song found with that Elcro ID");
-                    dispatch({
-                        type: "fill",
-                        payload: {
-                            elcroId: elcroId,
-                            artist: "",
-                            title: "",
-                            origTitle: "",
-                            album: "",
-                            origAlbum: "",
-                            albumImageLoc: "",
-                            genres: [],
-                            specialNote: "",
-                            songReleaseLoc: [],
-                        },
-                    });
-                }
-            })
-            .catch((err) => {
-                setError(err.message);
-            });
-    });
-    return (
-        <form
-            onSubmit={(e) => {
-                handleSubmit(e);
-            }}
-        >
-            <TextField
-                label="Elcro ID"
-                value={newShowInput.song.elcroId}
-                onChange={(e) => {
-                    dispatch({
-                        type: "elcroId",
-                        payload: e.target.value,
-                    });
-
-                    fillElcroId(e.target.value);
-                }}
-                fullWidth
-                sx={{ mt: 1 }}
-            />
-            <Stack direction="row" spacing={1} sx={{ mt: "8px" }}>
-                <TextField
-                    label="Artist"
-                    value={newShowInput.song.artist}
-                    onChange={(e) =>
-                        dispatch({
-                            type: "artist",
-                            payload: e.target.value,
-                        })
-                    }
-                    fullWidth
-                    sx={{ mt: 1 }}
-                />
-                <TextField
-                    label="Title"
-                    value={newShowInput.song.title}
-                    onChange={(e) =>
-                        dispatch({
-                            type: "title",
-                            payload: e.target.value,
-                        })
-                    }
-                    fullWidth
-                    sx={{ mt: 1 }}
-                />
-            </Stack>
-            <TextField
-                label="Original Title"
-                value={newShowInput.song.origTitle}
-                onChange={(e) =>
-                    dispatch({
-                        type: "origTitle",
-                        payload: e.target.value,
-                    })
-                }
-                fullWidth
-                sx={{ mt: 1 }}
-            />
-            <Stack direction="row" spacing={1} sx={{ mt: "8px" }}>
-                <TextField
-                    label="Album"
-                    value={newShowInput.song.album}
-                    onChange={(e) =>
-                        dispatch({
-                            type: "album",
-                            payload: e.target.value,
-                        })
-                    }
-                    fullWidth
-                    sx={{ mt: 1 }}
-                />
-                <TextField
-                    label="Original Album"
-                    value={newShowInput.song.origAlbum}
-                    onChange={(e) =>
-                        dispatch({
-                            type: "origAlbum",
-                            payload: e.target.value,
-                        })
-                    }
-                    fullWidth
-                    sx={{ mt: 1 }}
-                />
-            </Stack>
-            <TextField
-                label="Album Image Location"
-                value={newShowInput.song.albumImageLoc}
-                onChange={(e) =>
-                    dispatch({
-                        type: "albumImageLoc",
-                        payload: e.target.value,
-                    })
-                }
-                fullWidth
-                sx={{ mt: 1 }}
-            />
-
-            <Stack
-                direction="row"
-                spacing={1}
-                alignItems="center"
-                sx={{ mt: 1 }}
-            >
-                <TextField
-                    label="Genre"
-                    value={genreInput}
-                    onChange={(e) => setGenreInput(e.target.value)}
-                />
-                <Button
-                    size="large"
-                    variant="contained"
-                    onClick={() => {
-                        dispatch({
-                            type: "addGenre",
-                            payload: genreInput,
-                        });
-                        setGenreInput("");
-                    }}
-                >
-                    Add
-                </Button>
-                <Box
-                    sx={{
-                        display: "flex",
-                        flexDirection: "row",
-                        overflowY: "hidden",
-                        overflow: "hidden",
-                        scrollbarWidth: "none",
-                        "&::-webkit-scrollbar": {
-                            display: "none",
-                        },
-                        width: "100%",
-
-                    }}
-                >
-                    <Stack direction={"row"} spacing={1} sx={{
-                        overflowX: "auto",
-                        scrollbarWidth: "none",
-                        "&::-webkit-scrollbar": {
-                            display: "none",
-                        },
-                    }}>
-                        {newShowInput.song.genres.map((genre) => (
-                            <Chip
-                                label={genre}
-                                size="small"
-                                sx={{ margin: "2px" }}
-                            />
-                        ))}
-                    </Stack>
-                </Box>
-            </Stack>
-            <TextField
-                label="Special Note"
-                value={newShowInput.song.specialNote}
-                onChange={(e) =>
-                    dispatch({
-                        type: "specialNote",
-                        payload: e.target.value,
-                    })
-                }
-                fullWidth
-                sx={{ mt: 1 }}
-            />
-            <Button type="submit">Add Song</Button>
-        </form>
     );
 };
 
@@ -378,7 +170,7 @@ const SongSearch = ({ dispatch }) => {
             <Stack spacing={1} sx={{ mt: 2 }} direction={"column"}>
                 {searchResults.length > 0 ? (
                     searchResults.map((song) => (
-                        <SongSearchCard song={song} dispatch={dispatch} />
+                        <SongSearchCard song={song} dispatch={dispatch} key={song._id} />
                     ))
                 ) : (
                     <Typography>No results</Typography>

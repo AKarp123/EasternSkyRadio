@@ -28,6 +28,8 @@ const AdminPage = () => {
             <Container>
                 <Stack spacing={2} sx={{ mt: 2 }}>
                     <HomeButton text="New Show Log" link="/admin/newshow" />
+                    <HomeButton text="Edit Log" link="/admin/editshow" />
+                    <HomeButton text="Edit Song" link="/admin/editsongs" />
                     <Box onClick={(e) => logout(e)}>
                         <HomeButton text="Logout" link="/login" />
                     </Box>

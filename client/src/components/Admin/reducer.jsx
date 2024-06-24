@@ -34,11 +34,12 @@ export const reducer = (state, action) => {
                 song: { ...state.song, albumImageLoc: action.payload },
             };
         case "addGenre":
+            console.log(action.payload)
             return {
                 ...state,
                 song: {
                     ...state.song,
-                    genres: [...state.song.genres, action.payload],
+                    genres: state.song.genres.concat(action.payload),
                 },
             };
         case "removeGenre":
@@ -73,7 +74,7 @@ export const reducer = (state, action) => {
                 song: {
                     ...state.song,
                     songReleaseLoc: state.song.songReleaseLoc.filter(
-                        (loc) => loc !== action.payload
+                        (loc) => loc.link !== action.payload
                     ),
                 },
             };
@@ -103,7 +104,7 @@ export const reducer = (state, action) => {
             return {
                 ...state,
                 songsList: state.songsList.filter(
-                    (song) => song !== action.payload
+                    (song) => song._id !== action.payload
                 ),
             };
         default:

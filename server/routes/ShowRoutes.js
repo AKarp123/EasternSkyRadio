@@ -1,6 +1,8 @@
 import { Router } from "express";
 import ShowEntry from "../models/ShowEntry.js";
 import requireLogin from "./requireLogin.js";
+import mongoose from "mongoose";
+import Increment from "../models/IncrementModel.js";
 
 const showRouter = Router();
 
@@ -54,11 +56,19 @@ showRouter.get("/getShows", async (req, res) => {
 
 showRouter.post("/addShow", requireLogin, async (req, res) => {
     const { showData } = req.body;
+    delete showData.song;
     try {
-        const newShow = new ShowEntry(showData);
+        showData.songsList = showData.songsList.map((song) => song._id);
+        const nextShowId = await Increment.findOneAndUpdate(
+            { model: "ShowEntry" },
+            { $inc: { counter: 1 } },
+            { new: true }
+        );
+        const newShow = new ShowEntry({...showData, showId: nextShowId.counter });
         await newShow.save();
         res.json({ success: true, message: "Show added successfully." });
     } catch (err) {
+        console.log(err)
         res.json({ success: false, message: "Error adding show." });
     }
 });

@@ -68,24 +68,25 @@ const createAdminAccount = async() => {
 }
 
 export const initializeTestData = async () => {
-    mongoose.connection.dropDatabase();
-    await new SiteData({showDay: 2, showHour: 0, onBreak: false}).save();
-    await createAdminAccount();
-    await initializeCounters();
-    const song = await addSong(sD.sampleSong);
-    const song2 = await addSong(sD.sampleSong2);
-    for(let i = 0; i< 3; i++) {
+    // mongoose.connection.dropDatabase();
+    // await new SiteData({showDay: 2, showHour: 0, onBreak: false}).save();
+    // await createAdminAccount();
+    // await initializeCounters();
+    // const song = await addSong(sD.sampleSong);
+    // const song2 = await addSong(sD.sampleSong2);
+    // for(let i = 0; i< 3; i++) {
        
-        await addShow(sD.sampleShow);
-    }
+    //     await addShow(sD.sampleShow);
+    // }
+    
+    const allSongs = await SongEntry.find();
     
     
-    
-    for(let i = 0; i< 5; i++) {
+    // for(let i = 0; i< 5; i++) {
 
-        await addSongToShow(1, song)
-        await addSongToShow(1, song2)
-    }
+    //     await addSongToShow(1, song)
+    //     await addSongToShow(1, song2)
+    // }
     
     console.log("Test data initialized!");
 
