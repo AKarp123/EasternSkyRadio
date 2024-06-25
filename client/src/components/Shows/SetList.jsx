@@ -26,6 +26,7 @@ import { useState, useEffect, useContext, useRef } from "react";
 import axios from "axios";
 import ErrorContext from "../../providers/ErrorContext";
 import PageHeader from "../PageHeader";
+import { Textfit } from "react-textfit";
 
 const SetList = () => {
     const { showId } = useParams();
@@ -53,6 +54,7 @@ const SetList = () => {
         <PageBackdrop>
             <PageHeader title={`Show #${showId}`} />
             <Divider sx={{ mb: "24px" }} />
+
             <Container maxWidth={"lg"}>
                 <Grid container spacing={2}>
                     {loading ? (
@@ -72,6 +74,23 @@ const SetList = () => {
 
 const SetListCard = ({ song }) => {
     const genreBoxRef = useRef(null);
+
+    const fontSwitch = (len) => {
+        if (len < 24) {
+            return "1.5rem !important";
+        }
+        if (len < 30) {
+            return "1.25rem !important";
+        }
+        if (len < 36) {
+            return "1rem !important";
+        }
+        if (len < 42) {
+            return "0.9rem !important";
+        }
+    };
+
+    const size = fontSwitch(song.title.length);
 
     const iconSwitch = {
         Spotify: (
@@ -125,22 +144,35 @@ const SetListCard = ({ song }) => {
                         overflow: "hidden",
                         justifyContent: "space-between",
                         overflowX: "auto",
-
+                        // paddingBottom: "0px !important",
                         // paddingTop: "4px !important",
-                        // paddingBottom: "4px !important",
+                        paddingBottom: "8px !important",
                     }}
                 >
                     <Tooltip
                         title={
                             "Original Title: " +
-                            (song.origTitle === undefined
+                            (song.origTitle === undefined ||
+                            song.origTitle === ""
                                 ? "N/A"
                                 : song.origTitle)
                         }
                         placement="top"
                         arrow
                     >
-                        <Typography variant="h6" >{song.title}</Typography>
+                        <Typography
+                            variant="h6"
+                            sx={{
+                                fontSize:
+                                    song.title.length > 24
+                                        ? song.title.length > 48
+                                            ? "0.9rem !important"
+                                            : "1rem !important "
+                                        : "1.25rem !important",
+                            }}
+                        >
+                            {song.title}
+                        </Typography>
                     </Tooltip>
 
                     <Typography variant="body1">{song.artist}</Typography>

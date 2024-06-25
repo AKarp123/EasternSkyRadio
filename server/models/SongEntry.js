@@ -6,7 +6,17 @@ import { Schema as schema, model } from "mongoose";
  **/
 const songEntrySchema = new schema({
     songId: { type: Number, required: [true, "Missing songId field"] },
-    elcroId: { type: String, required: false, select: false },
+    elcroId: {
+        type: String,
+        required: false,
+        select: false,
+        validate: {
+            validator: function (v) {
+                return typeof v === "string" && (v.length === 6 || v.length === 0);
+            },
+            message: (props) => `${props.value} is not a string of length 6`,
+        },
+    },
     artist: { type: String, required: [true, "Missing artist field"] },
     title: { type: String, required: [true, "Missing title field"] },
     origTitle: { type: String, required: false },
@@ -47,7 +57,6 @@ songEntrySchema.pre("save", async function (next) {
         return next();
     }
 
-
     this.genres = this.genres.map(
         (genre) =>
             genre.substring(0, 1).toUpperCase() +
@@ -55,15 +64,15 @@ songEntrySchema.pre("save", async function (next) {
     );
 
     this.songReleaseLoc.sort((a, b) => {
-        if(a.service > b.service) {
+        if (a.service > b.service) {
             return 1;
         }
-        if(a.service < b.service) {
+        if (a.service < b.service) {
             return -1;
         }
         return 0;
     });
-    
+
     const album = this.album;
     const existingSong = await model("SongEntry").findOne({ album });
     if (existingSong) {
@@ -73,7 +82,6 @@ songEntrySchema.pre("save", async function (next) {
     }
     next();
 });
-
 
 const SongEntry = model("SongEntry", songEntrySchema);
 

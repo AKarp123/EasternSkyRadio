@@ -79,8 +79,17 @@ export const initializeTestData = async () => {
     //     await addShow(sD.sampleShow);
     // }
     
-    const allSongs = await SongEntry.find();
+    // const allSongs = await SongEntry.find();
     
+    // allSongs.forEach(async (song) => {
+    //     song.songReleaseLoc = song.songReleaseLoc.map((loc) => {
+    //         if(loc.service !== "Download" || loc.service !== "Purchase") {
+    //             loc.description = "";
+    //         }
+    //         return loc;
+    //     });
+    //     await song.save();
+    // });
     
     // for(let i = 0; i< 5; i++) {
 

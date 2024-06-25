@@ -34,6 +34,7 @@ songRouter.get("/search", async (req, res) => {
                 $or: [
                     { title: { $regex: req.query.query, $options: "i" } },
                     { artist: { $regex: req.query.query, $options: "i" } },
+                    { album: { $regex: req.query.query, $options: "i" } },
                 ],
             }).select("-__v" + (req.user ? " +elcroId" : "") );
             res.json({success: true, searchResults: searchResults});
@@ -49,6 +50,11 @@ songRouter.post("/addSong", requireLogin, async (req, res) => {
 
     if (!songData) {
         res.json({ success: false, message: "No song data provided." });
+    }
+    const checkDup = await SongEntry.findOne({ album: songData.album, title: songData.title });
+    if(checkDup){
+        res.json({ success: false, message: "Song already exists." });
+        return;
     }
     addSong(songData)
         .then((newSong) => {

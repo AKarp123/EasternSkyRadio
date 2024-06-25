@@ -13,7 +13,7 @@ import { useContext, useState } from "react";
 import { useDebouncedCallback } from "use-debounce";
 import axios from "axios";
 import ErrorContext from "../../providers/ErrorContext";
-
+import InputFileUpload from "./InputFileUpload";
 
 export const NewSongForm = ({ newShowInput, dispatch }) => {
     const setError = useContext(ErrorContext);
@@ -40,6 +40,46 @@ export const NewSongForm = ({ newShowInput, dispatch }) => {
             })
             .catch((err) => {
                 console.log(err);
+            });
+    };
+
+
+    const uploadImage = (filearr) => {
+        const file = filearr[0];
+        // e.preventDefault();
+        const { artist, album } = newShowInput.song;
+        if (artist === "" || album === "") {
+            setError("Please enter artist and album before uploading image");
+            return;
+        }
+        console.log(file);
+        const formData = new FormData();
+
+        // if(!file.name) {
+        //     const fileName = `${artist} - ${album}.jpg`;
+        //     formData.append("filename", file, fileName);
+        // } else {
+        //     formData.append("filename", file);
+        // }
+        formData.append("filename", file);
+        formData.append("artist", artist);
+        formData.append("album", album);
+        setError("Uploading Image...", "info");
+        axios
+            .post("/api/upload", formData, {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+            })
+            .then((res) => {
+                dispatch({
+                    type: "albumImageLoc",
+                    payload: res.data.url,
+                });
+                setError("Image uploaded successfully!", "success");
+            })
+            .catch((err) => {
+                setError(err.message);
             });
     };
 
@@ -77,6 +117,44 @@ export const NewSongForm = ({ newShowInput, dispatch }) => {
                             songReleaseLoc: [],
                         },
                     });
+                }
+            })
+            .catch((err) => {
+                setError(err.message);
+            });
+    }, 500);
+
+    const fillAlbum = useDebouncedCallback((album) => {
+        if(album === "") {
+            return;
+        }
+        axios
+            .get("/api/search", { params: { query: album } })
+            .then((res) => {
+                if (res.data.searchResults.length > 0) {
+                    if (
+                        res.data.searchResults[0].album.toUpperCase() ===
+                        album.toUpperCase()
+                    ) {
+                        dispatch({
+                            type: "album",
+                            payload: res.data.searchResults[0].album,
+                        });
+                        dispatch({
+                            type: "origAlbum",
+                            payload: res.data.searchResults[0].origAlbum,
+                        });
+                        dispatch({
+                            type: "albumImageLoc",
+                            payload: res.data.searchResults[0].albumImageLoc,
+                        });
+
+                        dispatch({
+                            type: "setSongReleaseLoc",
+                            payload: res.data.searchResults[0].songReleaseLoc,
+                        });
+                            
+                    }
                 }
             })
             .catch((err) => {
@@ -145,12 +223,14 @@ export const NewSongForm = ({ newShowInput, dispatch }) => {
                 <TextField
                     label="Album"
                     value={newShowInput.song.album}
-                    onChange={(e) =>
+                    onChange={(e) => {
                         dispatch({
                             type: "album",
                             payload: e.target.value,
-                        })
-                    }
+                        });
+
+                        fillAlbum(e.target.value);
+                    }}
                     fullWidth
                     sx={{ mt: 1 }}
                 />
@@ -167,26 +247,28 @@ export const NewSongForm = ({ newShowInput, dispatch }) => {
                     sx={{ mt: 1 }}
                 />
             </Stack>
-            <TextField
-                label="Album Image Location"
-                value={newShowInput.song.albumImageLoc}
-                onChange={(e) =>
-                    dispatch({
-                        type: "albumImageLoc",
-                        payload: e.target.value,
-                    })
-                }
-                fullWidth
-                sx={{ mt: 1 }}
-            />
-
+            <Stack direction="row" spacing={1} sx={{ mt: "8px" }}>
+                <TextField
+                    label="Album Image Location"
+                    value={newShowInput.song.albumImageLoc}
+                    onChange={(e) =>
+                        dispatch({
+                            type: "albumImageLoc",
+                            payload: e.target.value,
+                        })
+                    }
+                    fullWidth
+                    sx={{ mt: 1 }}
+                />
+                <InputFileUpload uploadImage={uploadImage} />
+            </Stack>
             <Stack direction="row" spacing={1} sx={{ mt: 1 }}>
                 <TextField
                     label="Genre"
                     value={genreInput}
                     onChange={(e) => setGenreInput(e.target.value)}
                     onKeyPress={(e) => {
-                        if (e.key === 'Enter') {
+                        if (e.key === "Enter") {
                             e.preventDefault();
                             dispatch({
                                 type: "addGenre",
@@ -203,7 +285,9 @@ export const NewSongForm = ({ newShowInput, dispatch }) => {
                     onClick={() => {
                         dispatch({
                             type: "addGenre",
-                            payload: genreInput.split(",").map((genre) => genre.trim()),
+                            payload: genreInput
+                                .split(",")
+                                .map((genre) => genre.trim()),
                         });
                         setGenreInput("");
                     }}
@@ -267,11 +351,13 @@ export const NewSongForm = ({ newShowInput, dispatch }) => {
                     value={songReleaseInput}
                     onChange={(e) => setSongReleaseInput(e.target.value)}
                     onKeyPress={(e) => {
-                        if (e.key === 'Enter') {
+                        if (e.key === "Enter") {
                             e.preventDefault();
-                            if (songReleaseType === "Purchase" || songReleaseType === "Download") {
+                            if (
+                                songReleaseType === "Purchase" ||
+                                songReleaseType === "Download"
+                            ) {
                                 // handle additional field if needed
-
                             } else {
                                 dispatch({
                                     type: "addSongReleaseLoc",
@@ -295,7 +381,7 @@ export const NewSongForm = ({ newShowInput, dispatch }) => {
                         value={songReleaseDesc}
                         onChange={(e) => setSongReleaseDesc(e.target.value)}
                         onKeyPress={(e) => {
-                            if (e.key === 'Enter') {
+                            if (e.key === "Enter") {
                                 e.preventDefault();
                                 dispatch({
                                     type: "addSongReleaseLoc",
@@ -306,8 +392,8 @@ export const NewSongForm = ({ newShowInput, dispatch }) => {
                                     },
                                 });
                                 setSongReleaseInput("");
+                                setSongReleaseDesc("");
                             }
-                        
                         }}
                         fullWidth
                         sx={{ mt: 1 }}

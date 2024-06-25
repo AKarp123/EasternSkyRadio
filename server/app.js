@@ -11,9 +11,11 @@ import { initializeTestData } from "./dbMethods.js";
 import User from "./models/UserModel.js";
 import apiRouter from "./routes/index.js";
 import "dotenv/config";
+import initializeAdmin from "./config/admin.js";
 
 mongoose.connect(process.env.MONGODB_URI);
 const db = mongoose.connection;
+
 const app = express();
 
 const __filename = fileURLToPath(import.meta.url);

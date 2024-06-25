@@ -16,7 +16,7 @@ import {
 } from "@mui/material";
 import PageBackdrop from "../PageBackdrop";
 import PageHeader from "../PageHeader";
-import { useContext, useReducer, useState } from "react";
+import { useContext, useEffect, useReducer, useState } from "react";
 import { useDebounce, useDebouncedCallback } from "use-debounce";
 import axios from "axios";
 import ErrorContext from "../../providers/ErrorContext";
@@ -42,6 +42,15 @@ const NewShow = () => {
             songReleaseLoc: [],
         },
     });
+
+    useEffect(() => {
+        let showState = localStorage.getItem("showState");
+        if (showState) {
+            dispatch({ type: "load", payload: JSON.parse(showState) });
+        }
+        
+    }, []);
+
     const [tab, setTab] = useState(0);
 
     const addShow = () => {
@@ -121,7 +130,10 @@ const NewShow = () => {
                         <Stack spacing={1}>
                             {newShowInput.songsList.map((song) => (
                                 <Typography onClick={(e) => {
-                                    
+                                    dispatch({
+                                        type: "removeSong",
+                                        payload: song,
+                                    });
                                 }}>
                                     {song.artist} - {song.title}
                                 </Typography>
