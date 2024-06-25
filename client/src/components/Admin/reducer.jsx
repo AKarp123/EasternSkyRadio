@@ -167,12 +167,13 @@ export const reducer = (state, action) => {
             };
         case "removeSong":
             obj.songsList = obj.songsList.filter(
-                (song) => song._id !== action.payload
+                (song) => song._id !== action.payload._id
             )
+            localStorage.setItem("showState", JSON.stringify(obj))
             return {
                 ...state,
                 songsList: state.songsList.filter(
-                    (song) => song._id !== action.payload
+                    (song) => song._id !== action.payload._id
                 ),
             };
         case "load":

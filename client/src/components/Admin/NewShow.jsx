@@ -130,6 +130,7 @@ const NewShow = () => {
                         <Stack spacing={1}>
                             {newShowInput.songsList.map((song) => (
                                 <Typography onClick={(e) => {
+                                    e.preventDefault();
                                     dispatch({
                                         type: "removeSong",
                                         payload: song,

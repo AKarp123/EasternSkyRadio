@@ -47,37 +47,48 @@ router.get("/getBucket", (req, res) => {
     res.json({ message: "test" });
 });
 
-router.post("/upload", requireLogin, upload.single("filename"), async(req, res) => {
-    const { artist, album } = req.body;
+router.post(
+    "/upload",
+    requireLogin,
+    upload.single("filename"),
+    async (req, res) => {
+        const { artist, album } = req.body;
 
-    const storageRef = storage
-        .bucket()
-        .file(`albumCovers/${req.file.originalname} + ${artist} + ${album}`);
-    
-    // await storageRef.makePublic();
+        const storageRef = storage
+            .bucket()
+            .file(
+                `albumCovers/${req.file.originalname} + ${artist} + ${album}`
+            );
 
-    // console.log(req.file)
+        // await storageRef.makePublic();
 
-    if(req.file.mimetype !== "image/jpeg" && req.file.mimetype !== "image/png") {
-        res.json({ message: "Invalid file type" });
+        // console.log(req.file)
+
+        if (
+            req.file.mimetype !== "image/jpeg" &&
+            req.file.mimetype !== "image/png"
+        ) {
+            return res.json({ success: false, message: "Invalid file type" });
+        }
+        const metadata = {
+            contentType: req.file.mimetype,
+        };
+
+        storageRef
+            .save(req.file.buffer, { metadata })
+            .then(() => {
+                console.log(storageRef.publicUrl());
+                res.json({
+                    message: "File uploaded",
+                    url: storageRef.publicUrl(),
+                });
+            })
+            .catch((err) => {
+                console.log(err);
+                res.json({ message: "Error uploading file" });
+            });
     }
-    const metadata = {
-        contentType: req.file.mimetype,
-    };
-
-    
-    storageRef
-        .save(req.file.buffer, { metadata })
-        .then(() => {
-            console.log(storageRef.publicUrl());
-            res.json({ message: "File uploaded", url: storageRef.publicUrl()});
-        })
-        .catch((err) => {
-            console.log(err);
-            res.json({ message: "Error uploading file" });
-        });
-});
-
+);
 
 router.use("/", showRouter);
 router.use("/", SongRouter);

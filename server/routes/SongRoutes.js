@@ -65,4 +65,23 @@ songRouter.post("/addSong", requireLogin, async (req, res) => {
         });
 });
 
+songRouter.post("/editSong", requireLogin, async (req, res) => {
+    const { songData } = req.body;
+
+
+    if (!songData) {
+        res.json({ success: false, message: "No song data provided." });
+    }
+    
+
+    SongEntry.findOneAndUpdate({ songId: songData.songId }, songData, { new: true })
+        .then((updatedSong) => {
+            res.json({ success: true, message: "Song updated successfully.", song: updatedSong });
+        })
+        .catch((err) => {
+            res.json({ success: false, message: err.message });
+        });
+});
+    
+
 export default songRouter;

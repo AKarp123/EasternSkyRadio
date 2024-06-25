@@ -82,13 +82,13 @@ export const initializeTestData = async () => {
     // const allSongs = await SongEntry.find();
     
     // allSongs.forEach(async (song) => {
-    //     song.songReleaseLoc = song.songReleaseLoc.map((loc) => {
-    //         if(loc.service !== "Download" || loc.service !== "Purchase") {
-    //             loc.description = "";
+    //     song.genres = song.genres.map((genre) => {
+    //         genre.split(" ").map((word) => {
+    //             return word.charAt(0).toUpperCase() + word.slice(1);
     //         }
-    //         return loc;
-    //     });
-    //     await song.save();
+    //         ).join(" ");
+    //     })
+    //     song.save();
     // });
     
     // for(let i = 0; i< 5; i++) {

@@ -18,6 +18,8 @@ import Login from "./components/Admin/Login";
 import UserContext from "./providers/UserContext";
 import AdminPage from "./components/Admin/AdminPage";
 import NewShow from "./components/Admin/NewShow";
+import EditSongs from "./components/Admin/EditSongs";
+import EditShows from "./components/Admin/EditShows";
 
 let darkTheme = createTheme({
     palette: {
@@ -35,7 +37,7 @@ function App() {
     const [user, setUser] = useState(null);
 
     const displayError = (errorMessage, variant = "error") => {
-        setError({errorMessage, variant});
+        setError({ errorMessage, variant });
     };
 
     return (
@@ -43,7 +45,7 @@ function App() {
             <CssBaseline />
             {/* <StarParticles /> */}
             <ErrorContext.Provider value={displayError}>
-                <UserContext.Provider value={{user, setUser}}>
+                <UserContext.Provider value={{ user, setUser }}>
                     <div className="App">
                         {error && (
                             <Snackbar
@@ -75,11 +77,17 @@ function App() {
                             <Route exact path="/login">
                                 <Login />
                             </Route>
-                            <Route exact path="/admin"> 
+                            <Route exact path="/admin">
                                 <AdminPage />
                             </Route>
                             <Route exact path="/admin/newshow">
                                 <NewShow />
+                            </Route>
+                            <Route exact path="/admin/editsong">
+                                <EditSongs />
+                            </Route>
+                            <Route exact path="/admin/editshow">
+                                <EditShows />
                             </Route>
                         </Switch>
                     </div>

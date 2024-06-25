@@ -44,8 +44,8 @@ export const NewSongForm = ({ newShowInput, dispatch }) => {
     };
 
 
-    const uploadImage = (filearr) => {
-        const file = filearr[0];
+    const uploadImage = (file) => {
+       
         // e.preventDefault();
         const { artist, album } = newShowInput.song;
         if (artist === "" || album === "") {
@@ -72,6 +72,10 @@ export const NewSongForm = ({ newShowInput, dispatch }) => {
                 },
             })
             .then((res) => {
+                if(res.data.success === false) {
+                    setError(res.data.message);
+                    return;
+                }
                 dispatch({
                     type: "albumImageLoc",
                     payload: res.data.url,

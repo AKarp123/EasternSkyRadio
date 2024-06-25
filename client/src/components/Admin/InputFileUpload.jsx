@@ -22,7 +22,7 @@ export default function InputFileUpload({ uploadImage }) {
     
   
     return (
-        <FileUploader multiple={true} handleChange={uploadImage} name="filename">
+        <FileUploader multiple={false} handleChange={uploadImage} name="filename">
             <div>
             <Button
                 size="small"
