@@ -48,26 +48,26 @@ const NewShow = () => {
         if (showState) {
             dispatch({ type: "load", payload: JSON.parse(showState) });
         }
-        
     }, []);
 
     const [tab, setTab] = useState(0);
 
     const addShow = () => {
-        
         axios
-            .post("/api/addShow", { showData: newShowInput})
+            .post("/api/addShow", { showData: newShowInput })
             .then((res) => {
                 if (res.data.success === false) {
                     setError(res.data.message);
                     return;
                 }
                 setError("Show added successfully", "success");
+                dispatch({ type: "reset" });
+                localStorage.setItem("showState", JSON.stringify(newShowInput));
             })
             .catch((err) => {
                 setError(err.message);
             });
-    }
+    };
 
     return (
         <PageBackdrop>
@@ -129,13 +129,15 @@ const NewShow = () => {
                         </Typography>
                         <Stack spacing={1}>
                             {newShowInput.songsList.map((song) => (
-                                <Typography onClick={(e) => {
-                                    e.preventDefault();
-                                    dispatch({
-                                        type: "removeSong",
-                                        payload: song,
-                                    });
-                                }}>
+                                <Typography
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        dispatch({
+                                            type: "removeSong",
+                                            payload: song,
+                                        });
+                                    }}
+                                >
                                     {song.artist} - {song.title}
                                 </Typography>
                             ))}
@@ -148,7 +150,8 @@ const NewShow = () => {
     );
 };
 
-const SongSearch = ({ dispatch }) => {
+const SongSearch = ({ dispatch, parent }) => {
+    parent = parent === undefined ? "New Show" : parent;
     const [searchResults, setSearchResults] = useState([]);
     const setError = useContext(ErrorContext);
     const searchDebounced = useDebouncedCallback((query) => {
@@ -183,7 +186,11 @@ const SongSearch = ({ dispatch }) => {
             <Stack spacing={1} sx={{ mt: 2 }} direction={"column"}>
                 {searchResults.length > 0 ? (
                     searchResults.map((song) => (
-                        <SongSearchCard song={song} dispatch={dispatch} key={song._id} />
+                        <SongSearchCard
+                            song={song}
+                            dispatch={dispatch}
+                            key={song._id}
+                        />
                     ))
                 ) : (
                     <Typography>No results</Typography>
@@ -193,7 +200,9 @@ const SongSearch = ({ dispatch }) => {
     );
 };
 
-const SongSearchCard = ({ song, dispatch }) => {
+const SongSearchCard = ({ song, dispatch, parent }) => {
+    
+
     const setError = useContext(ErrorContext);
     return (
         <Card
@@ -256,21 +265,26 @@ const SongSearchCard = ({ song, dispatch }) => {
                 >
                     Add
                 </Button>
-                <Button
-                    onClick={() => {
-                        delete song._id;
-                        dispatch({
-                            type: "fill",
-                            payload: song,
-                        });
-                        setError("Song filled", "success");
-                    }}
-                >
-                    Fill
-                </Button>
+                {parent === "New Show" ? (
+                    <Button
+                        onClick={() => {
+                            delete song._id;
+                            dispatch({
+                                type: "fill",
+                                payload: song,
+                            });
+                            setError("Song filled", "success");
+                        }}
+                    >
+                        Fill
+                    </Button>
+                ) : (
+                    ""
+                )}
             </CardActions>
         </Card>
     );
 };
 
 export default NewShow;
+export { SongSearch };

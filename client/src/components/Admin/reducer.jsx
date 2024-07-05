@@ -178,6 +178,24 @@ export const reducer = (state, action) => {
             };
         case "load":
             return action.payload;
+        case "reset":
+            return {
+                showDate: new Date(Date.now()).toISOString().split("T")[0],
+                showDescription: "",
+                songsList: [],
+                song: {
+                    elcroId: "",
+                    artist: "",
+                    title: "",
+                    origTitle: "",
+                    album: "",
+                    origAlbum: "",
+                    albumImageLoc: "",
+                    genres: [],
+                    specialNote: "",
+                    songReleaseLoc: [],
+                },
+            }
         default:
             return state;
     }

@@ -1,9 +1,24 @@
-import { Divider, TextField, Container, Grid } from "@mui/material";
+import {
+    Divider,
+    TextField,
+    Container,
+    Grid,
+    List,
+    ListItem,
+    ListItemText,
+    Tabs,
+    Tab,
+    Button,
+    Stack,
+    Tooltip,
+} from "@mui/material";
 import PageBackdrop from "../PageBackdrop";
 import PageHeader from "../PageHeader";
-import { useReducer, useState } from "react";
+import { useReducer, useState, useContext } from "react";
 import { useDebouncedCallback } from "use-debounce";
 import axios from "axios";
+import ErrorContext from "../../providers/ErrorContext";
+import { SongSearch } from "./NewShow";
 
 const reducer = (state, action) => {
     switch (action.type) {
@@ -14,6 +29,16 @@ const reducer = (state, action) => {
         case "fill":
             return {
                 ...action.payload,
+            };
+        case "editSongsList":
+            return {
+                ...state,
+                songsList: action.payload,
+            };
+        case "addSong":
+            return {
+                ...state,
+                songsList: [...state.songsList, action.payload],
             };
         case "clear": {
             return {
@@ -34,9 +59,11 @@ const EditShows = () => {
         songsList: [], // always include song object id
     });
     const [showId, setShowId] = useState("");
+    const [tab, setTab] = useState(0);
+    const setError = useContext(ErrorContext);
 
     const fillShow = useDebouncedCallback(() => {
-        if(showId === "") return;
+        if (showId === "") return;
         axios
             .get("/api/getShowData", {
                 params: {
@@ -44,9 +71,39 @@ const EditShows = () => {
                 },
             })
             .then((res) => {
-                dispatch({ type: "fill", payload: {...res.data.showData} });
+                if (res.data.showData === null) {
+                    dispatch({ type: "clear" });
+                    setError("Show not found");
+
+                    return;
+                }
+                dispatch({ type: "fill", payload: { ...res.data.showData } });
             });
     }, 500);
+
+    const submit = () => {
+        axios.post("/api/editShow", { showData }).then((res) => {
+            if (res.data.success === false) {
+                setError(res.data.message);
+                return;
+            }
+            setError("Show edited successfully", "success");
+        });
+    };
+
+    const editOrder = (curIndex, newIndex) => {
+        let temp = showData.songsList;
+        let tempSong = temp[curIndex];
+        temp.splice(newIndex, 0, tempSong);
+        temp.splice(curIndex + (curIndex > newIndex ? 1 : 0), 1);
+        dispatch({ type: "editSongsList", payload: temp });
+    };
+
+    const removeSong = (index) => {
+        let temp = showData.songsList;
+        temp.splice(index, 1);
+        dispatch({ type: "editSongsList", payload: temp });
+    };
 
     return (
         <PageBackdrop>
@@ -55,16 +112,19 @@ const EditShows = () => {
             <Container>
                 <Grid container spacing={2}>
                     <Grid item xs={12}>
-                        <TextField
-                            label="Show ID"
-                            fullWidth
-                            value={showId}
-                            onChange={(e) => {
-                                e.preventDefault();
-                                setShowId(e.target.value);
-                                fillShow();
-                            }}
-                        />
+                        <Stack direction="row" spacing={2}>
+                            <TextField
+                                label="Show ID"
+                                fullWidth
+                                value={showId}
+                                onChange={(e) => {
+                                    e.preventDefault();
+                                    setShowId(e.target.value);
+                                    fillShow();
+                                }}
+                            />
+                            <Button onClick={(e) => submit()}>Submit</Button>
+                        </Stack>
                     </Grid>
                     <Grid item xs={12} sm={6}>
                         <TextField
@@ -82,7 +142,50 @@ const EditShows = () => {
                         />
                     </Grid>
                     <Grid item xs={12} sm={6}>
-                        <TextField label="Show Description" fullWidth value={showData.showDescription}/>
+                        <TextField
+                            label="Show Description"
+                            fullWidth
+                            value={showData.showDescription}
+                        />
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                        <Tabs
+                            value={tab}
+                            onChange={(e, val) => setTab(val)}
+                            centered
+                            sx={{ mb: 2 }}
+                        >
+                            <Tab label="Add Song" />
+                            <Tab label="Edit Song Order" />
+                        </Tabs>
+                        {tab === 0 ? (
+                            <SongSearch
+                                dispatch={dispatch}
+                                parent="Edit Show"
+                            />
+                        ) : (
+                            <EditSongOrder editOrder={editOrder} />
+                        )}
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                        <List
+                            sx={{
+                                width: "100%",
+                                overflowY: "auto",
+                                maxHeight: "400px",
+                                border: "1.5px solid #495057",
+                                borderRadius: "10px",
+                            }}
+                        >
+                            {showData.songsList.map((song, index) => (
+                                <SongListItem
+                                    song={song}
+                                    removeSong={removeSong}
+                                    key={index}
+                                    index={index}
+                                />
+                            ))}
+                        </List>
                     </Grid>
                 </Grid>
             </Container>
@@ -90,4 +193,52 @@ const EditShows = () => {
     );
 };
 
+const SongListItem = ({ song, removeSong, index }) => (
+    <Tooltip title={index + 1} placement="top">
+        <ListItem key={song.songId} onClick={(e) => removeSong(index)}>
+            <ListItemText primary={song.title} secondary={song.artist} />
+        </ListItem>
+    </Tooltip>
+);
+
+const EditSongOrder = ({ editOrder }) => {
+    const [curIndex, setCurIndex] = useState(-1);
+    const [newIndex, setNewIndex] = useState(-1);
+
+    return (
+        <Container>
+            <List>
+                <ListItem>
+                    <ListItemText>Current Index</ListItemText>
+                    <TextField
+                        type="number"
+                        value={curIndex}
+                        onChange={(e) => {
+                            e.preventDefault();
+                            setCurIndex(e.target.value);
+                        }}
+                    />
+                </ListItem>
+                <ListItem>
+                    <ListItemText>New Index</ListItemText>
+                    <TextField
+                        type="number"
+                        value={newIndex}
+                        onChange={(e) => {
+                            e.preventDefault();
+                            setNewIndex(e.target.value);
+                        }}
+                    />
+                </ListItem>
+                <ListItem>
+                    <Button
+                        onClick={() => editOrder(curIndex - 1, newIndex - 1)}
+                    >
+                        Edit Order
+                    </Button>
+                </ListItem>
+            </List>
+        </Container>
+    );
+};
 export default EditShows;

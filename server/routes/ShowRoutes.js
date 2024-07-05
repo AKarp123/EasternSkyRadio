@@ -7,7 +7,7 @@ import Increment from "../models/IncrementModel.js";
 const showRouter = Router();
 
 showRouter.get("/getShowData", async (req, res) => {
-    if (req.query.showId === undefined) {
+    if (req.query.showId === undefined || req.query.showId === "" || isNaN(req.query.showId)) {
         res.json({ success: false, message: "No Show ID provided." });
     } else {
         const showData = await ShowEntry.findOne(
@@ -68,9 +68,32 @@ showRouter.post("/addShow", requireLogin, async (req, res) => {
         await newShow.save();
         res.json({ success: true, message: "Show added successfully." });
     } catch (err) {
-        console.log(err)
+        console.log(err);
+        await Increment.findOneAndUpdate(
+            { model: "ShowEntry" },
+            { $inc: { counter: -1 } }
+        );
         res.json({ success: false, message: "Error adding show." });
     }
+});
+
+showRouter.post("/editShow", requireLogin, async (req, res) => {  
+    const { showData } = req.body;
+    const show = await ShowEntry.findOne({ showId: showData.showId });
+    if(show === null) {
+        res.json({ success: false, message: "Show not found." });
+        return;
+    }
+    show.songsList = showData.songsList;
+    show.showDate = showData.showDate;
+    show.showDescription = showData.showDescription;
+    show.save()
+    .then(() => {
+        res.json({ success: true, message: "Show Updated!" });
+    })
+    .catch((err) => {
+        res.json({ success: false, message: "Error adding song to show." });
+    });
 });
 
 export default showRouter;

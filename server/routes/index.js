@@ -79,13 +79,14 @@ router.post(
             .then(() => {
                 console.log(storageRef.publicUrl());
                 res.json({
+                    success: true,
                     message: "File uploaded",
                     url: storageRef.publicUrl(),
                 });
             })
             .catch((err) => {
                 console.log(err);
-                res.json({ message: "Error uploading file" });
+                res.json({ success: false, message: "Error uploading file" });
             });
     }
 );
