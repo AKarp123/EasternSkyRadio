@@ -66,7 +66,8 @@ router.post(
 
         if (
             req.file.mimetype !== "image/jpeg" &&
-            req.file.mimetype !== "image/png"
+            req.file.mimetype !== "image/png" && 
+            req.file.mimetype !== "image/webp"
         ) {
             return res.json({ success: false, message: "Invalid file type" });
         }

@@ -91,6 +91,17 @@ const EditShows = () => {
         });
     };
 
+    const deleteShow = () => {
+        axios.post("/api/deleteShow", { showId }).then((res) => {
+            if (res.data.success === false) {
+                setError(res.data.message);
+                return;
+            }
+            setError("Show deleted successfully", "success");
+            dispatch({ type: "clear" });
+        });
+    };
+
     const editOrder = (curIndex, newIndex) => {
         let temp = showData.songsList;
         let tempSong = temp[curIndex];
@@ -124,7 +135,11 @@ const EditShows = () => {
                                 }}
                             />
                             <Button onClick={(e) => submit()}>Submit</Button>
+                            <Button color="error" onClick={(e) => deleteShow()}> 
+                                Delete Show
+                            </Button>
                         </Stack>
+                       
                     </Grid>
                     <Grid item xs={12} sm={6}>
                         <TextField

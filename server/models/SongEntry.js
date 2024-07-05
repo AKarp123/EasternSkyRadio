@@ -57,11 +57,6 @@ songEntrySchema.pre("save", async function (next) {
         return next();
     }
 
-    this.genres = this.genres.map(
-        (genre) =>
-            genre.substring(0, 1).toUpperCase() +
-            genre.substring(1).toLowerCase()
-    );
 
     this.songReleaseLoc.sort((a, b) => {
         if (a.service > b.service) {

@@ -53,7 +53,7 @@ songRouter.post("/addSong", requireLogin, async (req, res) => {
     }
     const checkDup = await SongEntry.findOne({ album: songData.album, title: songData.title });
     if(checkDup){
-        res.json({ success: false, message: "Song already exists." });
+        res.json({ success: false, message: "Song already exists.", song: checkDup});
         return;
     }
     addSong(songData)

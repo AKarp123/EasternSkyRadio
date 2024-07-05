@@ -85,6 +85,7 @@ const resetData = async () => {
     await new SiteData({ showDay: 2, showHour: 0, onBreak: false }).save();
     await createAdminAccount();
     await initializeCounters();
+    console.log("Data reset!");
 };
 
 export const initializeTestData = async () => {

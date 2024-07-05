@@ -7,7 +7,11 @@ import Increment from "../models/IncrementModel.js";
 const showRouter = Router();
 
 showRouter.get("/getShowData", async (req, res) => {
-    if (req.query.showId === undefined || req.query.showId === "" || isNaN(req.query.showId)) {
+    if (
+        req.query.showId === undefined ||
+        req.query.showId === "" ||
+        isNaN(req.query.showId)
+    ) {
         res.json({ success: false, message: "No Show ID provided." });
     } else {
         const showData = await ShowEntry.findOne(
@@ -28,7 +32,7 @@ showRouter.get("/getShowData", async (req, res) => {
         //     .sort({ showId: "desc" })
         //     .select("showId showDate");
 
-        res.json({ showData});
+        res.json({ showData });
     }
 });
 
@@ -59,12 +63,16 @@ showRouter.post("/addShow", requireLogin, async (req, res) => {
     delete showData.song;
     try {
         showData.songsList = showData.songsList.map((song) => song._id);
+        showData.showDate = new Date(showData.showDate);
         const nextShowId = await Increment.findOneAndUpdate(
             { model: "ShowEntry" },
             { $inc: { counter: 1 } },
             { new: true }
         );
-        const newShow = new ShowEntry({...showData, showId: nextShowId.counter });
+        const newShow = new ShowEntry({
+            ...showData,
+            showId: nextShowId.counter,
+        });
         await newShow.save();
         res.json({ success: true, message: "Show added successfully." });
     } catch (err) {
@@ -77,23 +85,53 @@ showRouter.post("/addShow", requireLogin, async (req, res) => {
     }
 });
 
-showRouter.post("/editShow", requireLogin, async (req, res) => {  
+showRouter.post("/editShow", requireLogin, async (req, res) => {
     const { showData } = req.body;
     const show = await ShowEntry.findOne({ showId: showData.showId });
-    if(show === null) {
+    if (show === null) {
         res.json({ success: false, message: "Show not found." });
         return;
     }
     show.songsList = showData.songsList;
-    show.showDate = showData.showDate;
+    show.showDate = new Date(showData.showDate);
+    
     show.showDescription = showData.showDescription;
     show.save()
-    .then(() => {
-        res.json({ success: true, message: "Show Updated!" });
-    })
-    .catch((err) => {
-        res.json({ success: false, message: "Error adding song to show." });
-    });
+        .then(() => {
+            res.json({ success: true, message: "Show Updated!" });
+        })
+        .catch((err) => {
+            res.json({ success: false, message: "Error adding song to show." });
+        });
+});
+
+showRouter.post("/deleteShow", requireLogin, async (req, res) => {
+    const { showId } = req.body;
+    if (showId === undefined || isNaN(showId)) {
+        res.json({ success: false, message: "No Show ID provided." });
+    } else {
+        try {
+            await ShowEntry.deleteOne({ showId });
+            let nxtShow = await ShowEntry.findOne({ showId: { $gt: showId } });
+            let curId = (await ShowEntry.findOne({ showId: { $lt: showId } }))
+                .showId++;
+            while (nxtShow !== null) {
+                nxtShow.showId = curId;
+                await nxtShow.save();
+                curId++;
+                nxtShow = await ShowEntry.findOne({ showId: { $gt: curId } });
+            }
+            Increment.findOneAndUpdate(
+                { model: "ShowEntry" },
+                { counter: curId + 1 }
+            );
+
+            res.json({ success: true, message: "Show deleted." });
+        } catch (err) {
+            console.log(err);
+            res.json({ success: false, message: "Error deleting show." });
+        }
+    }
 });
 
 export default showRouter;

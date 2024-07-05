@@ -35,7 +35,20 @@ export const NewSongForm = ({ newShowInput, dispatch }) => {
                         payload: res.data.song,
                     });
                 } else {
-                    setError(res.data.message);
+                    if (res.data.message === "Song already exists.") {
+                        dispatch({
+                            type: "addSong",
+                            payload: res.data.song,
+                        });
+                        setError(
+                            "Song already exists. Song added to show.",
+                            "info"
+                        );
+                    }
+                    else {
+
+                        setError(res.data.message);
+                    }
                 }
             })
             .catch((err) => {
@@ -43,9 +56,7 @@ export const NewSongForm = ({ newShowInput, dispatch }) => {
             });
     };
 
-
     const uploadImage = (file) => {
-       
         // e.preventDefault();
         const { artist, album } = newShowInput.song;
         if (artist === "" || album === "") {
@@ -72,7 +83,7 @@ export const NewSongForm = ({ newShowInput, dispatch }) => {
                 },
             })
             .then((res) => {
-                if(res.data.success === false) {
+                if (res.data.success === false) {
                     setError(res.data.message);
                     return;
                 }
@@ -129,7 +140,7 @@ export const NewSongForm = ({ newShowInput, dispatch }) => {
     }, 500);
 
     const fillAlbum = useDebouncedCallback((album) => {
-        if(album === "") {
+        if (album === "") {
             return;
         }
         axios
@@ -157,7 +168,6 @@ export const NewSongForm = ({ newShowInput, dispatch }) => {
                             type: "setSongReleaseLoc",
                             payload: res.data.searchResults[0].songReleaseLoc,
                         });
-                            
                     }
                 }
             })
@@ -276,7 +286,9 @@ export const NewSongForm = ({ newShowInput, dispatch }) => {
                             e.preventDefault();
                             dispatch({
                                 type: "addGenre",
-                                payload: genreInput.split(","),
+                                payload: genreInput
+                                    .split(",")
+                                    .map((genre) => genre.trim()),
                             });
                             setGenreInput("");
                         }

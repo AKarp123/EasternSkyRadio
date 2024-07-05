@@ -62,7 +62,7 @@ const NewShow = () => {
                 }
                 setError("Show added successfully", "success");
                 dispatch({ type: "reset" });
-                localStorage.setItem("showState", JSON.stringify(newShowInput));
+                
             })
             .catch((err) => {
                 setError(err.message);
@@ -114,7 +114,7 @@ const NewShow = () => {
                         </Tabs>
 
                         {tab === 1 ? (
-                            <SongSearch dispatch={dispatch} />
+                            <SongSearch dispatch={dispatch}/>
                         ) : (
                             <NewSongForm
                                 newShowInput={newShowInput}
@@ -151,7 +151,7 @@ const NewShow = () => {
 };
 
 const SongSearch = ({ dispatch, parent }) => {
-    parent = parent === undefined ? "New Show" : parent;
+    parent =( parent === undefined ? "New Show" : parent);
     const [searchResults, setSearchResults] = useState([]);
     const setError = useContext(ErrorContext);
     const searchDebounced = useDebouncedCallback((query) => {
@@ -189,6 +189,7 @@ const SongSearch = ({ dispatch, parent }) => {
                         <SongSearchCard
                             song={song}
                             dispatch={dispatch}
+                            parent={parent}
                             key={song._id}
                         />
                     ))
