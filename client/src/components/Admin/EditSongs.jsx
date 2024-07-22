@@ -642,16 +642,6 @@ const SongSearchCard = ({ song, dispatch }) => {
             </Box>
             <CardActions>
                 <Button
-                    onClick={() =>
-                        dispatch({
-                            type: "addSong",
-                            payload: { ...song },
-                        })
-                    }
-                >
-                    Add
-                </Button>
-                <Button
                     onClick={() => {
                         delete song._id;
                         dispatch({
@@ -661,7 +651,7 @@ const SongSearchCard = ({ song, dispatch }) => {
                         setError("Song filled", "success");
                     }}
                 >
-                    Fill
+                    Edit
                 </Button>
             </CardActions>
         </Card>

@@ -7,6 +7,7 @@ import {
     Typography,
     Divider,
     Fade,
+    Link,
 } from "@mui/material";
 import { useState, useEffect } from "react";
 import axios from "axios";
@@ -74,10 +75,13 @@ const Home = React.memo(() => {
                 <Divider sx={{ mt: 2 }} />
                 <Container>
                     <Stack spacing={3} sx={{ mt: 2 }}>
-                        <HomeButton link="/shows" text="Shows" />
-                        <HomeButton link="/blog" text="Blog" />
-                        <HomeButton link="/stats" text="Stats" />
-                        <HomeButton link="/blog" text="Listen live!" />
+                        <HomeButton route="/shows" text="Shows" />
+                        <HomeButton route="/blog" text="Blog" />
+                        <HomeButton route="/stats" text="Stats" />
+                        <HomeButton
+                            link="https://thecore.fm/public/shows/people/eastern-sky.php"
+                            text="Listen live!"
+                        />
                     </Stack>
                 </Container>
             </Paper>

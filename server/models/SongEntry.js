@@ -53,7 +53,7 @@ const songEntrySchema = new schema({
 });
 
 songEntrySchema.pre("save", async function (next) {
-    if (!this.isModified("albumImageLoc") && !this.isNew) {
+    if (!this.isModified("albumImageLoc") && !this.isNew ) {
         return next();
     }
 
@@ -69,11 +69,14 @@ songEntrySchema.pre("save", async function (next) {
     });
 
     const album = this.album;
-    const existingSong = await model("SongEntry").findOne({ album });
-    if (existingSong) {
-        this.albumImageLoc = existingSong.albumImageLoc;
-        this.origAlbum = existingSong.origAlbum;
-        this.songReleaseLoc = existingSong.songReleaseLoc;
+    if(!(album === "Single" || album === "single")) {
+        
+        const existingSong = await model("SongEntry").findOne({ album });
+        if (existingSong) {
+            this.albumImageLoc = existingSong.albumImageLoc;
+            this.origAlbum = existingSong.origAlbum;
+            this.songReleaseLoc = existingSong.songReleaseLoc;
+        }
     }
     next();
 });

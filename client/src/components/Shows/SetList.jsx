@@ -147,8 +147,8 @@ const SetListCard = ({ song }) => {
                         justifyContent: "space-between",
                         overflowX: "auto",
                         // paddingBottom: "0px !important",
-                        // paddingTop: "4px !important",
-                        paddingBottom: "8px !important",
+                        paddingTop: "12px !important",
+                        paddingBottom: "12px !important",
                     }}
                 >
                     <Tooltip
@@ -223,6 +223,7 @@ const SetListCard = ({ song }) => {
                     })}
                 </Stack>
             </CardContent>
+            
             <Divider variant="middle">Release Locations</Divider>
             <CardContent
                 sx={{

@@ -80,6 +80,27 @@ const createAdminAccount = async () => {
     });
 };
 
+export const removeMissingShows = async () => {
+    try {
+        // Get all shows sorted by showId
+        const shows = await ShowEntry.find().sort({ showId: "asc" });
+
+        // Update showIds to be sequential starting from 1
+        for (let i = 0; i < shows.length; i++) {
+            shows[i].showId = i + 1;
+            await shows[i].save();
+        }
+        await Increment.findOneAndUpdate(
+            { model: "ShowEntry" },
+            { $set: { counter: shows.length } }
+        );
+
+        console.log("Show IDs updated successfully.");
+    } catch (error) {
+        console.error("Error updating show IDs:", error);
+    }
+};
+
 const resetData = async () => {
     mongoose.connection.dropDatabase();
     await new SiteData({ showDay: 2, showHour: 0, onBreak: false }).save();
@@ -89,10 +110,13 @@ const resetData = async () => {
 };
 
 export const initializeTestData = async () => {
+    // mongoose.connection.dropCollection("users")
+    // createAdminAccount();
     // await resetData();
     // const song = await addSong(sD.sampleSong);
     // const song2 = await addSong(sD.sampleSong2);
     // for(let i = 0; i< 3; i++) {
+
 
     //     await addShow(sD.sampleShow);
     // }

@@ -3,6 +3,7 @@ import ShowEntry from "../models/ShowEntry.js";
 import requireLogin from "./requireLogin.js";
 import mongoose from "mongoose";
 import Increment from "../models/IncrementModel.js";
+import { removeMissingShows } from "../dbMethods.js";
 
 const showRouter = Router();
 
@@ -112,19 +113,7 @@ showRouter.post("/deleteShow", requireLogin, async (req, res) => {
     } else {
         try {
             await ShowEntry.deleteOne({ showId });
-            let nxtShow = await ShowEntry.findOne({ showId: { $gt: showId } });
-            let curId = (await ShowEntry.findOne({ showId: { $lt: showId } }))
-                .showId++;
-            while (nxtShow !== null) {
-                nxtShow.showId = curId;
-                await nxtShow.save();
-                curId++;
-                nxtShow = await ShowEntry.findOne({ showId: { $gt: curId } });
-            }
-            Increment.findOneAndUpdate(
-                { model: "ShowEntry" },
-                { counter: curId + 1 }
-            );
+            removeMissingShows();
 
             res.json({ success: true, message: "Show deleted." });
         } catch (err) {

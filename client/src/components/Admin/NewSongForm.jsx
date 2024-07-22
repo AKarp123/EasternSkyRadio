@@ -56,6 +56,19 @@ export const NewSongForm = ({ newShowInput, dispatch }) => {
             });
     };
 
+    const handleUrlType = (url) => { 
+        // console.log(typeof url)
+        if (url.includes("spotify")) {
+            setSongReleaseType("Spotify");
+        } else if (url.includes("apple")) {
+            setSongReleaseType("Apple Music");
+        } else if (url.includes("youtube")) {
+            setSongReleaseType("Youtube");
+        } else {
+            setSongReleaseType("Purchase");
+        }
+    };
+
     const uploadImage = (file) => {
         // e.preventDefault();
         const { artist, album } = newShowInput.song;
@@ -140,7 +153,7 @@ export const NewSongForm = ({ newShowInput, dispatch }) => {
     }, 500);
 
     const fillAlbum = useDebouncedCallback((album) => {
-        if (album === "") {
+        if (album === "" || album === "Single" || album === "single") {
             return;
         }
         axios
@@ -271,6 +284,16 @@ export const NewSongForm = ({ newShowInput, dispatch }) => {
                             payload: e.target.value,
                         })
                     }
+                    onPaste={(e) => {
+                        for(const item of e.clipboardData.items) {
+                            if(item.type.startsWith("image/")) {
+                                const file = item.getAsFile();
+                                uploadImage(file);
+                            }
+                        }
+                        e.preventDefault();
+                        setError("Please use the upload button to add images");
+                    }}
                     fullWidth
                     sx={{ mt: 1 }}
                 />
@@ -365,7 +388,10 @@ export const NewSongForm = ({ newShowInput, dispatch }) => {
                 <TextField
                     label="Release URL"
                     value={songReleaseInput}
-                    onChange={(e) => setSongReleaseInput(e.target.value)}
+                    onChange={(e) => {
+                        setSongReleaseInput(e.target.value);
+                        handleUrlType(e.target.value)
+                    }}
                     onKeyPress={(e) => {
                         if (e.key === "Enter") {
                             e.preventDefault();

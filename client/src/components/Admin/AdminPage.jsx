@@ -3,12 +3,14 @@ import PageHeader from "../PageHeader";
 import { Box, Container, Divider, Stack, Typography } from "@mui/material";
 import { useContext } from "react";
 import UserContext from "../../providers/UserContext";
-import { Redirect } from "react-router-dom";
+import { Redirect, useHistory } from "react-router-dom";
 import HomeButton from "../Home/HomeButton";
 import axios from "axios";
 
 const AdminPage = () => {
     const user = useContext(UserContext);
+    const history = useHistory();
+    
     
     const logout = (e) => {
         e.preventDefault();
@@ -27,11 +29,11 @@ const AdminPage = () => {
             <Divider sx={{ mt: 2 }} />
             <Container>
                 <Stack spacing={2} sx={{ mt: 2 }}>
-                    <HomeButton text="New Show Log" link="/admin/newshow" />
-                    <HomeButton text="Edit Log" link="/admin/editshow" />
-                    <HomeButton text="Edit Song" link="/admin/editsong" />
+                    <HomeButton text="New Show Log" route="/admin/newshow" />
+                    <HomeButton text="Edit Log" route="/admin/editshow" />
+                    <HomeButton text="Edit Song" route="/admin/editsong" />
                     <Box onClick={(e) => logout(e)}>
-                        <HomeButton text="Logout" link="/login" />
+                        <HomeButton text="Logout" route="/login" />
                     </Box>
                 </Stack>
             </Container>
