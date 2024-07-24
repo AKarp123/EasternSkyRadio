@@ -20,7 +20,8 @@ import DownloadIcon from "@mui/icons-material/Download";
 import ShoppingBagIcon from "@mui/icons-material/ShoppingBag";
 import AppleIcon from "@mui/icons-material/Apple";
 import YouTubeIcon from "@mui/icons-material/YouTube";
-import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
+import MusicIcon from "@mui/icons-material/MusicNote";
+import DoNotDisturbIcon from '@mui/icons-material/DoNotDisturb';
 import { ReactComponent as SpotifyIcon } from "../../icons/spotify.svg";
 import { useState, useEffect, useContext, useRef } from "react";
 import axios from "axios";
@@ -104,6 +105,7 @@ const SetListCard = ({ song }) => {
         Download: <DownloadIcon sx={{ height: "25px", width: "25px" }} />,
         "Apple Music": <AppleIcon sx={{ height: "25px", width: "25px" }} />,
         Youtube: <YouTubeIcon sx={{ height: "25px", width: "25px" }} />,
+        Other: <MusicIcon sx={{ height: "25px", width: "25px" }} />,
     };
 
     return (
@@ -268,6 +270,18 @@ const SetListCard = ({ song }) => {
                             </Tooltip>
                         );
                     })}
+                    {song.songReleaseLoc.length === 0 && (
+                        
+                        <Tooltip
+                            title={"No release locations"}
+                            placement="top"
+                            arrow
+                        >
+                            <IconButton size="large">
+                                <DoNotDisturbIcon />
+                            </IconButton>
+                        </Tooltip>
+                    )}
                 </Stack>
             </CardContent>
         </Card>

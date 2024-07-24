@@ -12,8 +12,8 @@ const BackButton = () => {
             sx={{
                 color: "white",
                 position: {
-                    xs: "relative",
-                    sm: "absolute",
+                    sm: "relative",
+                    md: "absolute",
                 },
                 // position: "absolute",
                 left: "2%",

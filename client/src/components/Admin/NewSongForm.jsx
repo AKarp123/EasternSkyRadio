@@ -15,14 +15,19 @@ import axios from "axios";
 import ErrorContext from "../../providers/ErrorContext";
 import InputFileUpload from "./InputFileUpload";
 
-export const NewSongForm = ({ newShowInput, dispatch }) => {
+
+export const NewSongForm = ({ songData, dispatch, type, submit }) => {
     const setError = useContext(ErrorContext);
     const [genreInput, setGenreInput] = useState("");
     const [songReleaseInput, setSongReleaseInput] = useState("");
     const [songReleaseType, setSongReleaseType] = useState("");
     const [songReleaseDesc, setSongReleaseDesc] = useState("");
     const handleSubmit = (e) => {
-        const songObj = newShowInput.song;
+        if(type === "edit") {
+            submit(e);
+            return;
+        }
+        const songObj = songData;
         delete songObj._id;
         e.preventDefault();
         axios
@@ -64,14 +69,24 @@ export const NewSongForm = ({ newShowInput, dispatch }) => {
             setSongReleaseType("Apple Music");
         } else if (url.includes("youtube")) {
             setSongReleaseType("Youtube");
-        } else {
+        } 
+        else if (url.includes("bandcamp")) {
             setSongReleaseType("Purchase");
+            setSongReleaseDesc("Bandcamp");
+        }
+        else if (url.includes("booth")) {
+            setSongReleaseType("Purchase");
+            setSongReleaseDesc("Booth");
+        }
+        else {
+            setSongReleaseType("Other");
         }
     };
 
+
     const uploadImage = (file) => {
         // e.preventDefault();
-        const { artist, album } = newShowInput.song;
+        const { artist, album } = songData;
         if (artist === "" || album === "") {
             setError("Please enter artist and album before uploading image");
             return;
@@ -196,7 +211,7 @@ export const NewSongForm = ({ newShowInput, dispatch }) => {
         >
             <TextField
                 label="Elcro ID"
-                value={newShowInput.song.elcroId}
+                value={songData.elcroId}
                 onChange={(e) => {
                     dispatch({
                         type: "elcroId",
@@ -211,7 +226,7 @@ export const NewSongForm = ({ newShowInput, dispatch }) => {
             <Stack direction="row" spacing={1} sx={{ mt: "8px" }}>
                 <TextField
                     label="Title"
-                    value={newShowInput.song.title}
+                    value={songData.title}
                     onChange={(e) =>
                         dispatch({
                             type: "title",
@@ -223,7 +238,7 @@ export const NewSongForm = ({ newShowInput, dispatch }) => {
                 />
                 <TextField
                     label="Artist"
-                    value={newShowInput.song.artist}
+                    value={songData.artist}
                     onChange={(e) =>
                         dispatch({
                             type: "artist",
@@ -236,7 +251,7 @@ export const NewSongForm = ({ newShowInput, dispatch }) => {
             </Stack>
             <TextField
                 label="Original Title"
-                value={newShowInput.song.origTitle}
+                value={songData.origTitle}
                 onChange={(e) =>
                     dispatch({
                         type: "origTitle",
@@ -249,7 +264,7 @@ export const NewSongForm = ({ newShowInput, dispatch }) => {
             <Stack direction="row" spacing={1} sx={{ mt: "8px" }}>
                 <TextField
                     label="Album"
-                    value={newShowInput.song.album}
+                    value={songData.album}
                     onChange={(e) => {
                         dispatch({
                             type: "album",
@@ -263,7 +278,7 @@ export const NewSongForm = ({ newShowInput, dispatch }) => {
                 />
                 <TextField
                     label="Original Album"
-                    value={newShowInput.song.origAlbum}
+                    value={songData.origAlbum}
                     onChange={(e) =>
                         dispatch({
                             type: "origAlbum",
@@ -277,7 +292,7 @@ export const NewSongForm = ({ newShowInput, dispatch }) => {
             <Stack direction="row" spacing={1} sx={{ mt: "8px" }}>
                 <TextField
                     label="Album Image Location"
-                    value={newShowInput.song.albumImageLoc}
+                    value={songData.albumImageLoc}
                     onChange={(e) =>
                         dispatch({
                             type: "albumImageLoc",
@@ -285,14 +300,13 @@ export const NewSongForm = ({ newShowInput, dispatch }) => {
                         })
                     }
                     onPaste={(e) => {
+                        // e.preventDefault();
                         for(const item of e.clipboardData.items) {
                             if(item.type.startsWith("image/")) {
                                 const file = item.getAsFile();
                                 uploadImage(file);
                             }
                         }
-                        e.preventDefault();
-                        setError("Please use the upload button to add images");
                     }}
                     fullWidth
                     sx={{ mt: 1 }}
@@ -345,10 +359,10 @@ export const NewSongForm = ({ newShowInput, dispatch }) => {
                     "&::-webkit-scrollbar": {
                         display: "none",
                     },
-                    mt: newShowInput.song.genres.length > 0 ? 1 : 0,
+                    mt: songData.genres.length > 0 ? 1 : 0,
                 }}
             >
-                {newShowInput.song.genres.map((genre, i) => (
+                {songData.genres.map((genre, i) => (
                     <Chip
                         key={i}
                         label={genre}
@@ -384,6 +398,7 @@ export const NewSongForm = ({ newShowInput, dispatch }) => {
                     <MenuItem value="Youtube">YouTube</MenuItem>
                     <MenuItem value="Download">Download</MenuItem>
                     <MenuItem value="Purchase">Purchase</MenuItem>
+                    <MenuItem value="Other">Other</MenuItem>
                 </Select>
                 <TextField
                     label="Release URL"
@@ -397,7 +412,8 @@ export const NewSongForm = ({ newShowInput, dispatch }) => {
                             e.preventDefault();
                             if (
                                 songReleaseType === "Purchase" ||
-                                songReleaseType === "Download"
+                                songReleaseType === "Download" ||
+                                songReleaseType === "Other"
                             ) {
                                 // handle additional field if needed
                             } else {
@@ -417,7 +433,7 @@ export const NewSongForm = ({ newShowInput, dispatch }) => {
                     sx={{ mt: 1 }}
                 />
                 {songReleaseType === "Purchase" ||
-                songReleaseType === "Download" ? (
+                songReleaseType === "Download" || songReleaseType === "Other" ? (
                     <TextField
                         label="Description"
                         value={songReleaseDesc}
@@ -469,10 +485,10 @@ export const NewSongForm = ({ newShowInput, dispatch }) => {
                     "&::-webkit-scrollbar": {
                         display: "none",
                     },
-                    mt: newShowInput.song.songReleaseLoc.length > 0 ? 1 : 0,
+                    mt: songData.songReleaseLoc.length > 0 ? 1 : 0,
                 }}
             >
-                {newShowInput.song.songReleaseLoc.map((release) => (
+                {songData.songReleaseLoc.map((release) => (
                     <Tooltip
                         title={release.link}
                         key={release.link}
@@ -496,7 +512,7 @@ export const NewSongForm = ({ newShowInput, dispatch }) => {
 
             <TextField
                 label="Special Note"
-                value={newShowInput.song.specialNote}
+                value={songData.specialNote}
                 onChange={(e) =>
                     dispatch({
                         type: "specialNote",
@@ -506,7 +522,7 @@ export const NewSongForm = ({ newShowInput, dispatch }) => {
                 fullWidth
                 sx={{ mt: 1 }}
             />
-            <Button type="submit">Add Song</Button>
+            <Button type="submit">{type === "edit" ? "Edit" : "Add"} Song</Button>
         </form>
     );
 };

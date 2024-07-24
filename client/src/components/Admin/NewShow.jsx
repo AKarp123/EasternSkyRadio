@@ -117,7 +117,7 @@ const NewShow = () => {
                             <SongSearch dispatch={dispatch}/>
                         ) : (
                             <NewSongForm
-                                newShowInput={newShowInput}
+                                songData={newShowInput.song}
                                 dispatch={dispatch}
                             />
                         )}

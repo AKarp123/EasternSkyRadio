@@ -40,6 +40,7 @@ const songEntrySchema = new schema({
                         "Spotify",
                         "Apple Music",
                         "Youtube",
+                        "Other",
                         "Purchase",
                         "Download",
                     ],

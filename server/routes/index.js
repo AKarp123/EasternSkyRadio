@@ -78,7 +78,6 @@ router.post(
         storageRef
             .save(req.file.buffer, { metadata })
             .then(() => {
-                console.log(storageRef.publicUrl());
                 res.json({
                     success: true,
                     message: "File uploaded",
