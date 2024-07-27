@@ -168,7 +168,7 @@ export const NewSongForm = ({ songData, dispatch, type, submit }) => {
     }, 500);
 
     const fillAlbum = useDebouncedCallback((album) => {
-        if (album === "" || album === "Single" || album === "single") {
+        if (album === "" || album.toUpperCase() === "SINGLE") {
             return;
         }
         axios

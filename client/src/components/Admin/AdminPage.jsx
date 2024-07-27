@@ -26,7 +26,7 @@ const AdminPage = () => {
     return (
         <PageBackdrop>
             <PageHeader title="Admin" />
-            <Divider sx={{ mt: 2 }} />
+            <Divider />
             <Container>
                 <Stack spacing={2} sx={{ mt: 2 }}>
                     <HomeButton text="New Show Log" route="/admin/newshow" />

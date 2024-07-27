@@ -20,6 +20,7 @@ import AdminPage from "./components/Admin/AdminPage";
 import NewShow from "./components/Admin/NewShow";
 import EditSongs from "./components/Admin/EditSongs";
 import EditShows from "./components/Admin/EditShows";
+import AuthRoute from "./AuthRoute";
 
 let darkTheme = createTheme({
     palette: {
@@ -40,10 +41,14 @@ function App() {
         setError({ errorMessage, variant });
     };
 
+    const isAuthenticated = useMemo(() => {
+        return user !== null;
+    });
+
     return (
         <ThemeProvider theme={darkTheme}>
             <CssBaseline />
-            {/* <StarParticles /> */}
+            <StarParticles />
             <ErrorContext.Provider value={displayError}>
                 <UserContext.Provider value={{ user, setUser }}>
                     <div className="App">
@@ -77,18 +82,31 @@ function App() {
                             <Route exact path="/login">
                                 <Login />
                             </Route>
-                            <Route exact path="/admin">
-                                <AdminPage />
-                            </Route>
-                            <Route exact path="/admin/newshow">
-                                <NewShow />
-                            </Route>
-                            <Route exact path="/admin/editsong">
-                                <EditSongs />
-                            </Route>
-                            <Route exact path="/admin/editshow">
-                                <EditShows />
-                            </Route>
+                            <AuthRoute
+                                exact
+                                path="/admin"
+                                isAuthenticated={isAuthenticated}
+                                component={AdminPage}
+                            />
+                            <AuthRoute
+                                exact
+                                path="/admin/newShow"
+                                isAuthenticated={isAuthenticated}
+                                component={NewShow}
+                            />
+                            <AuthRoute
+                                exact
+                                path="/admin/editSongs"
+                                isAuthenticated={isAuthenticated}
+                                component={EditSongs}
+                            />
+                            <AuthRoute
+                                exact
+                                path="/admin/editShows"
+                                isAuthenticated={isAuthenticated}
+                                component={EditShows}
+                            />
+                            
                         </Switch>
                     </div>
                 </UserContext.Provider>

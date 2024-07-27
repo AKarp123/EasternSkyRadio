@@ -17,7 +17,7 @@ songRouter.get("/getSongInfo", async (req, res) => {
     }
 });
 
-songRouter.get("/search", async (req, res) => {
+songRouter.get("/search", requireLogin, async (req, res) => {
 
 
     try {
