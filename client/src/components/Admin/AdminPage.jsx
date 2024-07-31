@@ -1,15 +1,15 @@
 import PageBackdrop from "../PageBackdrop";
 import PageHeader from "../PageHeader";
-import { Box, Container, Divider, Stack, Typography } from "@mui/material";
+import { Box, Container, Divider, Stack } from "@mui/material";
 import { useContext } from "react";
 import UserContext from "../../providers/UserContext";
-import { Redirect, useHistory } from "react-router-dom";
+import { Redirect } from "react-router-dom";
 import HomeButton from "../Home/HomeButton";
 import axios from "axios";
 
 const AdminPage = () => {
     const user = useContext(UserContext);
-    const history = useHistory();
+
     
     
     const logout = (e) => {

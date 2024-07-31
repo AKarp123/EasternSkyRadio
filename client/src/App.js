@@ -96,13 +96,13 @@ function App() {
                             />
                             <AuthRoute
                                 exact
-                                path="/admin/editSongs"
+                                path="/admin/editsong"
                                 isAuthenticated={isAuthenticated}
                                 component={EditSongs}
                             />
                             <AuthRoute
                                 exact
-                                path="/admin/editShows"
+                                path="/admin/editshow"
                                 isAuthenticated={isAuthenticated}
                                 component={EditShows}
                             />
