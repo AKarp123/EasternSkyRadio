@@ -4,7 +4,7 @@ This repository contains the source code for the Eastern Sky radio website, my r
 
 > Can I copy this for my own show? 
 
-Yes! Feel free to copy/clone whatever the repo but I would appreciate if you linked back to this and gave credit :)
+Yes! Feel free to copy/clone whatever but I would appreciate if you linked back to this and gave credit :)
 
 >How do I run it myself?
 
