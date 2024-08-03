@@ -7,6 +7,7 @@ import multer from "multer";
 import { getStorage } from "firebase-admin/storage";
 import initializeAdmin from "../config/admin.js";
 import requireLogin from "./requireLogin.js";
+import { generateStats } from "../dbMethods.js";
 
 const router = Router();
 initializeAdmin();
@@ -17,6 +18,12 @@ router.get("/getSiteInfo", async (req, res) => {
     // res.json({ message: "Hello from the server!" });
     const data = await SiteData.findOne({}, { _id: 0, __v: 0 });
     res.json(data);
+});
+
+router.get("/getStats", async (req, res) => {
+    const stats = await generateStats();
+
+    res.json(stats);
 });
 
 router.post("/login", passport.authenticate("local"), async (req, res) => {

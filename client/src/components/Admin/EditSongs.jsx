@@ -23,7 +23,7 @@ import axios from "axios";
 import ErrorContext from "../../providers/ErrorContext";
 import InputFileUpload from "./InputFileUpload";
 import { useDebouncedCallback } from "use-debounce";
-import { NewSongForm } from "./NewSongForm";
+import SongForm from "./SongForm";
 
 const reducer = (state, action) => {
     switch (action.type) {
@@ -151,7 +151,7 @@ const EditSongs = () => {
             <Container>
                 <Grid container spacing={2}>
                     <Grid item xs={12} sm={6}>
-                        <NewSongForm songData={editSong}
+                        <SongForm songData={editSong}
                             dispatch={dispatch}
                             type="edit"
                             submit={handleSubmit}

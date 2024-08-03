@@ -101,6 +101,55 @@ export const removeMissingShows = async () => {
     }
 };
 
+export const generateStats = async () => {
+    const data = {
+        totalShows: 0,
+        totalSongs: 0,
+        uniqueSongs: 0,
+        uniqueArtists: 0,
+        uniqueAlbums: 0,
+    };
+
+    const shows = await ShowEntry.find();
+    data.totalShows = shows.length;
+    data.totalSongs = shows.reduce((acc, show) => {
+        
+        return acc + show.songsList.length;
+    }, 0);
+
+    const uniqueArtists = {};
+    const uniqueAlbums = {};
+    const songs = await SongEntry.find();
+    
+    songs.forEach((song) => {
+        if(uniqueArtists[song.artist] === undefined) {
+            uniqueArtists[song.artist] = 1;
+        }
+        else {
+            uniqueArtists[song.artist]++;
+        }
+        if(uniqueAlbums[song.album] === undefined) {
+            uniqueAlbums[song.album] = 1;
+        }
+        else {
+            uniqueAlbums[song.album]++;
+        }
+
+    });
+    data.uniqueArtists = Object.keys(uniqueArtists).length;
+    data.uniqueAlbums = Object.keys(uniqueAlbums).length;
+
+
+
+    
+    
+    data.uniqueSongs = (await Increment.findOne({ model: "SongEntry" })).counter;
+
+    return data;
+
+
+}
+
 const resetData = async () => {
     mongoose.connection.dropDatabase();
     await new SiteData({ showDay: 2, showHour: 0, onBreak: false }).save();

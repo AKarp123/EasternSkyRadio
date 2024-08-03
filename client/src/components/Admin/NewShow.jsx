@@ -21,7 +21,7 @@ import { useDebounce, useDebouncedCallback } from "use-debounce";
 import axios from "axios";
 import ErrorContext from "../../providers/ErrorContext";
 import { reducer } from "./reducer";
-import { NewSongForm } from "./NewSongForm";
+import SongForm from "./SongForm";
 
 const NewShow = () => {
     const setError = useContext(ErrorContext);
@@ -116,7 +116,7 @@ const NewShow = () => {
                         {tab === 1 ? (
                             <SongSearch dispatch={dispatch}/>
                         ) : (
-                            <NewSongForm
+                            <SongForm
                                 songData={newShowInput.song}
                                 dispatch={dispatch}
                             />

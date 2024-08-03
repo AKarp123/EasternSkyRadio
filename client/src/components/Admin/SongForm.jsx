@@ -15,15 +15,14 @@ import axios from "axios";
 import ErrorContext from "../../providers/ErrorContext";
 import InputFileUpload from "./InputFileUpload";
 
-
-export const NewSongForm = ({ songData, dispatch, type, submit }) => {
+const SongForm = ({ songData, dispatch, type, submit }) => {
     const setError = useContext(ErrorContext);
     const [genreInput, setGenreInput] = useState("");
     const [songReleaseInput, setSongReleaseInput] = useState("");
     const [songReleaseType, setSongReleaseType] = useState("");
     const [songReleaseDesc, setSongReleaseDesc] = useState("");
     const handleSubmit = (e) => {
-        if(type === "edit") {
+        if (type === "edit") {
             submit(e);
             return;
         }
@@ -49,9 +48,7 @@ export const NewSongForm = ({ songData, dispatch, type, submit }) => {
                             "Song already exists. Song added to show.",
                             "info"
                         );
-                    }
-                    else {
-
+                    } else {
                         setError(res.data.message);
                     }
                 }
@@ -61,7 +58,7 @@ export const NewSongForm = ({ songData, dispatch, type, submit }) => {
             });
     };
 
-    const handleUrlType = (url) => { 
+    const handleUrlType = (url) => {
         // console.log(typeof url)
         if (url.includes("spotify")) {
             setSongReleaseType("Spotify");
@@ -69,20 +66,16 @@ export const NewSongForm = ({ songData, dispatch, type, submit }) => {
             setSongReleaseType("Apple Music");
         } else if (url.includes("youtube")) {
             setSongReleaseType("Youtube");
-        } 
-        else if (url.includes("bandcamp")) {
+        } else if (url.includes("bandcamp")) {
             setSongReleaseType("Purchase");
             setSongReleaseDesc("Bandcamp");
-        }
-        else if (url.includes("booth")) {
+        } else if (url.includes("booth")) {
             setSongReleaseType("Purchase");
             setSongReleaseDesc("Booth");
-        }
-        else {
+        } else {
             setSongReleaseType("Other");
         }
     };
-
 
     const uploadImage = (file) => {
         // e.preventDefault();
@@ -127,6 +120,9 @@ export const NewSongForm = ({ songData, dispatch, type, submit }) => {
     };
 
     const fillElcroId = useDebouncedCallback((elcroId) => {
+        if(type === "edit") {
+            return;
+        }
         axios
             .get("/api/search", { params: { elcroId } })
             .then((res) => {
@@ -168,7 +164,7 @@ export const NewSongForm = ({ songData, dispatch, type, submit }) => {
     }, 500);
 
     const fillAlbum = useDebouncedCallback((album) => {
-        if (album === "" || album.toUpperCase() === "SINGLE") {
+        if (album === "" || album.toUpperCase() === "SINGLE" || type === "edit") {
             return;
         }
         axios
@@ -209,20 +205,37 @@ export const NewSongForm = ({ songData, dispatch, type, submit }) => {
                 handleSubmit(e);
             }}
         >
-            <TextField
-                label="Elcro ID"
-                value={songData.elcroId}
-                onChange={(e) => {
-                    dispatch({
-                        type: "elcroId",
-                        payload: e.target.value,
-                    });
+            <Stack direction="row" spacing={1} sx={{ mt: 1 }}>
+                <TextField
+                    label="Elcro ID"
+                    value={songData.elcroId}
+                    onChange={(e) => {
+                        dispatch({
+                            type: "elcroId",
+                            payload: e.target.value,
+                        });
 
-                    fillElcroId(e.target.value);
-                }}
-                fullWidth
-                sx={{ mt: 1 }}
-            />
+                        fillElcroId(e.target.value);
+                    }}
+                    fullWidth
+                    sx={{ mt: 1 }}
+                />
+                {type === "edit" && (
+                    <TextField
+                        label="Song ID"
+                        value={songData.songId}
+                        onChange={(e) =>
+                            dispatch({
+                                type: "songId",
+                                payload: e.target.value,
+                            })
+                        }
+                        fullWidth
+                        disabled
+                        sx={{ mt: 1 }}
+                    />
+                )}
+            </Stack>
             <Stack direction="row" spacing={1} sx={{ mt: "8px" }}>
                 <TextField
                     label="Title"
@@ -301,8 +314,8 @@ export const NewSongForm = ({ songData, dispatch, type, submit }) => {
                     }
                     onPaste={(e) => {
                         // e.preventDefault();
-                        for(const item of e.clipboardData.items) {
-                            if(item.type.startsWith("image/")) {
+                        for (const item of e.clipboardData.items) {
+                            if (item.type.startsWith("image/")) {
                                 const file = item.getAsFile();
                                 uploadImage(file);
                             }
@@ -405,7 +418,7 @@ export const NewSongForm = ({ songData, dispatch, type, submit }) => {
                     value={songReleaseInput}
                     onChange={(e) => {
                         setSongReleaseInput(e.target.value);
-                        handleUrlType(e.target.value)
+                        handleUrlType(e.target.value);
                     }}
                     onKeyPress={(e) => {
                         if (e.key === "Enter") {
@@ -433,7 +446,8 @@ export const NewSongForm = ({ songData, dispatch, type, submit }) => {
                     sx={{ mt: 1 }}
                 />
                 {songReleaseType === "Purchase" ||
-                songReleaseType === "Download" || songReleaseType === "Other" ? (
+                songReleaseType === "Download" ||
+                songReleaseType === "Other" ? (
                     <TextField
                         label="Description"
                         value={songReleaseDesc}
@@ -522,7 +536,11 @@ export const NewSongForm = ({ songData, dispatch, type, submit }) => {
                 fullWidth
                 sx={{ mt: 1 }}
             />
-            <Button type="submit">{type === "edit" ? "Edit" : "Add"} Song</Button>
+            <Button type="submit">
+                {type === "edit" ? "Edit" : "Add"} Song
+            </Button>
         </form>
     );
 };
+
+export default SongForm;

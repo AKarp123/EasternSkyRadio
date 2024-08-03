@@ -21,6 +21,7 @@ import NewShow from "./components/Admin/NewShow";
 import EditSongs from "./components/Admin/EditSongs";
 import EditShows from "./components/Admin/EditShows";
 import AuthRoute from "./AuthRoute";
+import Stats from "./Stats";
 
 let darkTheme = createTheme({
     palette: {
@@ -79,9 +80,13 @@ function App() {
                             <Route exact path="/blog">
                                 <BlogPage />
                             </Route>
+                            <Route exact path="/stats">
+                                <Stats />
+                            </Route>
                             <Route exact path="/login">
                                 <Login />
                             </Route>
+                            
                             <AuthRoute
                                 exact
                                 path="/admin"
