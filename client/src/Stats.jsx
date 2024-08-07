@@ -1,15 +1,27 @@
-import { Container, Paper, Typography, Divider, Stack } from "@mui/material";
+import {
+    Container,
+    Paper,
+    Typography,
+    Divider,
+    Stack,
+    SvgIcon,
+    Button,
+} from "@mui/material";
 import { useState, useEffect } from "react";
-import BackButton from "./components/BackButton";
+import { useHistory } from "react-router-dom";
+
 import axios from "axios";
 const Stats = () => {
     const [stats, setStats] = useState({});
+    const [loading, setLoading] = useState(true);
+    const history = useHistory();
 
     useEffect(() => {
         axios
             .get("/api/getStats")
             .then((res) => {
                 setStats(res.data);
+                setLoading(false);
             })
             .catch((err) => {
                 console.log(err);
@@ -18,7 +30,11 @@ const Stats = () => {
 
     const style = {
         fontFamily: "Tiny5, Roboto",
-    }
+    };
+
+    const handleBackClick = () => {
+        history.push("/");
+    };
 
     return (
         <Container
@@ -42,13 +58,56 @@ const Stats = () => {
                     backdropFilter: "blur(3px)",
                 }}
             >
-                <Typography
-                    variant="h3"
-                    align="center"
-                    sx={{ mt: 2, fontFamily: "Tiny5, Roboto" }}
+                <Stack
+                    direction="row"
+                    spacing={2}
+                    sx={{
+                        mt: 2,
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        width: "100%",
+                        position: "relative",
+                    }}
                 >
-                    Stats
-                </Typography>
+                    <SvgIcon
+                        sx={{
+                            fontSize: {
+                                sm: "3em",
+                            },
+                            transition: "transform 300ms ease-in-out",
+                            "&:hover .svgIcon": {
+                                transform: "translateX(-5px)",
+                                transition: "transform 300ms ease-in-out",
+                            },
+                            cursor: "pointer",
+                            position: "absolute",
+                            left: 0,
+                        }}
+                        onClick={handleBackClick}
+                    >
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="1em"
+                            height="1em"
+                            viewBox="0 0 24 24"
+                            className="svgIcon"
+                        >
+                            <path
+                                fill="currentColor"
+                                d="M20 11v2H8v2H6v-2H4v-2h2V9h2v2zM10 7H8v2h2zm0 0h2V5h-2zm0 10H8v-2h2zm0 0h2v2h-2z"
+                            ></path>
+                        </svg>
+                    </SvgIcon>
+
+                    <Typography
+                        variant="h3"
+                        align="center"
+                        sx={{ fontFamily: "Tiny5, Roboto" }}
+                    >
+                        Stats
+                    </Typography>
+                </Stack>
 
                 <Divider sx={{ mt: 2 }} />
                 <Stack spacing={3} sx={{ mt: 2 }}>
