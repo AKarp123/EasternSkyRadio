@@ -51,6 +51,10 @@ passport.deserializeUser(User.deserializeUser());
 
 
 app.use("/api", apiRouter);
+app.use("*", (req, res) => {
+    res.sendFile(join(__dirname, "../client/build/index.html"));
+}
+);
 
 app.listen(3000, () => {
     console.log("Server is running on port 3000");
