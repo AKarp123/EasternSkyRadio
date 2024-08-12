@@ -1,5 +1,4 @@
 import admin from "firebase-admin";
-import serviceAccount from "./serviceAccountKey.json" assert { type: "json" };
 import { getStorage } from "firebase-admin/storage";
 import "dotenv/config"
 
