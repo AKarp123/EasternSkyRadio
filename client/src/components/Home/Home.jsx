@@ -30,7 +30,24 @@ const Home = React.memo(() => {
             });
     }, []);
 
-    const date = new Date(siteData.nextShowDate);
+    
+   
+    const nextShowDate = () => {
+        let now = new Date();
+        let nextShow = new Date(
+            now.getFullYear(),
+            now.getMonth(),
+            now.getDate(),
+            siteData.showHour
+        );
+        let daysUntilNextShow = (siteData.showDay - now.getDay() + 7) % 7;
+
+        if (daysUntilNextShow === 0 && now.getHours() > siteData.showHour) {
+            daysUntilNextShow = 7;
+        }
+        nextShow.setDate(now.getDate() + daysUntilNextShow);
+        return nextShow;
+    };
 
     return (
         <Container
@@ -50,7 +67,7 @@ const Home = React.memo(() => {
                 >
                     {siteData.onBreak
                         ? "On break for the semester"
-                        : `Next show: ${date.toDateString()} at ${date.toLocaleTimeString()}`}
+                        : `Next show: ${nextShowDate().toDateString()} at ${nextShowDate().toLocaleTimeString()}`}
                 </Typography>
             </Fade>
             <Paper
