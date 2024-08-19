@@ -7,7 +7,7 @@ import {
 } from "@mui/material/styles";
 import { CssBaseline, Alert, Snackbar } from "@mui/material";
 import axios from "axios";
-import { useEffect, useState, useMemo } from "react";
+import { useState } from "react";
 import ErrorContext from "./providers/ErrorContext";
 import Home from "./components/Home/Home";
 import ShowPage from "./components/Shows/ShowPage";
@@ -15,7 +15,7 @@ import StarParticles from "./components/StarParticles";
 import SetList from "./components/Shows/SetList";
 import BlogPage from "./components/Blog/BlogPage";
 import Login from "./components/Admin/Login";
-import UserContext from "./providers/UserContext";
+import { UserProvider } from "./providers/UserProvider";
 import AdminPage from "./components/Admin/AdminPage";
 import NewShow from "./components/Admin/NewShow";
 import EditSongs from "./components/Admin/EditSongs";
@@ -36,22 +36,17 @@ darkTheme = responsiveFontSizes(darkTheme);
 
 function App() {
     const [error, setError] = useState(null);
-    const [user, setUser] = useState(null);
 
     const displayError = (errorMessage, variant = "error") => {
         setError({ errorMessage, variant });
     };
-
-    const isAuthenticated = useMemo(() => {
-        return user !== null;
-    });
 
     return (
         <ThemeProvider theme={darkTheme}>
             <CssBaseline />
             <StarParticles />
             <ErrorContext.Provider value={displayError}>
-                <UserContext.Provider value={{ user, setUser }}>
+                <UserProvider>
                     <div className="App">
                         {error && (
                             <Snackbar
@@ -86,35 +81,31 @@ function App() {
                             <Route exact path="/login">
                                 <Login />
                             </Route>
-                            
+
                             <AuthRoute
                                 exact
                                 path="/admin"
-                                isAuthenticated={isAuthenticated}
                                 component={AdminPage}
                             />
                             <AuthRoute
                                 exact
                                 path="/admin/newShow"
-                                isAuthenticated={isAuthenticated}
                                 component={NewShow}
                             />
                             <AuthRoute
                                 exact
                                 path="/admin/editsong"
-                                isAuthenticated={isAuthenticated}
+                                
                                 component={EditSongs}
                             />
                             <AuthRoute
                                 exact
                                 path="/admin/editshow"
-                                isAuthenticated={isAuthenticated}
                                 component={EditShows}
                             />
-                            
                         </Switch>
                     </div>
-                </UserContext.Provider>
+                </UserProvider>
             </ErrorContext.Provider>
         </ThemeProvider>
     );

@@ -10,36 +10,25 @@ import {
 import { useState, useContext, useEffect } from "react";
 import axios from "axios";
 import ErrorContext from "../../providers/ErrorContext";
-import { Redirect } from "react-router-dom";
-import UserContext from "../../providers/UserContext";
+import { Redirect, useHistory, useLocation } from "react-router-dom";
+import { useAuth } from "../../providers/UserProvider";
 
 const Login = () => {
     const [password, setPassword] = useState("");
     const setError = useContext(ErrorContext);
-    const user = useContext(UserContext);
+    const { user, setUser } = useAuth();
+    const history = useHistory();
+    const location = useLocation();
 
-    useEffect(() => {
-        axios
-            .get("/api/getUser")
-            .then((res) => {
-                if (res.data.user != null) {
-                    user.setUser(res.data.user);
-                }
-            })
-            .catch((err) => {
-                setError("Failed to get user");
-            });
-    }, []);
-
+    const { from } = location.state || { from: { pathname: "/admin" } };
     const login = () => {
         axios
             .post("/api/login", { username: "admin", password })
             .then((res) => {
                 if (res.data.success) {
-                    user.setUser(res.data.user);
+                    setUser(res.data.user);
                     setError(res.data.message, "success");
-                }
-                else {
+                } else {
                     setError(res.data.message);
                 }
             })
@@ -47,8 +36,9 @@ const Login = () => {
                 setError("Failed to login");
             });
     };
-    if (user.user) {
-        return <Redirect to="/admin" />;
+
+    if (user) {
+        history.replace(from);
     }
     return (
         <Container

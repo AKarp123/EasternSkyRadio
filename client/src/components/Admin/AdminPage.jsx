@@ -2,13 +2,13 @@ import PageBackdrop from "../PageBackdrop";
 import PageHeader from "../PageHeader";
 import { Box, Container, Divider, Stack } from "@mui/material";
 import { useContext } from "react";
-import UserContext from "../../providers/UserContext";
+import { useAuth } from "../../providers/UserProvider";
 import { Redirect } from "react-router-dom";
 import HomeButton from "../Home/HomeButton";
 import axios from "axios";
 
 const AdminPage = () => {
-    const user = useContext(UserContext);
+    const { setUser } = useAuth();
 
     
     
@@ -17,12 +17,10 @@ const AdminPage = () => {
         axios.post("/api/logout").then((res) => {
             console.log(res.data)
             console.log("Logged out")
-            user.setUser(null);
+            setUser(null);
         });
     };
-    if (!user.user) {
-        return <Redirect to="/login" />;
-    }
+    
     return (
         <PageBackdrop>
             <PageHeader title="Admin" />
