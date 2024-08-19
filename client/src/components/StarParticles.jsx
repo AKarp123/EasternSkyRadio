@@ -31,6 +31,8 @@ const StarParticles = memo(({children}) => {
                 },
             },
             preset: "stars",
+            fpsLimit: 16,
+            pauseOnBlur: true,
         }),
         []
     );

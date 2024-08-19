@@ -77,6 +77,28 @@ const SongForm = ({ songData, dispatch, type, submit }) => {
         }
     };
 
+    const handleDrop = async (e) => {
+        e.preventDefault();
+        const textData = e.dataTransfer.getData("text/plain");
+
+        setError("Uploading Image...", "info");
+        axios.post("/api/uploadURL", { artist: songData.artist, album: songData.album, url: textData })
+            .then((res) => {
+                if (res.data.success === false) {
+                    setError(res.data.message);
+                    return;
+                }
+                dispatch({
+                    type: "albumImageLoc",
+                    payload: res.data.url,
+                });
+                setError("Image uploaded successfully!", "success");
+            })
+            .catch((err) => {
+                setError(err.message);
+            });
+    };
+
     const uploadImage = (file) => {
         // e.preventDefault();
         const { artist, album } = songData;
@@ -120,7 +142,7 @@ const SongForm = ({ songData, dispatch, type, submit }) => {
     };
 
     const fillElcroId = useDebouncedCallback((elcroId) => {
-        if(type === "edit") {
+        if (type === "edit") {
             return;
         }
         axios
@@ -163,6 +185,7 @@ const SongForm = ({ songData, dispatch, type, submit }) => {
             });
     }, 500);
 
+    
     const fillAlbum = useDebouncedCallback((album) => {
         if (album === "" || album.toUpperCase() === "SINGLE" || type === "edit") {
             return;
@@ -320,6 +343,12 @@ const SongForm = ({ songData, dispatch, type, submit }) => {
                                 uploadImage(file);
                             }
                         }
+                    }}
+                    onDrop={(e) => {
+                        handleDrop(e);
+                    }}
+                    onDragOver={(e) => {
+                        e.preventDefault();
                     }}
                     fullWidth
                     sx={{ mt: 1 }}

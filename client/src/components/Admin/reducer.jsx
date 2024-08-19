@@ -59,7 +59,7 @@ export const reducer = (state, action) => {
                 song: { ...state.song, albumImageLoc: action.payload },
             };
         case "addGenre":
-            obj.song.genres.push(action.payload);
+            obj.song.genres = obj.song.genres.concat(action.payload);
             localStorage.setItem("showState", JSON.stringify(obj));
             console.log(action.payload);
             return {

@@ -8,6 +8,8 @@ import { getStorage } from "firebase-admin/storage";
 import initializeAdmin from "../config/admin.js";
 import requireLogin from "./requireLogin.js";
 import { generateStats } from "../dbMethods.js";
+import axios from "axios";
+import fs from "fs";
 
 const router = Router();
 initializeAdmin();
@@ -60,6 +62,9 @@ router.post(
     upload.single("filename"),
     async (req, res) => {
         const { artist, album } = req.body;
+        if(!req.file || !artist || !album){
+            return res.json({ success: false, message: "Missing required fields" });
+        }
 
         const storageRef = storage
             .bucket()
@@ -97,6 +102,47 @@ router.post(
             });
     }
 );
+
+router.post("/uploadURL", requireLogin, async (req, res) => {
+    const { artist, album, url } = req.body;
+
+    if (!artist || !album || !url) {
+        return res.json({ success: false, message: "Missing required fields" });
+    }
+
+    const response = await axios.get(url, { responseType: "arraybuffer" });
+
+    
+
+   
+
+    const contentType = response.headers["content-type"];
+
+
+    const storageRef = storage
+        .bucket()
+        .file(`albumCovers/${artist} + ${album}.jpg`);
+    
+    const metadata = {
+        contentType: contentType,
+    };
+
+    storageRef
+        .save(response.data, { metadata })
+        .then(() => {
+            res.json({
+                success: true,
+                message: "File uploaded",
+                url: storageRef.publicUrl(),
+            });
+        })
+        .catch((err) => {
+            console.log(err);
+            res.json({ success: false, message: "Error uploading file" });
+        });
+
+    
+});
 
 router.use("/", showRouter);
 router.use("/", SongRouter);

@@ -53,6 +53,22 @@ const songEntrySchema = new schema({
     },
 });
 
+
+songEntrySchema.pre("validate", function (next) { 
+
+
+    this.set("elcroId", this.elcroId.trim());
+    this.set("artist", this.artist.trim());
+    this.set("title", this.title.trim());
+    this.set("album", this.album.trim());
+    this.set("origTitle", this.origTitle.trim());
+    this.set("origAlbum", this.origAlbum.trim());
+    this.set("specialNote", this.specialNote.trim());
+
+    
+    next();
+})
+
 songEntrySchema.pre("save", async function (next) {
     if (!this.isModified("albumImageLoc") && !this.isNew ) {
         return next();
