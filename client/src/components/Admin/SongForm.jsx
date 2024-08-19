@@ -145,6 +145,9 @@ const SongForm = ({ songData, dispatch, type, submit }) => {
         if (type === "edit") {
             return;
         }
+        if(elcroId.length < 6) {
+            return;
+        }
         axios
             .get("/api/search", { params: { elcroId } })
             .then((res) => {

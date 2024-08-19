@@ -51,10 +51,12 @@ songRouter.post("/addSong", requireLogin, async (req, res) => {
     if (!songData) {
         res.json({ success: false, message: "No song data provided." });
     }
-    const checkDup = await SongEntry.findOne(
-        { title: { $regex: req.query.query, $options: "i" } },
-        { artist: { $regex: req.query.query, $options: "i" } }
-    );
+    const checkDup = await SongEntry.findOne({
+        $and: [
+            { title: { $regex: songData.title, $options: "i" } },
+            { artist: { $regex: songData.artist, $options: "i" } },
+        ],
+    });
     if(checkDup){
         res.json({ success: false, message: "Song already exists.", song: checkDup});
         return;
