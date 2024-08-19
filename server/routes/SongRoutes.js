@@ -53,8 +53,8 @@ songRouter.post("/addSong", requireLogin, async (req, res) => {
     }
     const checkDup = await SongEntry.findOne({
         $and: [
-            { title: { $regex: songData.title, $options: "i" } },
-            { artist: { $regex: songData.artist, $options: "i" } },
+            { title: { $regex: new RegExp(`^${songData.title}$`, "i") } },
+            { artist: { $regex: new RegExp(`^${songData.artist}$`, "i") } },
         ],
     });
     if(checkDup){
