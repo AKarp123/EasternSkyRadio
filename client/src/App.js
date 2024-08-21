@@ -114,7 +114,7 @@ function App() {
                                 backgroundColor: darkTheme.palette.background.default,
                                 color: "#888888 ",
                                 textAlign: "center",
-                                padding: "10px",
+                                padding: "5px",
                             }}
                         >
                             Created by Ashton Karp | <a href="https://github.com/AKarp123/EasternSkyRadio" style={{color: "#888888"}} target="_blank" rel="noopener noreferrer">Source Code</a>

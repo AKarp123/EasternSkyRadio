@@ -62,11 +62,11 @@ const ShowPageMain = ({ showList, setShowList, parentref }) => {
         );
     }
 
-    const fetchMoreShows = (curId) => {
+    const fetchMoreShows = () => {
         axios
             .get("/api/getShows", {
                 params: {
-                    offset: curId,
+                    offset: showList.length,
                 },
             })
             .then((res) => {
@@ -85,7 +85,7 @@ const ShowPageMain = ({ showList, setShowList, parentref }) => {
         >
             <InfiniteScroll
                 pageStart={0}
-                loadMore={() => fetchMoreShows(showList.length)}
+                loadMore={fetchMoreShows}
                 hasMore={showList[showList.length - 1].showId > 1}
                 loader={<CircularProgress key={0} />}
                 useWindow={false}
