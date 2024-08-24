@@ -13,7 +13,7 @@ import apiRouter from "./routes/index.js";
 import "dotenv/config";
 
 mongoose.connect(
-    process.env.NODE_ENV === "productuin"
+    process.env.NODE_ENV === "production"
         ? process.env.MONGODB_URI
         : process.env.MONGODB_DEV_URI
 );
