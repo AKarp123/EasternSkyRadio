@@ -6,6 +6,7 @@ import * as sD from "./sampleData.js";
 import mongoose from "mongoose";
 import User from "./models/UserModel.js";
 
+
 export const addSong = async (songData) => {
     const nextSongId = await Increment.findOneAndUpdate(
         { model: "SongEntry" },
@@ -102,6 +103,10 @@ export const removeMissingShows = async () => {
 };
 
 export const generateStats = async () => {
+
+    
+
+
     const data = {
         totalShows: 0,
         totalSongs: 0,

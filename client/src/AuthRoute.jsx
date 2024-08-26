@@ -3,7 +3,7 @@ import { Redirect, Route } from 'react-router-dom';
 import { useContext } from "react";
 import UserContext, { useAuth } from "./providers/UserProvider";
 
-const AuthRoute = ({ component: Component, isAuthenticated, ...rest }) => {
+const AuthRoute = ({ component: Component, ...rest }) => {
     const { user } = useAuth();
     if(user === "Loading") {
         return <></>

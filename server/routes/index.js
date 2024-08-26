@@ -9,7 +9,9 @@ import initializeAdmin from "../config/admin.js";
 import requireLogin from "./requireLogin.js";
 import { generateStats } from "../dbMethods.js";
 import axios from "axios";
-import fs from "fs";
+import NodeCache from "node-cache";
+
+const statsCache = new NodeCache({ stdTTL: 300 });
 
 const router = Router();
 initializeAdmin();
@@ -23,7 +25,15 @@ router.get("/getSiteInfo", async (req, res) => {
 });
 
 router.get("/getStats", async (req, res) => {
+
+    if(statsCache.has("stats")){
+     
+        res.json(statsCache.get("stats"));
+        return;
+    }
+
     const stats = await generateStats();
+    statsCache.set("stats", stats);
 
     res.json(stats);
 });

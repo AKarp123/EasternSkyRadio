@@ -93,8 +93,12 @@ const Home = React.memo(() => {
                 <Container>
                     <Stack spacing={3} sx={{ mt: 2 }}>
                         <HomeButton route="/shows" text="Shows" />
-                        <HomeButton route="/blog" text="Blog" />
+                        {/* <HomeButton route="/blog" text="Blog" /> */}
                         <HomeButton route="/stats" text="Stats" />
+                        <HomeButton
+                            link="https://www.instagram.com/easternsky90.3/"
+                            text="Instagram"
+                        />
                         <HomeButton
                             link="https://thecore.fm/public/shows/people/eastern-sky.php"
                             text="Listen live!"
