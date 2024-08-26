@@ -5,6 +5,10 @@ import UserContext, { useAuth } from "./providers/UserProvider";
 
 const AuthRoute = ({ component: Component, isAuthenticated, ...rest }) => {
     const { user } = useAuth();
+    if(user === "Loading") {
+        return <></>
+    }
+    
     return (
         <Route
             {...rest}

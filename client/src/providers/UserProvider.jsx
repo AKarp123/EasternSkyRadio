@@ -7,7 +7,7 @@ const UserContext = createContext();
 export const useAuth = () => useContext(UserContext);
 
 export const UserProvider = ({ children }) => {
-    const [user, setUser] = useState(null);
+    const [user, setUser] = useState("Loading");
     const setError = useContext(ErrorContext);
 
     useEffect(() => {
@@ -17,9 +17,13 @@ export const UserProvider = ({ children }) => {
                 if (res.data.user != null) {
                     setUser(res.data.user);
                 }
+                else {
+                    setUser(null);
+                }
             })
             .catch((err) => {
                 setError("Failed to get user");
+
             });
     }, []);
 

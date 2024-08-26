@@ -15,10 +15,11 @@ const AdminPage = () => {
     const logout = (e) => {
         e.preventDefault();
         axios.post("/api/logout").then((res) => {
+            console.log(res)
             console.log(res.data)
             console.log("Logged out")
-            setUser(null);
         });
+        setUser(null);
     };
     
     return (
