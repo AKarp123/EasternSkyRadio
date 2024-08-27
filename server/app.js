@@ -38,7 +38,12 @@ app.use(
         saveUninitialized: false,
         cookie: { maxAge: 3600 * 3 * 1000 },
         rolling: true,
-        store: MongoStore.create({ mongoUrl: process.env.MONGODB_URI }),
+        store: MongoStore.create({
+            mongoUrl:
+                process.env.NODE_ENV === "production"
+                    ? process.env.MONGODB_URI
+                    : process.env.MONGODB_DEV_URI,
+        }),
     })
 );
 
