@@ -51,6 +51,17 @@ const SetList = () => {
             });
     }, []);
 
+    if(!loading && showData === null) {
+        return (
+            <PageBackdrop>
+                <Typography variant="h2" sx={{ fontFamily: "Tiny5, Roboto", mx: "auto" }}>
+                    No show data available
+                </Typography>
+            </PageBackdrop>
+        )
+    }
+    
+
     return (
         <PageBackdrop>
             <PageHeader title={`Show #${showId}`} />
