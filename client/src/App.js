@@ -6,7 +6,6 @@ import {
     responsiveFontSizes,
 } from "@mui/material/styles";
 import { CssBaseline, Alert, Snackbar } from "@mui/material";
-
 import { useState } from "react";
 import ErrorContext from "./providers/ErrorContext";
 import Home from "./components/Home/Home";
@@ -20,6 +19,7 @@ import AdminPage from "./components/Admin/AdminPage";
 import NewShow from "./components/Admin/NewShow";
 import EditSongs from "./components/Admin/EditSongs";
 import EditShows from "./components/Admin/EditShows";
+import Graphic from "./components/Shows/Graphic";
 import AuthRoute from "./AuthRoute";
 import Stats from "./Stats";
 
@@ -46,7 +46,7 @@ function App() {
     return (
         <ThemeProvider theme={darkTheme}>
             <CssBaseline />
-            { process.env.NODE_ENV === "production" && <StarParticles /> }
+            {process.env.NODE_ENV === "production" && <StarParticles />}
             <ErrorContext.Provider value={displayError}>
                 <UserProvider>
                     <div className="App">
@@ -74,6 +74,9 @@ function App() {
                             <Route exact path="/shows/:showId">
                                 <SetList />
                             </Route>
+                            <Route exact path="/graphic/:showId">
+                                <Graphic />
+                            </Route>
                             <Route exact path="/blog">
                                 <BlogPage />
                             </Route>
@@ -97,7 +100,6 @@ function App() {
                             <AuthRoute
                                 exact
                                 path="/admin/editsong"
-                                
                                 component={EditSongs}
                             />
                             <AuthRoute
@@ -106,22 +108,30 @@ function App() {
                                 component={EditShows}
                             />
                         </Switch>
-                        
+
                         <footer
                             style={{
                                 position: "fixed",
                                 bottom: 0,
                                 left: 0,
                                 width: "100%",
-                                backgroundColor: darkTheme.palette.background.default,
+                                backgroundColor:
+                                    darkTheme.palette.background.default,
                                 color: "#888888 ",
                                 textAlign: "center",
                                 padding: "5px",
                             }}
                         >
-                            Created by Ashton Karp | <a href="https://github.com/AKarp123/EasternSkyRadio" style={{color: "#888888"}} target="_blank" rel="noopener noreferrer">Source Code</a>
+                            Created by Ashton Karp |{" "}
+                            <a
+                                href="https://github.com/AKarp123/EasternSkyRadio"
+                                style={{ color: "#888888" }}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                Source Code
+                            </a>
                         </footer>
-
                     </div>
                 </UserProvider>
             </ErrorContext.Provider>

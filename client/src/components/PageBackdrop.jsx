@@ -1,7 +1,7 @@
 import { Paper, Container } from "@mui/material";
 import React, {useRef} from "react";
 
-const PageBackdrop = ({ children }) => {
+const PageBackdrop = ({ children, width}) => {
     const parentref = useRef(null);
     return (
         <Container
@@ -15,8 +15,9 @@ const PageBackdrop = ({ children }) => {
         >
             <Paper
                 sx={{
-                    height: { height: "85%" },
-                    width: { width: "100%" },
+                    height: "85%",
+                    maxHeight: "85%",
+                    width: { width: width ? width : "100%" },
                     margin: "0 auto",
                     border: "1.5px solid #495057",
                     borderRadius: "10px",
@@ -25,6 +26,7 @@ const PageBackdrop = ({ children }) => {
                     backdropFilter: "blur(3px)",
                     overflow: "hidden",
                     overflowY: "auto",
+            
                 }}
                 ref={parentref}
             >
