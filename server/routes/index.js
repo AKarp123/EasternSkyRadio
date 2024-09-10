@@ -7,7 +7,7 @@ import multer from "multer";
 import { getStorage } from "firebase-admin/storage";
 import initializeAdmin from "../config/admin.js";
 import requireLogin from "./requireLogin.js";
-import { generateStats } from "../dbMethods.js";
+import { generateStats, updateShowTimes } from "../dbMethods.js";
 import axios from "axios";
 import NodeCache from "node-cache";
 
@@ -65,6 +65,8 @@ router.post("/logout", (req, res) => {
 router.get("/getBucket", (req, res) => {
     res.json({ message: "test" });
 });
+
+
 
 router.post(
     "/upload",
@@ -153,6 +155,7 @@ router.post("/uploadURL", requireLogin, async (req, res) => {
 
     
 });
+
 
 router.use("/", showRouter);
 router.use("/", SongRouter);

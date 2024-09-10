@@ -163,7 +163,18 @@ const resetData = async () => {
     console.log("Data reset!");
 };
 
+export const updateShowTimes = async () => {
+    let shows = await ShowEntry.find();
+    shows.forEach((show) => {
+        let tempDate = new Date(show.showDate);
+        tempDate.setHours(tempDate.getHours() + 5); // Convert to EST  
+        show.showDate = tempDate;
+        show.save();
+    })
+}
+
 export const initializeTestData = async () => {
+    
     // mongoose.connection.dropCollection("users")
     // createAdminAccount();
     // await resetData();
