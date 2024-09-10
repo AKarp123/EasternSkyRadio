@@ -102,7 +102,6 @@ const ShowPageMain = ({ showList, setShowList, parentref }) => {
 
 const ShowListItem = ({ show }) => {
     const showDate = new Date(show.showDate);
-    showDate.setHours(showDate.getHours() + 5);
     return (
         <MUILink
             component={Link}
