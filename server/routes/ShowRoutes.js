@@ -64,7 +64,9 @@ showRouter.post("/addShow", requireLogin, async (req, res) => {
     delete showData.song;
     try {
         showData.songsList = showData.songsList.map((song) => song._id);
+
         showData.showDate = new Date(showData.showDate);
+        showData.showDate.setHours(showData.showDate.getHours() + 5);
         const nextShowId = await Increment.findOneAndUpdate(
             { model: "ShowEntry" },
             { $inc: { counter: 1 } },
@@ -88,13 +90,17 @@ showRouter.post("/addShow", requireLogin, async (req, res) => {
 
 showRouter.post("/editShow", requireLogin, async (req, res) => {
     const { showData } = req.body;
+    try{
+
     const show = await ShowEntry.findOne({ showId: showData.showId });
     if (show === null) {
         res.json({ success: false, message: "Show not found." });
         return;
     }
     show.songsList = showData.songsList;
-    show.showDate = new Date(showData.showDate);
+    let tempShowDate = new Date(showData.showDate);
+    tempShowDate.setHours(tempShowDate.getHours() + 5);
+    show.showDate = tempShowDate;
     
     show.showDescription = showData.showDescription;
     show.save()
@@ -104,6 +110,12 @@ showRouter.post("/editShow", requireLogin, async (req, res) => {
         .catch((err) => {
             res.json({ success: false, message: "Error adding song to show." });
         });
+    } catch(err){
+        console.log(err);
+        res.json({ success: false, message: "Error updating show." });
+    }
+    
+    
 });
 
 showRouter.post("/deleteShow", requireLogin, async (req, res) => {

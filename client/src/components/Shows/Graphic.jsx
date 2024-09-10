@@ -76,6 +76,7 @@ const Graphic = () => {
         return <div>Loading...</div>;
     }
 
+    console.log(new Date(showData.showDate));
     return (
         <>
         <PageBackdrop width="70%">
