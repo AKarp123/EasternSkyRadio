@@ -23,6 +23,7 @@ const Home = React.memo(() => {
             .get("/api/getSiteInfo")
             .then((res) => {
                 setSiteData(res.data);
+                setLoading(false);
                 console.log(res.data);
             })
             .catch((err) => {
@@ -59,7 +60,7 @@ const Home = React.memo(() => {
                 flexDirection: "column",
             }}
         >
-            <Fade in={loading} timeout={500}>
+            <Fade in={!loading} timeout={500}>
                 <Typography
                     variant="p"
                     align="center"
