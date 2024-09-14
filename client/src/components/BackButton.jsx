@@ -5,7 +5,7 @@ import { useHistory } from "react-router-dom";
 
 
 const BackButton = () => {
-    const { goBack } = useHistory();
+    const history = useHistory();
 
     return (
         <Link
@@ -24,7 +24,14 @@ const BackButton = () => {
                 },
                 cursor: "pointer",
             }}
-            onClick={() => goBack()}
+            onClick={() => {
+                if(history.length > 1) {
+                    history.goBack();
+                }
+                else {
+                    history.push("/");
+                }
+            }}
         >
             <SvgIcon
                 sx={{
