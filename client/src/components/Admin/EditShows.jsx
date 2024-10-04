@@ -71,7 +71,7 @@ const EditShows = () => {
                 },
             })
             .then((res) => {
-                if (res.data.success === false) {
+                if (res.data.success === false || res.data.showData === null) {
                     dispatch({ type: "clear" });
                     setError("Show not found");
 
