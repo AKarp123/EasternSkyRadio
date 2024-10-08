@@ -79,7 +79,7 @@ songRouter.post("/editSong", requireLogin, async (req, res) => {
     }
     
 
-    SongEntry.findOneAndUpdate({ songId: songData.songId }, songData, { new: true })
+    SongEntry.findOneAndUpdate({ songId: songData.songId }, songData, { new: true, runValidators: true })
         .then((updatedSong) => {
             res.json({ success: true, message: "Song updated successfully.", song: updatedSong });
         })
