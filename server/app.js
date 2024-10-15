@@ -12,6 +12,7 @@ import User from "./models/UserModel.js";
 import apiRouter from "./routes/index.js";
 import "dotenv/config";
 
+const port = process.env.PORT || 3000;
 mongoose.connect(
     process.env.NODE_ENV === "production"
         ? process.env.MONGODB_URI
@@ -57,15 +58,15 @@ app.use("*", (req, res) => {
     res.sendFile(join(__dirname, "../client/build/index.html"));
 });
 
-app.listen(3000, () => {
-    console.log("Server is running on port 3000");
+app.listen(port, () => {
+    console.log(`Server running on port ${port}`);
 });
-
-
-
 
 db.on("error", console.error.bind(console, "connection error:"));
 db.once("open", async function () {
     console.log("Connected to MongoDB");
-    initializeTestData();
+
+    if (!process.env.NODE_ENV === "production") {
+        initializeTestData();
+    }
 });
