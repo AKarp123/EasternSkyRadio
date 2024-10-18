@@ -1,6 +1,6 @@
 # Eastern Sky Radio
 
-[Live Site](https://easternskyradio.onrender.com)
+[Live Site](https://easternskyradio.xyz)
 
 This repository contains the source code for the Eastern Sky radio website, my radio show hosted on 90.3 The Core!
 
