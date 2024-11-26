@@ -575,6 +575,7 @@ const SongForm = ({ songData, dispatch, type, submit }) => {
                 label="Duration"
                 value={songData.duration}
                 type="number"
+                step="0.01"
                 onChange={(e) =>
                     dispatch({
                         type: "duration",
