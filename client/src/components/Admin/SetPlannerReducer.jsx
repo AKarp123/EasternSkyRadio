@@ -98,12 +98,18 @@ export const reducer = (state, action) => {
                 ...state,
                 duration: parseFloat(action.payload),
             };
-
+        
         case "elcroId":
             return {
                 ...state,
                 curSong: { ...state.curSong, elcroId: action.payload },
             };
+        case "fill":
+            return {
+                ...state,
+                curSong: action.payload,
+            };
+        
         case "artist":
             return {
                 ...state,
