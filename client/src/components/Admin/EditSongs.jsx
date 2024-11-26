@@ -152,7 +152,7 @@ const EditSongs = () => {
                     </Grid>
 
                     <Grid item xs={12} sm={6}>
-                        <SongSearch dispatch={dispatch} parent="Edit Songs" />
+                        <SongSearch dispatch={dispatch} parent="Edit Song" />
                     </Grid>
                 </Grid>
             </Container>
