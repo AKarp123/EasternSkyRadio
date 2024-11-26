@@ -3,7 +3,7 @@ import ShowEntry from "../models/ShowEntry.js";
 import requireLogin from "./requireLogin.js";
 import mongoose from "mongoose";
 import Increment from "../models/IncrementModel.js";
-import { removeMissingShows } from "../dbMethods.js";
+import { removeMissingShows, updateLastPlayed } from "../dbMethods.js";
 
 const showRouter = Router();
 
@@ -67,16 +67,19 @@ showRouter.post("/addShow", requireLogin, async (req, res) => {
 
         showData.showDate = new Date(showData.showDate);
         showData.showDate.setHours(showData.showDate.getHours() + 5);
+
         const nextShowId = await Increment.findOneAndUpdate(
             { model: "ShowEntry" },
             { $inc: { counter: 1 } },
             { new: true }
         );
+
         const newShow = new ShowEntry({
             ...showData,
             showId: nextShowId.counter,
         });
         await newShow.save();
+        await updateLastPlayed(showData.songsList, newShow.showDate);
         res.json({ success: true, message: "Show added successfully." });
     } catch (err) {
         console.log(err);

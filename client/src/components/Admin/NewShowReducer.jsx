@@ -90,6 +90,13 @@ export const reducer = (state, action) => {
                 ...state,
                 song: { ...state.song, specialNote: action.payload },
             };
+        case "setDuration": 
+            obj.song.duration = action.payload;
+            localStorage.setItem("showState", JSON.stringify(obj));
+            return {
+                ...state,
+                song: { ...state.song, duration: action.payload },
+            };
         case "addSongReleaseLoc":
             obj.song.songReleaseLoc.push(action.payload);
             localStorage.setItem("showState", JSON.stringify(obj));

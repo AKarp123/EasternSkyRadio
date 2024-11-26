@@ -6,6 +6,7 @@ import { useAuth } from "../../providers/UserProvider";
 import { Redirect } from "react-router-dom";
 import HomeButton from "../Home/HomeButton";
 import axios from "axios";
+import Home from "../Home/Home";
 
 const AdminPage = () => {
     const { setUser } = useAuth();
@@ -29,6 +30,7 @@ const AdminPage = () => {
             <Container>
                 <Stack spacing={2} sx={{ mt: 2 }}>
                     <HomeButton text="New Show Log" route="/admin/newshow" />
+                    <HomeButton text="Set Planner" route="/admin/setplanner" />
                     <HomeButton text="Edit Log" route="/admin/editshow" />
                     <HomeButton text="Edit Song" route="/admin/editsong" />
                     <Box onClick={(e) => logout(e)}>

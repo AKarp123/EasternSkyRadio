@@ -6,7 +6,6 @@ import * as sD from "./sampleData.js";
 import mongoose from "mongoose";
 import User from "./models/UserModel.js";
 
-
 export const addSong = async (songData) => {
     const nextSongId = await Increment.findOneAndUpdate(
         { model: "SongEntry" },
@@ -103,10 +102,6 @@ export const removeMissingShows = async () => {
 };
 
 export const generateStats = async () => {
-
-    
-
-
     const data = {
         totalShows: 0,
         totalSongs: 0,
@@ -118,42 +113,32 @@ export const generateStats = async () => {
     const shows = await ShowEntry.find();
     data.totalShows = shows.length;
     data.totalSongs = shows.reduce((acc, show) => {
-        
         return acc + show.songsList.length;
     }, 0);
 
     const uniqueArtists = {};
     const uniqueAlbums = {};
     const songs = await SongEntry.find();
-    
+
     songs.forEach((song) => {
-        if(uniqueArtists[song.artist] === undefined) {
+        if (uniqueArtists[song.artist] === undefined) {
             uniqueArtists[song.artist] = 1;
-        }
-        else {
+        } else {
             uniqueArtists[song.artist]++;
         }
-        if(uniqueAlbums[song.album] === undefined) {
+        if (uniqueAlbums[song.album] === undefined) {
             uniqueAlbums[song.album] = 1;
-        }
-        else {
+        } else {
             uniqueAlbums[song.album]++;
         }
-
     });
     data.uniqueArtists = Object.keys(uniqueArtists).length;
     data.uniqueAlbums = Object.keys(uniqueAlbums).length;
 
-
-
-    
-    
-    data.uniqueSongs = (await Increment.findOne({ model: "SongEntry" })).counter;
+    data.uniqueSongs = songs.length;
 
     return data;
-
-
-}
+};
 
 const resetData = async () => {
     mongoose.connection.dropDatabase();
@@ -167,21 +152,45 @@ export const updateShowTimes = async () => {
     let shows = await ShowEntry.find();
     shows.forEach((show) => {
         let tempDate = new Date(show.showDate);
-        tempDate.setHours(tempDate.getHours() + 5); // Convert to EST  
+        tempDate.setHours(tempDate.getHours() + 5); // Convert to EST
         show.showDate = tempDate;
         show.save();
+    });
+};
+
+const addLastPlayed = async () => {
+    const allShows = await ShowEntry.find().sort({ showId: "desc"}).populate("songsList");
+ 
+    allShows.forEach((show) => {
+        show.songsList.forEach(async (song) => {
+            if(song.lastPlayed === undefined) {
+                song.lastPlayed = show.showDate;
+                await song.save();
+            }
+        })
+
+    })
+
+    console.log("Last played added!");
+}
+
+export const updateLastPlayed = async (songsList, date) =>  {
+
+    songsList.forEach(async (song) => {
+        await SongEntry.findOneAndUpdate({ _id: song }, { lastPlayed: date }, { new: true });
     })
 }
 
+// addLastPlayed();
+
+
 export const initializeTestData = async () => {
-    
     // mongoose.connection.dropCollection("users")
     // createAdminAccount();
     // await resetData();
     // const song = await addSong(sD.sampleSong);
     // const song2 = await addSong(sD.sampleSong2);
     // for(let i = 0; i< 3; i++) {
-
 
     //     await addShow(sD.sampleShow);
     // }
@@ -197,6 +206,9 @@ export const initializeTestData = async () => {
     //     })
     //     song.save();
     // });
+
+    
+
 
     // for(let i = 0; i< 5; i++) {
 

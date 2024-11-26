@@ -15,6 +15,13 @@ import axios from "axios";
 import ErrorContext from "../../providers/ErrorContext";
 import InputFileUpload from "./InputFileUpload";
 
+
+/**
+ * 
+ * SongData - State of current song object
+ * Dispatch - Must implement the following actions: addS
+ * 
+ */
 const SongForm = ({ songData, dispatch, type, submit }) => {
     const setError = useContext(ErrorContext);
     const [genreInput, setGenreInput] = useState("");
@@ -82,7 +89,12 @@ const SongForm = ({ songData, dispatch, type, submit }) => {
         const textData = e.dataTransfer.getData("text/plain");
 
         setError("Uploading Image...", "info");
-        axios.post("/api/uploadURL", { artist: songData.artist, album: songData.album, url: textData })
+        axios
+            .post("/api/uploadURL", {
+                artist: songData.artist,
+                album: songData.album,
+                url: textData,
+            })
             .then((res) => {
                 if (res.data.success === false) {
                     setError(res.data.message);
@@ -145,7 +157,7 @@ const SongForm = ({ songData, dispatch, type, submit }) => {
         if (type === "edit") {
             return;
         }
-        if(elcroId.length < 6) {
+        if (elcroId.length < 6) {
             return;
         }
         axios
@@ -188,9 +200,12 @@ const SongForm = ({ songData, dispatch, type, submit }) => {
             });
     }, 500);
 
-    
     const fillAlbum = useDebouncedCallback((album) => {
-        if (album === "" || album.toUpperCase() === "SINGLE" || type === "edit") {
+        if (
+            album === "" ||
+            album.toUpperCase() === "SINGLE" ||
+            type === "edit"
+        ) {
             return;
         }
         axios
@@ -557,16 +572,27 @@ const SongForm = ({ songData, dispatch, type, submit }) => {
             </Stack>
 
             <TextField
-                label="Special Note"
-                value={songData.specialNote}
+                label="Duration"
+                value={songData.duration}
+                type="number"
                 onChange={(e) =>
                     dispatch({
-                        type: "specialNote",
+                        type: "duration",
                         payload: e.target.value,
                     })
                 }
                 fullWidth
-                sx={{ mt: 1 }}
+                sx={{
+                    mt: 1,
+                    "input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button":
+                        {
+                            "WebkitAppearance": "none",
+                            margin: 0,
+                        },
+                    "input[type=number]": {
+                        "MozAppearance": "textfield",
+                    },
+                }}
             />
             <Button type="submit">
                 {type === "edit" ? "Edit" : "Add"} Song

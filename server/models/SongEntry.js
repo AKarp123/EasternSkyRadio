@@ -12,7 +12,9 @@ const songEntrySchema = new schema({
         select: false,
         validate: {
             validator: function (v) {
-                return typeof v === "string" && (v.length === 6 || v.length === 0);
+                return (
+                    typeof v === "string" && (v.length === 6 || v.length === 0)
+                );
             },
             message: (props) => `${props.value} is not a string of length 6`,
         },
@@ -51,29 +53,31 @@ const songEntrySchema = new schema({
         ],
         required: false,
     },
+    duration: { type: Number, default: 0, select: false }, // approx duration in decimal time
+    lastPlayed: { type: Date, required: false, select: false },
 });
 
-
-songEntrySchema.pre("validate", function (next) { 
-
-
-    this.set("elcroId", this.elcroId.trim());
+songEntrySchema.pre("validate", function (next) {
+    if (this.elcroId) {
+        this.set("elcroId", this.elcroId.trim());
+    }
     this.set("artist", this.artist.trim());
     this.set("title", this.title.trim());
     this.set("album", this.album.trim());
     this.set("origTitle", this.origTitle.trim());
     this.set("origAlbum", this.origAlbum.trim());
     this.set("specialNote", this.specialNote.trim());
-
-    
-    next();
-})
-
-songEntrySchema.pre("save", async function (next) {
-    if (!this.isModified("albumImageLoc") && !this.isNew ) {
-        return next();
+    if(isNaN(this.duration) || this.duration === null){
+        this.duration = 0;
     }
 
+    next();
+});
+
+songEntrySchema.pre("save", async function (next) {
+    if (!this.isModified("albumImageLoc") && !this.isNew) {
+        return next();
+    }
 
     this.songReleaseLoc.sort((a, b) => {
         if (a.service > b.service) {
@@ -86,8 +90,7 @@ songEntrySchema.pre("save", async function (next) {
     });
 
     const album = this.album;
-    if(!(album === "Single" || album === "single")) {
-        
+    if (!(album === "Single" || album === "single")) {
         const existingSong = await model("SongEntry").findOne({ album });
         if (existingSong) {
             this.albumImageLoc = existingSong.albumImageLoc;
@@ -97,8 +100,6 @@ songEntrySchema.pre("save", async function (next) {
     }
     next();
 });
-
-
 
 const SongEntry = model("SongEntry", songEntrySchema);
 

@@ -82,6 +82,11 @@ const reducer = (state, action) => {
                 ...state,
                 specialNote: action.payload,
             };
+        case "duration":
+            return {
+                ...state,
+                duration: action.payload,
+            };
         case "submit":
             return {
                 songId: -1,
@@ -114,6 +119,7 @@ const EditSongs = () => {
         genres: [],
         specialNote: "",
         songReleaseLoc: [],
+        duration: "",
     });
     const setError = useContext(ErrorContext);
 

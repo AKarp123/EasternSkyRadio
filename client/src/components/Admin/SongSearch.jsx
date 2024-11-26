@@ -1,13 +1,22 @@
 import React, { useState, useContext } from "react";
 import axios from "axios";
 import { useDebouncedCallback } from "use-debounce";
-import { Container, TextField, Stack, Typography, Card, Box, CardMedia, CardContent, CardActions, Button } from "@mui/material";
+import {
+    Container,
+    TextField,
+    Stack,
+    Typography,
+    Card,
+    Box,
+    CardMedia,
+    CardContent,
+    CardActions,
+    Button,
+} from "@mui/material";
 import ErrorContext from "../../providers/ErrorContext";
 
-
-
 /**
- * 
+ *
  * Dispatch must implement the following actions:
  * Add song to list - Only if new show
  * Fill song - Always
@@ -64,7 +73,8 @@ const SongSearch = ({ dispatch, parent }) => {
 };
 
 const SongSearchCard = ({ song, dispatch, parent }) => {
-    const setError = useContext(ErrorContext);
+    const lastPlayed = new Date(song.lastPlayed);
+
     return (
         <Card
             sx={{
@@ -102,6 +112,7 @@ const SongSearchCard = ({ song, dispatch, parent }) => {
                         overflow: "hidden",
                         justifyContent: "space-between",
                         overflowX: "auto",
+                        paddingBottom: "0px !important"
 
                         // paddingTop: "4px !important",
                         // paddingBottom: "4px !important",
@@ -115,49 +126,86 @@ const SongSearchCard = ({ song, dispatch, parent }) => {
                     </Typography>
                 </CardContent>
             </Box>
-            <CardActions>
-                {parent === "New Show" ? (
-                    <>
-                        <Button
-                            onClick={() =>
-                                dispatch({
-                                    type: "addSong",
-                                    payload: song,
-                                })
-                            }
-                        >
-                            Add
-                        </Button>
-                        <Button
-                            onClick={() => {
-                                delete song._id;
-                                dispatch({
-                                    type: "fill",
-                                    payload: song,
-                                });
-                                setError("Song filled", "success");
-                            }}
-                        >
-                            Fill
-                        </Button>
-                    </>
-                ) : (
-                    <Button
-                        onClick={() => {
-                            delete song._id;
-                            dispatch({
-                                type: "fill",
-                                payload: song,
-                            });
-                            setError("Song filled", "success");
-                        }}
-                    >
-                        Edit
-                    </Button>
-                )}
+            <CardActions
+                sx={{
+                    paddingBottom: parent === "Set Planner" ? "0px !important" : ""
+                }}
+            >
+                <Buttons parent={parent} dispatch={dispatch} song={song} />
             </CardActions>
+
+            {(parent === "Set Planner") && (
+            <CardContent sx={{
+                paddingTop: "0px !important",
+                paddingBottom: "8px !important"
+            }}>
+                <Typography variant="body2">
+                    Last Played: {lastPlayed.toLocaleDateString() === "Invalid Date" ? "Never" : lastPlayed.toLocaleDateString()}
+                </Typography>
+            </CardContent>
+            )}
         </Card>
     );
 };
 
-export default SongSearch
+const Buttons = ({ parent, dispatch, song }) => {
+    if (parent === "New Show") {
+        return (
+            <>
+                <Button
+                    onClick={(e) => {
+                        e.preventDefault();
+                        dispatch({
+                            type: "addSong",
+                            song: song,
+                        });
+                    }}
+                >
+                    Add
+                </Button>
+                <Button
+                    onClick={(e) => {
+                        e.preventDefault();
+                        dispatch({
+                            type: "fill",
+                            payload: song,
+                        });
+                    }}
+                >
+                    Fill
+                </Button>
+            </>
+        );
+    } else if (parent === "Edit Song") {
+        return (
+            <Button
+                onClick={(e) => {
+                    e.preventDefault();
+                    dispatch({
+                        type: "fill",
+                        payload: song,
+                    });
+                }}
+            >
+                Fill
+            </Button>
+        );
+    }
+    else if (parent === "Set Planner") {
+        return (
+            <Button
+                onClick={(e) => {
+                    e.preventDefault();
+                    dispatch({
+                        type: "addSong",
+                        song: song,
+                    });
+                }}
+            >
+                Add
+            </Button>
+        );
+    }
+};
+
+export default SongSearch;

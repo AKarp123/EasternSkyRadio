@@ -22,6 +22,7 @@ import EditShows from "./components/Admin/EditShows";
 import Graphic from "./components/Shows/Graphic";
 import AuthRoute from "./AuthRoute";
 import Stats from "./Stats";
+import SetPlanner from "./components/Admin/SetPlanner";
 
 let darkTheme = createTheme({
     palette: {
@@ -106,6 +107,11 @@ function App() {
                                 exact
                                 path="/admin/editshow"
                                 component={EditShows}
+                            />
+                            <AuthRoute
+                                exact
+                                path="/admin/SetPlanner" 
+                                component={SetPlanner}
                             />
                         </Switch>
 

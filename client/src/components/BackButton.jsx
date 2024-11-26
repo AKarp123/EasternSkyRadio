@@ -25,12 +25,9 @@ const BackButton = () => {
                 cursor: "pointer",
             }}
             onClick={() => {
-                if(history.length > 1) {
-                    history.goBack();
-                }
-                else {
-                    history.push("/");
-                }
+                let path = history.location.pathname;
+                let prevPath = path.split("/").slice(0, -1).join("/");
+                history.push(prevPath);
             }}
         >
             <SvgIcon

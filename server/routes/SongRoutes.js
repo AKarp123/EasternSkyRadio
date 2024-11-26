@@ -27,7 +27,7 @@ songRouter.get("/search", requireLogin, async (req, res) => {
         } else if (req.query.elcroId) {
             const searchResults = await SongEntry.find({
                 elcroId: req.query.elcroId,
-            }).select("-__v" +  (req.user ? " +elcroId" : ""));
+            }).select("-__v" +  (req.user ? " +elcroId +duration +lastPlayed" : ""));
             res.json(searchResults);
         } else {
             const searchResults = await SongEntry.find({
@@ -36,7 +36,7 @@ songRouter.get("/search", requireLogin, async (req, res) => {
                     { artist: { $regex: req.query.query, $options: "i" } },
                     { album: { $regex: req.query.query, $options: "i" } },
                 ],
-            }).select("-__v" + (req.user ? " +elcroId" : "") );
+            }).select("-__v" + (req.user ? " +elcroId +duration +lastPlayed" : "") );
             res.json({success: true, searchResults: searchResults});
         }
     }
