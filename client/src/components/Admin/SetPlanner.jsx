@@ -344,17 +344,15 @@ const SetPlannerCard = ({ song, state, dispatch, durationAtPoint, index }) => {
                                             target="_blank"
                                             rel="noopener noreferrer"
                                         >
-                                            {song.elcroId}
+                                            {song.elcroId}&nbsp;-&nbsp;
                                         </Link>
                                     </Typography>
 
-                                    <Typography>&nbsp;-&nbsp;</Typography>
+                                    
                                 </>
                             )}
-                            <Typography>{song.title}</Typography>
-                            <Typography>&nbsp;-&nbsp;</Typography>
-                            <Typography>{song.artist}</Typography>
-                            <Typography>&nbsp;({song.duration}min)</Typography>
+                            <Typography>{song.title}&nbsp;-&nbsp;{song.artist}&nbsp;({song.duration})min</Typography>
+                            
                         </Box>
                     </Box>
 
