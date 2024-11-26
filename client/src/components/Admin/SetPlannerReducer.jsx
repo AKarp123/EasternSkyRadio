@@ -163,6 +163,14 @@ export const reducer = (state, action) => {
                     ],
                 },
             };
+        case "setSongReleaseLoc": 
+            return {
+                ...state,
+                curSong: {
+                    ...state.curSong,
+                    songReleaseLoc: action.payload,
+                },
+            };
         case "removeSongReleaseLoc":
             return {
                 ...state,

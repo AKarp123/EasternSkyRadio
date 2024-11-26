@@ -174,6 +174,8 @@ const addLastPlayed = async () => {
     console.log("Last played added!");
 }
 
+// addLastPlayed();
+
 export const updateLastPlayed = async (songsList, date) =>  {
 
     songsList.forEach(async (song) => {
