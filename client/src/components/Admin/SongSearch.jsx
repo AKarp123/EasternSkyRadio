@@ -157,7 +157,7 @@ const Buttons = ({ parent, dispatch, song }) => {
                         e.preventDefault();
                         dispatch({
                             type: "addSong",
-                            song: song,
+                            paylods: {...song},
                         });
                     }}
                 >
@@ -198,7 +198,7 @@ const Buttons = ({ parent, dispatch, song }) => {
                     e.preventDefault();
                     dispatch({
                         type: "addSong",
-                        song: song,
+                        payload: {...song},
                     });
                 }}
             >
