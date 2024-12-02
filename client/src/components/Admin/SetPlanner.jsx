@@ -85,25 +85,30 @@ const SetPlanner = () => {
                     mb: 2,
                 }}
             />
-            <Container>
-                <Grid container spacing={2}>
-                    <Grid item xs={12} sm={8}>
+            <Container
+                sx={{
+                    height: "100%",
+                    overflow: { md: "hidden", xs: "auto" },
+                }}
+            >
+                <Grid container spacing={2} sx={{ height: { md: "100%" } }}>
+                    <Grid item xs={12} sm={8} sx={{ height: { md: "100%" } }}>
+                        <Typography
+                            variant="h6"
+                            sx={{ alignItems: "center", mb: 1 }}
+                        >
+                            Set List
+                        </Typography>
                         <Stack
                             spacing={1}
                             sx={{
-                                overflowY: "scroll",
-                                height: "70vh",
+                                overflowY: "auto",
+                                maxHeight: { md: "65%" },
                                 "&::-webkit-scrollbar": {
                                     width: "0.4em",
                                 },
                             }}
                         >
-                            <Typography
-                                variant="h6"
-                                sx={{ alignItems: "center" }}
-                            >
-                                Set List
-                            </Typography>
                             {state.songsList.map((song, index) => (
                                 <SetPlannerCard
                                     song={song}
@@ -116,7 +121,11 @@ const SetPlanner = () => {
                             ))}
                         </Stack>
                         {state.songsList.length > 0 && (
-                            <>
+                            <Box
+                                sx={{
+                                    my: 1,
+                                }}
+                            >
                                 <Button onClick={save}>Save</Button>
                                 <Button
                                     onClick={() => dispatch({ type: "reset" })}
@@ -124,10 +133,12 @@ const SetPlanner = () => {
                                     {" "}
                                     Reset
                                 </Button>
-                            </>
+                            </Box>
                         )}
                     </Grid>
-                    <Grid item xs={12} sm={4}>
+                    <Grid item xs={12} sm={4} sx={{
+                        height: { md: "100%" },
+                    }}>
                         <Typography variant="h6" sx={{ alignItems: "center" }}>
                             Add
                         </Typography>
@@ -347,12 +358,12 @@ const SetPlannerCard = ({ song, state, dispatch, durationAtPoint, index }) => {
                                             {song.elcroId}&nbsp;-&nbsp;
                                         </Link>
                                     </Typography>
-
-                                    
                                 </>
                             )}
-                            <Typography>{song.title}&nbsp;-&nbsp;{song.artist}&nbsp;({song.duration}min)</Typography>
-                            
+                            <Typography>
+                                {song.title}&nbsp;-&nbsp;{song.artist}&nbsp;(
+                                {song.duration}min)
+                            </Typography>
                         </Box>
                     </Box>
 
@@ -465,7 +476,6 @@ const SetPlannerForm = ({ dispatch, song, index }) => {
     );
 };
 
-
 function DurationForm({ state, dispatch }) {
     return (
         <Dialog open={state.toggleDurationForm}>
@@ -525,6 +535,5 @@ function DurationForm({ state, dispatch }) {
         </Dialog>
     );
 }
-
 
 export default SetPlanner;
