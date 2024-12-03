@@ -98,7 +98,7 @@ export const reducer = (state, action) => {
                 ...state,
                 duration: parseFloat(action.payload),
             };
-        
+
         case "elcroId":
             return {
                 ...state,
@@ -109,7 +109,7 @@ export const reducer = (state, action) => {
                 ...state,
                 curSong: action.payload,
             };
-        
+
         case "artist":
             return {
                 ...state,
@@ -169,7 +169,7 @@ export const reducer = (state, action) => {
                     ],
                 },
             };
-        case "setSongReleaseLoc": 
+        case "setSongReleaseLoc":
             return {
                 ...state,
                 curSong: {
@@ -236,7 +236,19 @@ export const reducer = (state, action) => {
             localStorage.removeItem("savedState");
             return {
                 songsList: [], //includes events such as mic breaks, announcements, etc. (too lazy to rename everything lol)
-                curSong: {},
+                curSong: {
+                    elcroId: "",
+                    artist: "",
+                    title: "",
+                    origTitle: "",
+                    album: "",
+                    origAlbum: "",
+                    albumImageLoc: "",
+                    genres: [],
+                    specialNote: "",
+                    songReleaseLoc: [],
+                    duration: "",
+                },
                 tabState: 0,
                 label: "",
                 toggleNewSongForm: false,
