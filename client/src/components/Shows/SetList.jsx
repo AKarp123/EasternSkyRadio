@@ -21,13 +21,12 @@ import ShoppingBagIcon from "@mui/icons-material/ShoppingBag";
 import AppleIcon from "@mui/icons-material/Apple";
 import YouTubeIcon from "@mui/icons-material/YouTube";
 import MusicIcon from "@mui/icons-material/MusicNote";
-import DoNotDisturbIcon from '@mui/icons-material/DoNotDisturb';
+import DoNotDisturbIcon from "@mui/icons-material/DoNotDisturb";
 import { ReactComponent as SpotifyIcon } from "../../icons/spotify.svg";
 import { useState, useEffect, useContext, useRef } from "react";
 import axios from "axios";
 import ErrorContext from "../../providers/ErrorContext";
 import PageHeader from "../PageHeader";
-
 
 const SetList = () => {
     const { showId } = useParams();
@@ -51,33 +50,34 @@ const SetList = () => {
             });
     }, []);
 
-    if(!loading && showData === null) {
+    if (!loading && showData === null) {
         return (
             <PageBackdrop>
                 <PageHeader title={"No show data found"} />
             </PageBackdrop>
-        )
+        );
     }
-
 
     return (
         <PageBackdrop>
-            <PageHeader title={`Show #${showId}`} />
-            <Divider sx={{ mb: "24px" }} />
+            <Box sx={{ overflowY: "auto" }}>
+                <PageHeader title={`Show #${showId}`} />
+                <Divider sx={{ mb: "24px" }} />
 
-            <Container maxWidth={"lg"}>
-                <Grid container spacing={2}>
-                    {loading ? (
-                        <Typography>Loading...</Typography>
-                    ) : (
-                        showData.songsList.map((song) => (
-                            <Grid item xs={12} sm={6} md={4}>
-                                <SetListCard song={song} key={song._id} />
-                            </Grid>
-                        ))
-                    )}
-                </Grid>
-            </Container>
+                <Container maxWidth={"lg"}>
+                    <Grid container spacing={2}>
+                        {loading ? (
+                            <Typography>Loading...</Typography>
+                        ) : (
+                            showData.songsList.map((song) => (
+                                <Grid item xs={12} sm={6} md={4}>
+                                    <SetListCard song={song} key={song._id} />
+                                </Grid>
+                            ))
+                        )}
+                    </Grid>
+                </Container>
+            </Box>
         </PageBackdrop>
     );
 };
@@ -127,7 +127,7 @@ const SetListCard = ({ song }) => {
                 backgroundColor: "rgba(22, 22, 22, 0.1)",
                 WebkitBackdropFilter: "blur(3px)",
                 backdropFilter: "blur(3px)",
-                height: "100%"
+                height: "100%",
             }}
         >
             <Box
@@ -234,7 +234,7 @@ const SetListCard = ({ song }) => {
                     })}
                 </Stack>
             </CardContent>
-            
+
             <Divider variant="middle">Release Locations</Divider>
             <CardContent
                 sx={{
@@ -280,7 +280,6 @@ const SetListCard = ({ song }) => {
                         );
                     })}
                     {song.songReleaseLoc.length === 0 && (
-                        
                         <Tooltip
                             title={"No release locations"}
                             placement="top"

@@ -88,7 +88,7 @@ const SetPlanner = () => {
             <Container
                 sx={{
                     height: "100%",
-                    overflow: { md: "hidden", xs: "auto" },
+                    overflow: "hidden",
                 }}
             >
                 <Grid container spacing={2} sx={{ height: { md: "100%" } }}>
@@ -103,6 +103,7 @@ const SetPlanner = () => {
                             spacing={1}
                             sx={{
                                 overflowY: "auto",
+                                overflow: "hidden",
                                 maxHeight: { md: "65%" },
                                 "&::-webkit-scrollbar": {
                                     width: "0.4em",
@@ -137,7 +138,7 @@ const SetPlanner = () => {
                         )}
                     </Grid>
                     <Grid item xs={12} sm={4} sx={{
-                        height: { md: "100%" },
+                    
                     }}>
                         <Typography variant="h6" sx={{ alignItems: "center" }}>
                             Add

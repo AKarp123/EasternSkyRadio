@@ -39,44 +39,40 @@ const SongSearch = ({ dispatch, parent }) => {
                 setError(err.message);
             });
     }, 500);
-    
+
     return (
-        <Box 
-            sx={{ 
-                display: 'flex', 
-                flexDirection: 'column', 
-                maxHeight: '75%',
-                overflow: 'hidden'
-            }}
-        > 
+        <Box sx={{
+            alignItems: "center",
+            justifyContent: "center",
+            height: "calc(100% - 130px)",
+           
+            pr: 1, // Add some padding for scrollbar
+        }}>
             <TextField
                 label="Search"
                 onChange={(e) => searchDebounced(e.target.value)}
                 fullWidth
-                sx={{ mb: 1, mt: 1}}
+                sx={{ mb: 1, mt: 1 }}
             />
             <Box
                 sx={{
-                    overflowY: 'auto',
+                    justifyContent: "center",
+                    overflow: "auto",
+                    height: "calc(100% - 130px)",
                     
-                    pr: 1,  // Add some padding for scrollbar
                     "&::-webkit-scrollbar": {
                         width: "0.4em",
                     },
                     "&::-webkit-scrollbar-track": {
-                        background: "#f1f1f1"
+                        background: "#f1f1f1",
                     },
                     "&::-webkit-scrollbar-thumb": {
                         background: "#888",
-                        borderRadius: "4px"
-                    }
+                        borderRadius: "4px",
+                    },
                 }}
             >
-                <Stack
-                    spacing={1}
-                    direction="column"
-                    
-                >
+                <Stack spacing={1} direction="column">
                     {searchResults.length > 0 ? (
                         searchResults.map((song) => (
                             <SongSearchCard
@@ -94,7 +90,6 @@ const SongSearch = ({ dispatch, parent }) => {
         </Box>
     );
 };
-
 
 // Rest of the component remains the same as in the original code
 const SongSearchCard = ({ song, dispatch, parent }) => {

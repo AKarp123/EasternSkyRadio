@@ -17,6 +17,7 @@ const PageBackdrop = ({ children, width }) => {
                 height: "100vh",
                 // alignItems: "center",
                 flexDirection: "column",
+                overflow: "hidden !important" 
             }}
         >
             <Paper
@@ -29,7 +30,7 @@ const PageBackdrop = ({ children, width }) => {
                     backgroundColor: "rgba(56, 56, 56, 0.5)",
                     WebkitBackdropFilter: "blur(3px)",
                     backdropFilter: "blur(3px)",
-                    overflow: "auto"
+                    overflow: "auto",
                 }}
                 ref={parentref}
             >
