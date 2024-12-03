@@ -92,7 +92,9 @@ const SetPlanner = () => {
                 }}
             >
                 <Grid container spacing={2} sx={{ height: { md: "100%" } }}>
-                    <Grid item xs={12} sm={8} sx={{ height: { md: "100%" } }}>
+                    <Grid item xs={12} sm={8} sx={{ height: { md: "100%" }, width: {
+                        xs: "100%",
+                    } }}>
                         <Typography
                             variant="h6"
                             sx={{ alignItems: "center", mb: 1 }}
