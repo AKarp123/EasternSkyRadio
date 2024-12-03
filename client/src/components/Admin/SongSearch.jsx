@@ -44,7 +44,6 @@ const SongSearch = ({ dispatch, parent }) => {
         <Box sx={{
             alignItems: "center",
             justifyContent: "center",
-            height: "calc(100% - 130px)",
            
             pr: 1, // Add some padding for scrollbar
         }}>
@@ -58,8 +57,7 @@ const SongSearch = ({ dispatch, parent }) => {
                 sx={{
                     justifyContent: "center",
                     overflow: "auto",
-                    height: "calc(100% - 130px)",
-                    
+                    maxHeight: parent === "Set Planner" ? "396px" : "355px", //absolute genius 
                     "&::-webkit-scrollbar": {
                         width: "0.4em",
                     },
