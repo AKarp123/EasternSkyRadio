@@ -88,13 +88,16 @@ const SetPlanner = () => {
             <Container
                 sx={{
                     height: "100%",
-                    overflow: "hidden",
+                    overflow: {xs: "auto", sm: "hidden"},
                 }}
             >
                 <Grid container spacing={2} sx={{ height: { md: "100%" } }}>
                     <Grid item xs={12} sm={8} sx={{ height: { md: "100%" }, width: {
                         xs: "100%",
-                    } }}>
+
+                    },
+                    overflowX: { xs: "auto", md: "hidden"}
+                    }}>
                         <Typography
                             variant="h6"
                             sx={{ alignItems: "center", mb: 1 }}
@@ -104,8 +107,8 @@ const SetPlanner = () => {
                         <Stack
                             spacing={1}
                             sx={{
-                                overflowY: "auto",
-                                overflow: "hidden",
+                                width: "100%",
+                                overflowX: "auto",
                                 maxHeight: { md: "65%" },
                                 "&::-webkit-scrollbar": {
                                     width: "0.4em",
@@ -140,7 +143,7 @@ const SetPlanner = () => {
                         )}
                     </Grid>
                     <Grid item xs={12} sm={4} sx={{
-                    
+
                     }}>
                         <Typography variant="h6" sx={{ alignItems: "center" }}>
                             Add
@@ -251,9 +254,11 @@ const SetPlannerCard = ({ song, state, dispatch, durationAtPoint, index }) => {
     }
     if (song.type === "Break") {
         return (
-            <Paper>
+            <Paper sx={{
+            }}>
                 <Container
                     sx={{
+                        
                         display: "flex",
                         backgroundColor: "rgba(65, 65, 65, 0.5)",
                         borderRadius: "3px",
@@ -310,7 +315,10 @@ const SetPlannerCard = ({ song, state, dispatch, durationAtPoint, index }) => {
         );
     }
     return (
-        <Paper>
+        <Paper sx={{
+            // width: "1000px"
+            minWidth: "604px"
+        }}>
             <Container
                 sx={{
                     display: "flex",
