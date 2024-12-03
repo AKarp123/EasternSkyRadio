@@ -170,7 +170,9 @@ const SetPlanner = () => {
                                     />
                                 )}
                                 {state.toggleNewSongForm && (
-                                    <Dialog open={state.toggleNewSongForm}>
+                                    <Dialog open={state.toggleNewSongForm} sx={{
+                                        overflow: "hidden"
+                                    }}>
                                         <DialogTitle>Add New Song</DialogTitle>
                                         <DialogContent>
                                             <SongForm
@@ -178,6 +180,17 @@ const SetPlanner = () => {
                                                 songData={state.curSong}
                                             />
                                         </DialogContent>
+                                        <DialogActions>
+                                            <Button
+                                                onClick={() =>
+                                                    dispatch({
+                                                        type: "toggleNewSongForm",
+                                                    })
+                                                }
+                                            >
+                                                Cancel
+                                            </Button>
+                                        </DialogActions>
                                     </Dialog>
                                 )}
                                 <SetPlannerButtons dispatch={dispatch} />
