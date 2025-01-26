@@ -187,6 +187,7 @@ const SetListItem = ({ song }) => {
                     display: "flex",
                     flexDirection: "column",
                     justifyContent: "center",
+                    width: "100%",
                 }}
             >
                 <Typography
@@ -201,13 +202,12 @@ const SetListItem = ({ song }) => {
                         //         : "25px !important",
                         textAlign: "left",
                         // Adjust this based on testing
-                        
                     }}
                 >
                     <AutoTextSize
                         mode="box"
                         minFontSizePx={15}
-                        maxFontSizePx={20}
+                        maxFontSizePx={25}
                     >
                         {song.artist} - {song.title}
                     </AutoTextSize>
@@ -221,7 +221,13 @@ const SetListItem = ({ song }) => {
                         fontStyle: "italic",
                     }}
                 >
-                    {song.album}
+                    <AutoTextSize
+                        mode="oneline"
+                        minFontSizePx={5}
+                        maxFontSizePx={25}
+                    >
+                        {song.album}
+                    </AutoTextSize>
                 </Typography>
             </Box>
         </Box>
