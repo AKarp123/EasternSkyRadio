@@ -238,7 +238,7 @@ const SetListItem = ({ song }) => {
                     }}
                 >
                     <AutoTextSize
-                        mode="oneline"
+                        mode="box"
                         minFontSizePx={5}
                         maxFontSizePx={25}
                     >
