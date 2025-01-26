@@ -2,8 +2,7 @@ import { useEffect, useState, useContext } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import ErrorContext from "../../providers/ErrorContext";
-import PageBackdrop from "../PageBackdrop";
-import PageHeader from "../PageHeader";
+import { AutoTextSize } from "auto-text-size";
 import {
     Container,
     Grid,
@@ -33,8 +32,8 @@ const Graphic = () => {
             .then((res) => {
                 setShowData(res.data.showData);
                 let tempSongList = [];
-                for(let i = 6*(offset-1); i < 6*offset; i++) {
-                    if(i < res.data.showData.songsList.length) {
+                for (let i = 6 * (offset - 1); i < 6 * offset; i++) {
+                    if (i < res.data.showData.songsList.length) {
                         tempSongList.push(res.data.showData.songsList[i]);
                     }
                 }
@@ -50,9 +49,9 @@ const Graphic = () => {
     const handleNext = () => {
         setOffset(offset + 1);
         let tempSongList = [];
-        let tOffset = offset+1;
-        for(let i = 6*(tOffset-1); i < 6*tOffset; i++) {
-            if(i < showData.songsList.length) {
+        let tOffset = offset + 1;
+        for (let i = 6 * (tOffset - 1); i < 6 * tOffset; i++) {
+            if (i < showData.songsList.length) {
                 tempSongList.push(showData.songsList[i]);
                 console.log(i);
             }
@@ -63,9 +62,9 @@ const Graphic = () => {
     const handlePrev = () => {
         setOffset(offset - 1);
         let tempSongList = [];
-        let tOffset = offset-1;
-        for(let i = 6*(tOffset-1); i < 6*tOffset; i++) {
-            if(i < showData.songsList.length) {
+        let tOffset = offset - 1;
+        for (let i = 6 * (tOffset - 1); i < 6 * tOffset; i++) {
+            if (i < showData.songsList.length) {
                 tempSongList.push(showData.songsList[i]);
             }
         }
@@ -78,66 +77,154 @@ const Graphic = () => {
 
     return (
         <>
-        <PageBackdrop width="70%">
+            {/* <PageBackdrop width="70%" height="90vh"> */}
             <Container
                 sx={{
                     textDecoration: "none",
                     color: "white",
                     display: "flex",
                     alignItems: "center",
-                    justifyContent: "center",
+                    justifyContent: "flex-start",
                     position: "relative",
                 }}
             >
                 <Typography
                     variant="h3"
                     align="center"
-
                     sx={{
                         fontFamily: "Tiny5, Roboto",
                         mx: "auto",
-                        height: "auto"
+                        marginBottom: "10px",
+                        height: "auto",
                     }}
                 >
-                    Show #{showId} - {new Date(showData.showDate).toDateString()}
+                    Show #{showId} -{" "}
+                    {new Date(showData.showDate).toDateString()}
                 </Typography>
             </Container>
 
-
-            <Container maxWidth={"lg"}>
+            <Container maxWidth={"md"}>
                 <Grid container spacing={2}>
-                    {songsList.map((song) => (
+                    {/* {songsList.map((song) => (
                         <Grid item xs={12} sm={6}>
                             <SetListCard song={song} key={song._id} />
                         </Grid>
-                    ))}
+                    ))} */}
+
+                    <Stack>
+                        {/* {showData.songsList.map((song) => (
+                                <SetListItem song={song} key={song._id} />
+                            ))} */}
+                        <Grid container spacing={0}>
+                            {showData.songsList.map((song) => {
+                                return (
+                                    <Grid item xs={12} sm={6} key={song._id}>
+                                        <SetListItem song={song} />
+                                    </Grid>
+                                );
+                            })}
+                        </Grid>
+                    </Stack>
                 </Grid>
             </Container>
-        </PageBackdrop>
-        <Container
+            {/* </PageBackdrop> */}
+            {/* <Container
+                sx={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    margin: "10px",
+                }}
+            >
+                <Button
+                    variant="contained"
+                    onClick={handlePrev}
+                    disabled={offset === 1}
+                >
+                    Previous
+                </Button>
+                <Button
+                    variant="contained"
+                    onClick={handleNext}
+                    disabled={6 * offset >= showData.songsList.length}
+                >
+                    Next
+                </Button>
+            </Container> */}
+        </>
+    );
+};
+
+const SetListItem = ({ song }) => {
+    return (
+        <Box
             sx={{
                 display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                margin: "10px",
+                flexDirection: "row",
+                justifyContent: "start",
             }}
         >
-            <Button
-                variant="contained"
-                onClick={handlePrev}
-                disabled={offset === 1}
+            <Box
+                sx={{
+                    height: "75px",
+                    width: "75px",
+                }}
             >
-                Previous
-            </Button>
-            <Button
-                variant="contained"
-                onClick={handleNext}
-                disabled={6*offset >= showData.songsList.length}
+                <img
+                    src={song.albumImageLoc}
+                    alt={song.title}
+                    style={{
+                        width: "75px",
+                        height: "75px",
+                        objectFit: "cover",
+                        padding: "8px",
+                        borderRadius: "20%",
+                    }}
+                />
+            </Box>
+            <Box
+                sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "center",
+                }}
             >
-                Next
-            </Button>
-        </Container>
-        </>
+                <Typography
+                    variant="h6"
+                    sx={{
+                        fontFamily: "PixelOperator, Roboto",
+                        // fontSize:
+                        //     song.title.length + song.artist.length > 43
+                        //         ? song.title.length + song.artist.length > 60
+                        //             ? "15px !important"
+                        //             : "20px !important"
+                        //         : "25px !important",
+                        textAlign: "left",
+                        // Adjust this based on testing
+                        
+                    }}
+                >
+                    <AutoTextSize
+                        mode="box"
+                        minFontSizePx={15}
+                        maxFontSizePx={20}
+                    >
+                        {song.artist} - {song.title}
+                    </AutoTextSize>
+                </Typography>
+                <Typography
+                    variant="body"
+                    sx={{
+                        fontFamily: "PixelOperator, Roboto",
+                        fontSize: "20px !important",
+                        textAlign: "left",
+                        fontStyle: "italic",
+                    }}
+                >
+                    {song.album}
+                </Typography>
+            </Box>
+        </Box>
     );
 };
 
@@ -201,12 +288,13 @@ const SetListCard = ({ song }) => {
                         <Typography
                             variant="h6"
                             sx={{
+                                fontFamily: "DogicaPixel, Roboto",
                                 fontSize:
                                     song.title.length > 24
                                         ? song.title.length > 48
-                                            ? "0.9rem !important"
-                                            : "1rem !important "
-                                        : "1.25rem !important",
+                                            ? "0.7rem !important"
+                                            : "0.8rem !important "
+                                        : "1rem !important",
                             }}
                         >
                             {song.title}

@@ -384,7 +384,11 @@ const SetPlannerCard = ({ song, state, dispatch, durationAtPoint, index }) => {
                                     </Typography>
                                 </>
                             )}
-                            <Typography>
+                            <Typography
+                                sx={{
+                                    
+                                }}
+                            >
                                 {song.title}&nbsp;-&nbsp;{song.artist}&nbsp;(
                                 {song.duration}min)
                             </Typography>
