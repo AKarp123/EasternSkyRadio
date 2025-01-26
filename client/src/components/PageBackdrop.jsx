@@ -7,7 +7,7 @@ import React, { useRef } from "react";
  * 
  * @todo Fix the height and layout cause im pretty sure its messing with the overflow scroll on other components
  */
-const PageBackdrop = ({ children, width }) => {
+const PageBackdrop = ({ children, width="100%", height="85vh" }) => {
     const parentref = useRef(null);
     return (
         <Container
@@ -22,8 +22,8 @@ const PageBackdrop = ({ children, width }) => {
         >
             <Paper
                 sx={{
-                    height: "85vh",
-                    width: { width: width ? width : "100%" },
+                    height: height,
+                    width: width,
                     margin: "0 auto",
                     border: "1.5px solid #495057",
                     borderRadius: "10px",
