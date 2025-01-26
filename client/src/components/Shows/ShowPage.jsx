@@ -83,7 +83,7 @@ const ShowPageMain = ({ showList, setShowList, parentref }) => {
                 justifyContent: "center",
             }}
         >
-            <InfiniteScroll
+            {/* <InfiniteScroll
                 pageStart={0}
                 loadMore={fetchMoreShows}
                 hasMore={showList[showList.length - 1].showId > 1}
@@ -91,11 +91,11 @@ const ShowPageMain = ({ showList, setShowList, parentref }) => {
                 useWindow={false}
                 getScrollParent={() => parentref.current}
                 threshold={1}
-            >
+            > */}
                 {showList.map((show, index) => (
                     <ShowListItem key={index} show={show} />
                 ))}
-            </InfiniteScroll>
+            {/* </InfiniteScroll> */}
         </Container>
     );
 };

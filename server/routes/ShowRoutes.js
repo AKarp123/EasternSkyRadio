@@ -43,7 +43,7 @@ showRouter.get("/getShows", async (req, res) => {
         const shows = await ShowEntry.find({}, { _id: 0, __v: 0 })
             .sort({ showId: "desc" })
             .skip(offset)
-            .limit(2);
+            .limit(5);
 
         // Remove songsList and id from each show object
         let s2 = shows.map((show) => show.toObject());
@@ -52,7 +52,7 @@ showRouter.get("/getShows", async (req, res) => {
     } else {
         const shows = await ShowEntry.find({}, { _id: 0, __v: 0 })
             .sort({ showId: "desc" })
-            .limit(5);
+            
         let s2 = shows.map((show) => show.toObject());
         s2 = s2.map(({ songsList, id, ...rest }) => rest);
         res.json(s2);
