@@ -78,7 +78,19 @@ const Graphic = () => {
     return (
         <>
             {/* <PageBackdrop width="70%" height="90vh"> */}
+            <Box
+            maxWidth={"md"}
+            //create invisible border so firefox will screenshot
+            sx={{
+                
+                mx: "auto",
+                // backdropFilter: "blur(10px)",
+                
+                
+            }}
+            >
             <Container
+                maxWidth={"md"}
                 sx={{
                     textDecoration: "none",
                     color: "white",
@@ -103,7 +115,10 @@ const Graphic = () => {
                 </Typography>
             </Container>
 
-            <Container maxWidth={"md"}>
+            <Container maxWidth={"md"}
+            
+            
+            >
                 <Grid container spacing={2}>
                     {/* {songsList.map((song) => (
                         <Grid item xs={12} sm={6}>
@@ -151,6 +166,7 @@ const Graphic = () => {
                     Next
                 </Button>
             </Container> */}
+            </Box>
         </>
     );
 };
