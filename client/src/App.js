@@ -116,29 +116,7 @@ function App() {
                             />
                         </Switch>
 
-                        <footer
-                            style={{
-                                position: "fixed",
-                                bottom: 0,
-                                left: 0,
-                                width: "100%",
-                                backgroundColor:
-                                    darkTheme.palette.background.default,
-                                color: "#888888 ",
-                                textAlign: "center",
-                                padding: "5px",
-                            }}
-                        >
-                            Created by Ashton Karp |{" "}
-                            <a
-                                href="https://github.com/AKarp123/EasternSkyRadio"
-                                style={{ color: "#888888" }}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                            >
-                                Source Code
-                            </a>
-                        </footer>
+                        
                     </div>
                 </UserProvider>
             </ErrorContext.Provider>

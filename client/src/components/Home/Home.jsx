@@ -31,8 +31,6 @@ const Home = React.memo(() => {
             });
     }, []);
 
-    
-   
     const nextShowDate = () => {
         let now = new Date();
         let nextShow = new Date(
@@ -106,6 +104,28 @@ const Home = React.memo(() => {
                         />
                     </Stack>
                 </Container>
+                <footer
+                    style={{
+                        position: "fixed",
+                        bottom: 0,
+                        left: 0,
+                        width: "100%",
+
+                        color: "#888888 ",
+                        textAlign: "center",
+                        fontFamily: "PixelOperator, Roboto",
+                    }}
+                >
+                    Created by Ashton Karp |{" "}
+                    <a
+                        href="https://github.com/AKarp123/EasternSkyRadio"
+                        style={{ color: "#888888" }}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        Source Code
+                    </a>
+                </footer>
             </Paper>
             <Typography
                 variant="p"
