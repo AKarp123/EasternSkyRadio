@@ -57,7 +57,7 @@ const SongSearch = ({ dispatch, parent }) => {
                 sx={{
                     justifyContent: "center",
                     overflow: "auto",
-                    height: parent === "Set Planner" ? "23vh" : "355px", //absolute genius
+                    height: parent === "Set Planner" ? "43vh" : "355px", //absolute genius
                     maxHeight: parent === "Set Planner" ? "396px" : "355px", //absolute genius 
                     "&::-webkit-scrollbar": {
                         width: "0.4em",
