@@ -2,7 +2,6 @@ import React, { useState, useContext } from "react";
 import axios from "axios";
 import { useDebouncedCallback } from "use-debounce";
 import {
-    Container,
     TextField,
     Stack,
     Typography,
@@ -41,12 +40,13 @@ const SongSearch = ({ dispatch, parent }) => {
     }, 500);
 
     return (
-        <Box sx={{
-            alignItems: "center",
-            justifyContent: "center",
-           
-            pr: 1, // Add some padding for scrollbar
-        }}>
+        <Box
+            sx={{
+                alignItems: "center",
+                justifyContent: "center",
+                pr: 1, // Padding right in case of a scrollbar
+            }}
+        >
             <TextField
                 label="Search"
                 onChange={(e) => searchDebounced(e.target.value)}
@@ -56,9 +56,11 @@ const SongSearch = ({ dispatch, parent }) => {
             <Box
                 sx={{
                     justifyContent: "center",
-                    overflow: "auto",
-                    height: parent === "Set Planner" ? "43vh" : "355px", //absolute genius
-                    maxHeight: parent === "Set Planner" ? "396px" : "355px", //absolute genius 
+                    overflowY: "auto", // Use vertical scroll only
+                    height: parent === "Set Planner" ? "43vh" : "355px", // Set fixed height
+                    maxHeight: parent === "Set Planner" ? "396px" : "355px",
+                    paddingBottom: "16px", // Add extra padding so the last card isn’t cut off
+                    boxSizing: "border-box",
                     "&::-webkit-scrollbar": {
                         width: "0.4em",
                     },
@@ -90,7 +92,6 @@ const SongSearch = ({ dispatch, parent }) => {
     );
 };
 
-// Rest of the component remains the same as in the original code
 const SongSearchCard = ({ song, dispatch, parent }) => {
     const lastPlayed = new Date(song.lastPlayed);
 
@@ -105,14 +106,9 @@ const SongSearchCard = ({ song, dispatch, parent }) => {
                 backdropFilter: "blur(3px)",
             }}
         >
-            <Box
-                sx={{
-                    display: "flex",
-                    flexWrap: "nowrap",
-                }}
-            >
+            <Box sx={{ display: "flex", flexWrap: "nowrap" }}>
                 <CardMedia
-                    component={"img"}
+                    component="img"
                     image={song.albumImageLoc}
                     sx={{
                         width: "125px",
@@ -168,7 +164,6 @@ const SongSearchCard = ({ song, dispatch, parent }) => {
     );
 };
 
-// Buttons component remains the same as in the original code
 const Buttons = ({ parent, dispatch, song }) => {
     if (parent === "New Show") {
         return (
