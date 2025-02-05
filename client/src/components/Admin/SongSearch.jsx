@@ -56,10 +56,11 @@ const SongSearch = ({ dispatch, parent }) => {
             <Box
                 sx={{
                     justifyContent: "center",
-                    overflowY: "auto", // Use vertical scroll only
-                    height: parent === "Set Planner" ? "43vh" : "355px", // Set fixed height
-                    maxHeight: parent === "Set Planner" ? "396px" : "355px",
-                    paddingBottom: "16px", // Add extra padding so the last card isn’t cut off
+                    overflowY: "auto",
+                    // Use vh units to scale with screen height:
+                    height: parent === "Set Planner" ? "40vh" : "60vh",
+                    maxHeight: parent === "Set Planner" ? "40vh" : "60vh",
+                    paddingBottom: "16px", // Extra padding so the last card isn’t cut off
                     boxSizing: "border-box",
                     "&::-webkit-scrollbar": {
                         width: "0.4em",
