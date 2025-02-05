@@ -232,6 +232,16 @@ export const reducer = (state, action) => {
             };
         case "load":
             return action.payload;
+        case "loadSync": 
+            return {
+                ...state,
+                songsList: action.payload
+            }
+        case "setSyncStatus": 
+            return {
+                ...state,
+                syncStatus: action.payload,
+            }
         case "reset":
             localStorage.removeItem("savedState");
             return {

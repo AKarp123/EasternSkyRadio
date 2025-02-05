@@ -46,18 +46,53 @@ const SetPlanner = () => {
         toggleNewSongForm: false,
         toggleDurationForm: false,
         duration: "",
+        syncStatus: "",
     });
 
+    console.log(state);
+
     useEffect(() => {
-        let savedState = localStorage.getItem("savedState");
-        if (savedState) {
-            dispatch({ type: "load", payload: JSON.parse(savedState) });
-        }
+        axios
+            .get("/api/sync", { params: { type: "SetPlanner" } })
+            .then((res) => {
+                let data = res.data;
+                if (
+                    res.data.success === false &&
+                    res.data.message === "No data provided."
+                ) {
+                    return;
+                } else {
+                    dispatch({ type: "loadSync", payload: data.data });
+                }
+            });
     }, []);
 
-    const save = () => {
-        localStorage.setItem("savedState", JSON.stringify(state));
-    };
+    useEffect(() => {
+        dispatch({ type: "setSyncStatus", payload: "Syncing..." });
+        axios
+            .post("/api/sync", { type: "SetPlanner", data: state.songsList })
+            .then((res) => {
+                if (res.data.success === false) {
+                    console.log(res.data.message);
+
+                    dispatch({
+                        type: "setSyncStatus",
+                        payload: "Error syncing",
+                    });
+                }
+                const timeStr = new Date(res.data.timestamp)
+                    .toLocaleTimeString("en-US", {
+                        hour: "numeric",
+                        minute: "numeric",
+                    })
+                    .toLowerCase()
+                    .replace(/\s/g, "");
+                dispatch({
+                    type: "setSyncStatus",
+                    payload: `Last synced at ${timeStr}`,
+                });
+            });
+    }, [state.songsList]);
 
     const calculateDurationAtPoint = () => {
         let arr = [];
@@ -88,22 +123,36 @@ const SetPlanner = () => {
             <Container
                 sx={{
                     height: "100%",
-                    overflow: {xs: "auto", sm: "hidden"},
+                    overflow: { xs: "auto", sm: "hidden" },
                 }}
             >
                 <Grid container spacing={2} sx={{ height: { md: "100%" } }}>
-                    <Grid item xs={12} sm={8} sx={{ height: { md: "100%" }, width: {
-                        xs: "100%",
-
-                    },
-                    overflowX: { xs: "auto", md: "hidden"}
-                    }}>
-                        <Typography
-                            variant="h6"
-                            sx={{ alignItems: "center", mb: 1 }}
+                    <Grid
+                        item
+                        xs={12}
+                        sm={8}
+                        sx={{
+                            height: { md: "100%" },
+                            width: {
+                                xs: "100%",
+                            },
+                            overflowX: { xs: "auto", md: "hidden" },
+                        }}
+                    >
+                        <Box
+                            sx={{
+                                display: "flex",
+                                justifyContent: "center",
+                                gap: "10px",
+                                alignItems: "center",
+                            }}
                         >
-                            Set List
-                        </Typography>
+                            <Typography variant="h6">Set Planner</Typography>
+                            <Typography variant="subtitle1" color={"textSecondary"}>
+                                {state.syncStatus}
+                            </Typography>
+                        </Box>
+
                         <Stack
                             spacing={1}
                             sx={{
@@ -126,7 +175,7 @@ const SetPlanner = () => {
                                 />
                             ))}
                         </Stack>
-                        {state.songsList.length > 0 && (
+                        {/* {state.songsList.length > 0 && (
                             <Box
                                 sx={{
                                     my: 1,
@@ -140,11 +189,9 @@ const SetPlanner = () => {
                                     Reset
                                 </Button>
                             </Box>
-                        )}
+                        )} */}
                     </Grid>
-                    <Grid item xs={12} sm={4} sx={{
-
-                    }}>
+                    <Grid item xs={12} sm={4} sx={{}}>
                         <Typography variant="h6" sx={{ alignItems: "center" }}>
                             Add
                         </Typography>
@@ -173,9 +220,12 @@ const SetPlanner = () => {
                                     />
                                 )}
                                 {state.toggleNewSongForm && (
-                                    <Dialog open={state.toggleNewSongForm} sx={{
-                                        overflow: "hidden"
-                                    }}>
+                                    <Dialog
+                                        open={state.toggleNewSongForm}
+                                        sx={{
+                                            overflow: "hidden",
+                                        }}
+                                    >
                                         <DialogTitle>Add New Song</DialogTitle>
                                         <DialogContent>
                                             <SongForm
@@ -254,11 +304,9 @@ const SetPlannerCard = ({ song, state, dispatch, durationAtPoint, index }) => {
     }
     if (song.type === "Break") {
         return (
-            <Paper sx={{
-            }}>
+            <Paper sx={{}}>
                 <Container
                     sx={{
-                        
                         display: "flex",
                         backgroundColor: "rgba(65, 65, 65, 0.5)",
                         borderRadius: "3px",
@@ -315,10 +363,12 @@ const SetPlannerCard = ({ song, state, dispatch, durationAtPoint, index }) => {
         );
     }
     return (
-        <Paper sx={{
-            // width: "1000px"
-            minWidth: "604px"
-        }}>
+        <Paper
+            sx={{
+                // width: "1000px"
+                minWidth: "604px",
+            }}
+        >
             <Container
                 sx={{
                     display: "flex",
@@ -384,11 +434,7 @@ const SetPlannerCard = ({ song, state, dispatch, durationAtPoint, index }) => {
                                     </Typography>
                                 </>
                             )}
-                            <Typography
-                                sx={{
-                                    
-                                }}
-                            >
+                            <Typography sx={{}}>
                                 {song.title}&nbsp;-&nbsp;{song.artist}&nbsp;(
                                 {song.duration}min)
                             </Typography>

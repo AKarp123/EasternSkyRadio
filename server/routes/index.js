@@ -10,6 +10,7 @@ import requireLogin from "./requireLogin.js";
 import { generateStats, updateShowTimes } from "../dbMethods.js";
 import axios from "axios";
 import NodeCache from "node-cache";
+import SyncRouter from "./SyncRoutes.js";
 
 const statsCache = new NodeCache({ stdTTL: 300 });
 
@@ -159,5 +160,5 @@ router.post("/uploadURL", requireLogin, async (req, res) => {
 
 router.use("/", showRouter);
 router.use("/", SongRouter);
-
+router.use("/", SyncRouter);
 export default router;
