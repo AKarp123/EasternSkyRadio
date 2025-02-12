@@ -217,6 +217,10 @@ const SongForm = ({ songData, dispatch, type, submit }) => {
                         album.toUpperCase()
                     ) {
                         dispatch({
+                            type: "elcroId",
+                            payload: res.data.searchResults[0].elcroId,
+                        })
+                        dispatch({
                             type: "album",
                             payload: res.data.searchResults[0].album,
                         });
@@ -228,7 +232,6 @@ const SongForm = ({ songData, dispatch, type, submit }) => {
                             type: "albumImageLoc",
                             payload: res.data.searchResults[0].albumImageLoc,
                         });
-
                         dispatch({
                             type: "setSongReleaseLoc",
                             payload: res.data.searchResults[0].songReleaseLoc,
