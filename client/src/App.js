@@ -47,8 +47,8 @@ function App() {
     return (
         <ThemeProvider theme={darkTheme}>
             <CssBaseline />
-            {/* {process.env.NODE_ENV === "production" && <StarParticles />} */}
-            <StarParticles />
+            {process.env.NODE_ENV === "production" && <StarParticles />}
+            {/* <StarParticles /> */}
             <ErrorContext.Provider value={displayError}>
                 <UserProvider>
                     <div className="App">

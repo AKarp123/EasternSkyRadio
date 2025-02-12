@@ -101,6 +101,27 @@ export const removeMissingShows = async () => {
     }
 };
 
+export const removeMissingSongs = async () => {
+    try {
+        // Get all songs sorted by songId
+        const songs = await SongEntry.find().sort({ songId: "asc" });
+
+        // Update songIds to be sequential starting from 1
+        for (let i = 0; i < songs.length; i++) {
+            songs[i].songId = i + 1;
+            await songs[i].save();
+        }
+        await Increment.findOneAndUpdate(
+            { model: "SongEntry" },
+            { $set: { counter: songs.length } }
+        );
+
+        console.log("Song IDs updated successfully.");
+    } catch (error) {
+        console.error("Error updating song IDs:", error);
+    }
+}
+
 export const generateStats = async () => {
     const data = {
         totalShows: 0,
