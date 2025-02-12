@@ -115,10 +115,9 @@ const Graphic = () => {
                 </Typography>
             </Container>
 
-            <Container maxWidth={"md"}
-            
-            
-            >
+            <Container sx={{
+                width: "800px"
+            }}>
                 <Grid container spacing={2}>
                     {/* {songsList.map((song) => (
                         <Grid item xs={12} sm={6}>
