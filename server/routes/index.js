@@ -11,6 +11,7 @@ import { generateStats, updateShowTimes } from "../dbMethods.js";
 import axios from "axios";
 import NodeCache from "node-cache";
 import SyncRouter from "./SyncRoutes.js";
+import UserRouter from "./UserRoutes.js";
 
 const statsCache = new NodeCache({ stdTTL: 300 });
 
@@ -50,6 +51,7 @@ router.post("/login", passport.authenticate("local"), async (req, res) => {
         res.json({ success: false, message: "Incorrect Password" });
     }
 });
+
 
 router.get("/getUser", (req, res) => {
     if (req.user) {
@@ -161,4 +163,5 @@ router.post("/uploadURL", requireLogin, async (req, res) => {
 router.use("/", showRouter);
 router.use("/", SongRouter);
 router.use("/", SyncRouter);
+router.use("/user", requireLogin, UserRouter);
 export default router;
