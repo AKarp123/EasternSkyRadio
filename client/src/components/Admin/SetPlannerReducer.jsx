@@ -235,7 +235,8 @@ export const reducer = (state, action) => {
         case "loadSync": 
             return {
                 ...state,
-                songsList: action.payload
+                songsList: action.payload,
+                firstLoad: false
             }
         case "setSyncStatus": 
             return {

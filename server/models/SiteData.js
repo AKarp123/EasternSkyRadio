@@ -9,6 +9,7 @@ const siteDataSchema = new Schema(
         onBreak: { type: Boolean, required: true, default: false },
         showDay: { type: Number, required: true },
         showHour: { type: Number, required: true },
+        timeZone: { type: String, required: true, default: "America/New_York" },
         showLength: { type: Number, required: true, default: 1 },
         messageOfTheDay: { type: String, required: false },
     },
@@ -42,7 +43,7 @@ const siteDataSchema = new Schema(
                         now.getFullYear(),
                         now.getMonth(),
                         now.getDate(),
-                        this.showHour
+                        this.showHour,
                     );
                     let daysUntilNextShow = (this.showDay - now.getDay() + 7) % 7;
 

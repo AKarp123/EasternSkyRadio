@@ -47,9 +47,9 @@ const SetPlanner = () => {
         toggleDurationForm: false,
         duration: "",
         syncStatus: "",
+        firstLoad: true,
     });
 
-    console.log(state);
 
     useEffect(() => {
         axios
@@ -68,6 +68,9 @@ const SetPlanner = () => {
     }, []);
 
     useEffect(() => {
+        if (state.firstLoad) {
+            return;
+        }
         dispatch({ type: "setSyncStatus", payload: "Syncing..." });
         axios
             .post("/api/sync", { type: "SetPlanner", data: state.songsList })
