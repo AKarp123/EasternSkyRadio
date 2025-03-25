@@ -15,6 +15,7 @@ import {
     DialogActions,
     Box,
     Link,
+    Tooltip,
 } from "@mui/material";
 import PageBackdrop from "../PageBackdrop";
 import PageHeader from "../PageHeader";
@@ -437,10 +438,12 @@ const SetPlannerCard = ({ song, state, dispatch, durationAtPoint, index }) => {
                                     </Typography>
                                 </>
                             )}
-                            <Typography sx={{}}>
-                                {song.title}&nbsp;-&nbsp;{song.artist}&nbsp;(
-                                {song.duration}min)
-                            </Typography>
+                            <Tooltip variant="outlined" title={song.origTitle} placement="top">
+                                <Typography sx={{}}>
+                                    {song.title}&nbsp;-&nbsp;{song.artist}&nbsp;(
+                                    {song.duration}min)
+                                </Typography>
+                            </Tooltip>
                         </Box>
                     </Box>
 
