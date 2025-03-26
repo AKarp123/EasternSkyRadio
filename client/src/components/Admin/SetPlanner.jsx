@@ -438,7 +438,7 @@ const SetPlannerCard = ({ song, state, dispatch, durationAtPoint, index }) => {
                                     </Typography>
                                 </>
                             )}
-                            <Tooltip variant="outlined" title={song.origTitle} placement="top">
+                            <Tooltip variant="outlined" title={song.origTitle} placement="top-start" arrow>
                                 <Typography sx={{}}>
                                     {song.title}&nbsp;-&nbsp;{song.artist}&nbsp;(
                                     {song.duration}min)
