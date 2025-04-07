@@ -179,6 +179,16 @@ const SetPlanner = () => {
                                 />
                             ))}
                         </Stack>
+                        <Button
+                            onClick={() => {
+                                dispatch({
+                                    type: "clearList"
+                                });
+                            }}
+                            
+                        >
+                            Clear List
+                        </Button>
                         {/* {state.songsList.length > 0 && (
                             <Box
                                 sx={{
