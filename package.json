@@ -6,7 +6,8 @@
       "server": "cd server && nodemon app.js",
       "client": "cd client && npm run start",
       "dev": "concurrently \"npm run server\" \"npm run client\"",
-      "install": "cd client && npm install --force && cd ../server && npm install"
+      "install": "cd client && npm install --force && cd ../server && npm install",
+      "build": "cd client && vite build"
     },
     "keywords": [],
     "author": "",

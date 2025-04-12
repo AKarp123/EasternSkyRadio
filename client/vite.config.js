@@ -17,7 +17,7 @@ export default defineConfig(({ mode }) => {
                     ws: true,
                 },
             },
-
-        }
+            open: true,
+        },
     };
 });
