@@ -51,7 +51,6 @@ const SetPlanner = () => {
         firstLoad: true,
     });
 
-
     useEffect(() => {
         axios
             .get("/api/sync", { params: { type: "SetPlanner" } })
@@ -152,7 +151,10 @@ const SetPlanner = () => {
                             }}
                         >
                             <Typography variant="h6">Set Planner</Typography>
-                            <Typography variant="subtitle1" color={"textSecondary"}>
+                            <Typography
+                                variant="subtitle1"
+                                color={"textSecondary"}
+                            >
                                 {state.syncStatus}
                             </Typography>
                         </Box>
@@ -182,10 +184,9 @@ const SetPlanner = () => {
                         <Button
                             onClick={() => {
                                 dispatch({
-                                    type: "clearList"
+                                    type: "clearList",
                                 });
                             }}
-                            
                         >
                             Clear List
                         </Button>
@@ -448,9 +449,15 @@ const SetPlannerCard = ({ song, state, dispatch, durationAtPoint, index }) => {
                                     </Typography>
                                 </>
                             )}
-                            <Tooltip variant="outlined" title={song.origTitle} placement="top-start" arrow>
+                            <Tooltip
+                                variant="outlined"
+                                title={song.origTitle}
+                                placement="top-start"
+                                arrow
+                            >
                                 <Typography sx={{}}>
-                                    {song.title}&nbsp;-&nbsp;{song.artist}&nbsp;(
+                                    {song.title}&nbsp;-&nbsp;{song.artist}
+                                    &nbsp;(
                                     {song.duration}min)
                                 </Typography>
                             </Tooltip>

@@ -79,7 +79,10 @@ const ShowPageMain = ({ showList, setShowList, parentref }) => {
                 display: "flex",
                 flexDirection: "column",
                 alignItems: "center",
-                justifyContent: "center",
+                justifyContent: "flex-start",
+                height: "100%",
+                overflowY: "auto", // allows scrolling when content overflows
+                padding: "0px",
             }}
         >
             {/* <InfiniteScroll
@@ -91,9 +94,9 @@ const ShowPageMain = ({ showList, setShowList, parentref }) => {
                 getScrollParent={() => parentref.current}
                 threshold={1}
             > */}
-                {showList.map((show, index) => (
-                    <ShowListItem key={index} show={show} />
-                ))}
+            {showList.map((show, index) => (
+                <ShowListItem key={index} show={show} />
+            ))}
             {/* </InfiniteScroll> */}
         </Container>
     );

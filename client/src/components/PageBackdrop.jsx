@@ -1,8 +1,6 @@
 import { Paper, Container } from "@mui/material";
 import React, { useRef } from "react";
 
-
-
 /**
  * 
  * @todo Fix the height and layout cause im pretty sure its messing with the overflow scroll on other components
@@ -14,10 +12,8 @@ const PageBackdrop = ({ children, width="100%", height="85vh" }) => {
             sx={{
                 display: "flex",
                 justifyContent: "center",
+                alignItems: "center",
                 height: "100vh",
-                // alignItems: "center",
-                flexDirection: "column",
-                overflow: "hidden !important" 
             }}
         >
             <Paper
@@ -30,7 +26,7 @@ const PageBackdrop = ({ children, width="100%", height="85vh" }) => {
                     backgroundColor: "rgba(56, 56, 56, 0.5)",
                     WebkitBackdropFilter: "blur(3px)",
                     backdropFilter: "blur(3px)",
-                    overflow: "auto",
+                    overflowY: "hidden"
                 }}
                 ref={parentref}
             >
