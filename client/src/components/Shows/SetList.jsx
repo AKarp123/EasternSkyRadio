@@ -60,23 +60,25 @@ const SetList = () => {
 
     return (
         <PageBackdrop>
-            <Box sx={{ overflowY: "auto" }}>
+            <Box sx={{ display: "flex", flexDirection: "column", height: "100%", width: "100%" }}>
                 <PageHeader title={`Show #${showId}`} />
                 <Divider sx={{ mb: "24px" }} />
 
-                <Container maxWidth={"lg"}>
-                    <Grid container spacing={2}>
-                        {loading ? (
-                            <Typography>Loading...</Typography>
-                        ) : (
-                            showData.songsList.map((song) => (
-                                <Grid item xs={12} sm={6} md={4}>
-                                    <SetListCard song={song} key={song._id} />
-                                </Grid>
-                            ))
-                        )}
-                    </Grid>
-                </Container>
+                <Box sx={{ flex: 1, overflowY: "auto" }}>
+                    <Container maxWidth={"lg"}>
+                        <Grid container spacing={2}>
+                            {loading ? (
+                                <Typography>Loading...</Typography>
+                            ) : (
+                                showData.songsList.map((song) => (
+                                    <Grid item xs={12} sm={6} md={4}>
+                                        <SetListCard song={song} key={song._id} />
+                                    </Grid>
+                                ))
+                            )}
+                        </Grid>
+                    </Container>
+                </Box>
             </Box>
         </PageBackdrop>
     );
