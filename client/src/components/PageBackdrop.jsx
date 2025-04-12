@@ -26,7 +26,7 @@ const PageBackdrop = ({ children, width = "100%", height = "85vh" }) => {
                     backgroundColor: "rgba(56, 56, 56, 0.5)",
                     WebkitBackdropFilter: "blur(3px)",
                     backdropFilter: "blur(3px)",
-                    overflowY: "hidden",
+                    overflowY: "hidden"
                 }}
                 ref={parentref}
             >
