@@ -36,6 +36,7 @@ const ShowPage = ({ parentRef }) => {
         <PageBackdrop>
             <PageHeader title="Shows" />
             <Divider />
+            <Box sx={{ flex: 1, overflowY: "auto" }}>
             {loading ? (
                 <CircularProgress />
             ) : (
@@ -45,6 +46,7 @@ const ShowPage = ({ parentRef }) => {
                     parentRef={parentRef}
                 />
             )}
+            </Box>
         </PageBackdrop>
     );
 };
@@ -80,8 +82,6 @@ const ShowPageMain = ({ showList, setShowList, parentref }) => {
                 flexDirection: "column",
                 alignItems: "center",
                 justifyContent: "flex-start",
-                height: "100%",
-                overflowY: "auto", // allows scrolling when content overflows
                 padding: "0px",
             }}
         >

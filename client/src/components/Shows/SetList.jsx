@@ -60,7 +60,6 @@ const SetList = () => {
 
     return (
         <PageBackdrop>
-            <Box sx={{ display: "flex", flexDirection: "column", height: "100%", width: "100%" }}>
                 <PageHeader title={`Show #${showId}`} />
                 <Divider sx={{ mb: "24px" }} />
 
@@ -79,7 +78,6 @@ const SetList = () => {
                         </Grid>
                     </Container>
                 </Box>
-            </Box>
         </PageBackdrop>
     );
 };
