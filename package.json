@@ -4,10 +4,10 @@
     "description": "",
     "scripts": {
       "server": "cd server && nodemon app.js",
-      "client": "cd client && npm run start",
-      "dev": "concurrently \"npm run server\" \"npm run client\"",
+      "client": "cd client && pnpm run start",
+      "dev": "concurrently \"pnpm run server\" \"pnpm run client\"",
       "install" : "cd client && pnpm install",
-      "build": "cd client && vite build"
+      "build": "cd client && pnpm run build"
     },
     "keywords": [],
     "author": "",
