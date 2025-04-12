@@ -22,7 +22,7 @@ import AppleIcon from "@mui/icons-material/Apple";
 import YouTubeIcon from "@mui/icons-material/YouTube";
 import MusicIcon from "@mui/icons-material/MusicNote";
 import DoNotDisturbIcon from "@mui/icons-material/DoNotDisturb";
-import { ReactComponent as SpotifyIcon } from "../../icons/spotify.svg";
+import SpotifyIcon from "../../icons/spotify.svg?react";
 import { useState, useEffect, useContext, useRef } from "react";
 import axios from "axios";
 import ErrorContext from "../../providers/ErrorContext";

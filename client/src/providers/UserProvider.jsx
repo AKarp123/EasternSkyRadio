@@ -6,7 +6,7 @@ const UserContext = createContext();
 
 export const useAuth = () => useContext(UserContext);
 
-export const UserProvider = ({ children }) => {
+const UserProvider = ({ children }) => {
     const [user, setUser] = useState("Loading");
     const setError = useContext(ErrorContext);
 
@@ -33,3 +33,6 @@ export const UserProvider = ({ children }) => {
         </UserContext.Provider>
     );
 };
+
+export default UserProvider;
+export { UserProvider };
