@@ -61,9 +61,9 @@ const SetList = () => {
     return (
         <PageBackdrop>
                 <PageHeader title={`Show #${showId}`} />
-                <Divider sx={{ mb: "24px" }} />
+                <Divider />
 
-                <Box sx={{ flex: 1, overflowY: "auto" }}>
+                <Box sx={{ flex: 1, overflowY: "auto", pt: "24px" }}>
                     <Container maxWidth={"lg"}>
                         <Grid container spacing={2}>
                             {loading ? (

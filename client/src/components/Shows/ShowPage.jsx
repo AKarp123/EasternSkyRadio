@@ -1,5 +1,4 @@
 import PageBackdrop from "../PageBackdrop";
-import InfiniteScroll from "react-infinite-scroller";
 import { useContext, useEffect, useState } from "react";
 import {
     Container,
@@ -9,6 +8,7 @@ import {
     Divider,
     Stack,
     Link as MUILink,
+    Box,
 } from "@mui/material";
 import { Link } from "react-router-dom";
 import ErrorContext from "../../providers/ErrorContext";
