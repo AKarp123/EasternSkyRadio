@@ -11,6 +11,7 @@ import {
     Button,
     Stack,
     Tooltip,
+    Box
 } from "@mui/material";
 import PageBackdrop from "../PageBackdrop";
 import PageHeader from "../PageHeader";
@@ -120,90 +121,96 @@ const EditShows = () => {
         <PageBackdrop>
             <PageHeader title="Edit Show Log" />
             <Divider sx={{ mb: 2 }} />
-            <Container>
-                <Grid container spacing={2}>
-                    <Grid item xs={12}>
-                        <Stack direction="row" spacing={2}>
+            <Box sx={{
+                flex: 1,
+                overflowY: { xs: "auto", md: "hidden" },
+             // Padding right in case of a scrollbar
+            }}>
+                <Container>
+                    <Grid container spacing={2}>
+                        <Grid item xs={12}>
+                            <Stack direction="row" spacing={2}>
+                                <TextField
+                                    label="Show ID"
+                                    fullWidth
+                                    value={showId}
+                                    onChange={(e) => {
+                                        e.preventDefault();
+                                        setShowId(e.target.value);
+                                        fillShow();
+                                    }}
+                                />
+                                <Button onClick={(e) => submit()}>Submit</Button>
+                                <Button color="error" onClick={(e) => deleteShow()}>
+                                    Delete Show
+                                </Button>
+                            </Stack>
+                
+                        </Grid>
+                        <Grid item xs={12} sm={6}>
                             <TextField
-                                label="Show ID"
+                                label="Show Date"
+                                type="date"
                                 fullWidth
-                                value={showId}
+                                value={showData.showDate.split("T")[0]}
                                 onChange={(e) => {
                                     e.preventDefault();
-                                    setShowId(e.target.value);
-                                    fillShow();
+                                    dispatch({
+                                        type: "showDate",
+                                        payload: e.target.value,
+                                    });
                                 }}
                             />
-                            <Button onClick={(e) => submit()}>Submit</Button>
-                            <Button color="error" onClick={(e) => deleteShow()}> 
-                                Delete Show
-                            </Button>
-                        </Stack>
-                       
-                    </Grid>
-                    <Grid item xs={12} sm={6}>
-                        <TextField
-                            label="Show Date"
-                            type="date"
-                            fullWidth
-                            value={showData.showDate.split("T")[0]}
-                            onChange={(e) => {
-                                e.preventDefault();
-                                dispatch({
-                                    type: "showDate",
-                                    payload: e.target.value,
-                                });
-                            }}
-                        />
-                    </Grid>
-                    <Grid item xs={12} sm={6}>
-                        <TextField
-                            label="Show Description"
-                            fullWidth
-                            value={showData.showDescription}
-                        />
-                    </Grid>
-                    <Grid item xs={12} sm={6}>
-                        <Tabs
-                            value={tab}
-                            onChange={(e, val) => setTab(val)}
-                            centered
-                            sx={{ mb: 2 }}
-                        >
-                            <Tab label="Add Song" />
-                            <Tab label="Edit Song Order" />
-                        </Tabs>
-                        {tab === 0 ? (
-                            <SongSearch
-                                dispatch={dispatch}
-                                parent="Edit Show"
+                        </Grid>
+                        <Grid item xs={12} sm={6}>
+                            <TextField
+                                label="Show Description"
+                                fullWidth
+                                value={showData.showDescription}
                             />
-                        ) : (
-                            <EditSongOrder editOrder={editOrder} />
-                        )}
-                    </Grid>
-                    <Grid item xs={12} sm={6}>
-                        <List
-                            sx={{
-                                width: "100%",
-                                overflowY: "auto",
-                                maxHeight: "400px",
-                                border: "1.5px solid #495057",
-                                borderRadius: "10px",
-                            }}
-                        >
-                            {showData.songsList.map((song, index) => (
-                                <SongListItem
-                                    song={song}
-                                    removeSong={removeSong}
-                                    key={index}
-                                    index={index}
+                        </Grid>
+                        <Grid item xs={12} sm={6}>
+                            <Tabs
+                                value={tab}
+                                onChange={(e, val) => setTab(val)}
+                                centered
+                                sx={{ mb: 2 }}
+                            >
+                                <Tab label="Add Song" />
+                                <Tab label="Edit Song Order" />
+                            </Tabs>
+                            {tab === 0 ? (
+                                <SongSearch
+                                    dispatch={dispatch}
+                                    parent="Edit Show"
                                 />
-                            ))}
-                        </List>
+                            ) : (
+                                <EditSongOrder editOrder={editOrder} />
+                            )}
+                        </Grid>
+                        <Grid item xs={12} sm={6}>
+                            <List
+                                sx={{
+                                    width: "100%",
+                                    overflowY: "auto",
+                                    maxHeight: "45vh",
+                                    border: "1.5px solid #495057",
+                                    borderRadius: "10px",
+                                }}
+                            >
+                                {showData.songsList.map((song, index) => (
+                                    <SongListItem
+                                        song={song}
+                                        removeSong={removeSong}
+                                        key={index}
+                                        index={index}
+                                    />
+                                ))}
+                            </List>
+                        </Grid>
                     </Grid>
-                </Grid>
-            </Container>
+                </Container>
+            </Box>
         </PageBackdrop>
     );
 };
