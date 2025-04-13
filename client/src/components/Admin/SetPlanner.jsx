@@ -126,20 +126,22 @@ const SetPlanner = () => {
             <Container
                 sx={{
                     height: "100%",
-                    overflow: { xs: "auto", sm: "hidden" },
+                    overflow: { xs: "auto", lg: "hidden" },
                 }}
             >
                 <Grid container spacing={2} sx={{ height: { md: "100%" } }}>
                     <Grid
                         item
                         xs={12}
-                        sm={8}
+                        lg={8}
                         sx={{
                             height: { md: "100%" },
                             width: {
                                 xs: "100%",
                             },
-                            overflowX: { xs: "auto", md: "hidden" },
+                            display: "flex",
+                            flexDirection: "column",
+                            overflowY: "hidden",
                         }}
                     >
                         <Box
@@ -159,28 +161,29 @@ const SetPlanner = () => {
                             </Typography>
                         </Box>
 
-                        <Stack
-                            spacing={1}
+                        <Box
                             sx={{
-                                width: "100%",
-                                overflowX: "auto",
-                                maxHeight: { md: "65%" },
-                                "&::-webkit-scrollbar": {
-                                    width: "0.4em",
-                                },
+                                flex: 1,
+                                overflowY: "auto",
+
                             }}
                         >
                             {state.songsList.map((song, index) => (
-                                <SetPlannerCard
-                                    song={song}
-                                    state={state}
-                                    dispatch={dispatch}
-                                    durationAtPoint={duration[index]}
-                                    key={index}
-                                    index={index}
-                                />
+                                <Box sx={{
+                                    mb: 1,
+                                }}>
+                                    <SetPlannerCard
+                                        song={song}
+                                        state={state}
+                                        dispatch={dispatch}
+                                        durationAtPoint={duration[index]}
+                                        key={index}
+                                        index={index}
+                                    />
+                                </Box>
                             ))}
-                        </Stack>
+                        </Box>
+
                         <Button
                             onClick={() => {
                                 dispatch({
@@ -206,7 +209,7 @@ const SetPlanner = () => {
                             </Box>
                         )} */}
                     </Grid>
-                    <Grid item xs={12} sm={4} sx={{}}>
+                    <Grid item xs={12} lg={4} sx={{}}>
                         <Typography variant="h6" sx={{ alignItems: "center" }}>
                             Add
                         </Typography>
