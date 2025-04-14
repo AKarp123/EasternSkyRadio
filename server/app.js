@@ -25,8 +25,9 @@ const app = express();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-app.use(express.static(join(__dirname, "public")));
-app.use(express.static(join(__dirname, "../client/build")));
+app.use(express.static(join(__dirname, "../client/public")));
+app.use(express.static(join(__dirname, "../client/dist")));
+
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -55,7 +56,7 @@ passport.deserializeUser(User.deserializeUser());
 
 app.use("/api", apiRouter);
 app.use("*", (req, res) => {
-    res.sendFile(join(__dirname, "../client/build/index.html"));
+    res.sendFile(join(__dirname, "../client/dist/index.html"));
 });
 
 app.listen(port, () => {

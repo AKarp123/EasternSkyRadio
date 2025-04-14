@@ -63,6 +63,17 @@ const SetPlanner = () => {
                     return;
                 } else {
                     dispatch({ type: "loadSync", payload: data.data });
+                    const timeStr = new Date(res.data.lastSynced)
+                    .toLocaleTimeString("en-US", {
+                        hour: "numeric",
+                        minute: "numeric",
+                    })
+                    .toLowerCase()
+                    .replace(/\s/g, "");
+                    dispatch({
+                        type: "setSyncStatus",
+                        payload: `Last synced at ${timeStr}`,
+                    });
                 }
             });
     }, []);

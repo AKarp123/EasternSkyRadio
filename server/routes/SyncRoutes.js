@@ -19,7 +19,7 @@ SyncRouter.get("/sync", requireLogin, async (req, res) => {
         res.json({success: false, message: "No data found."});
         return;
     }
-    res.json({success: true, data: data.data})
+    res.json({success: true, data: data.data, lastSynced: data.lastSynced})
 
 
 })
@@ -36,15 +36,17 @@ SyncRouter.post("/sync", requireLogin, async (req, res) => {
         return;
     }
     const existingData = await SyncModel.findOne({type});
+    let timestamp = Date.now();
     if(existingData === null){
-        const newData = new SyncModel({type, data});
+        const newData = new SyncModel({type, data, lastSynced: timestamp});
         await newData.save();
     } else {
         existingData.data = data;
+        existingData.lastSynced = timestamp;
         await existingData.save();
     }
 
-    res.json({success: true, message: "Data synced.", timestamp: Date.now()})
+    res.json({success: true, message: "Data synced.", timestamp})
 
 })
 
