@@ -21,7 +21,6 @@ const storage = getStorage();
 const upload = multer({ storage: multer.memoryStorage() });
 
 router.get("/getSiteInfo", async (req, res) => {
-    // res.json({ message: "Hello from the server!" });
     const data = await SiteData.findOne({}, { _id: 0, __v: 0 });
     res.json(data);
 });
@@ -29,7 +28,6 @@ router.get("/getSiteInfo", async (req, res) => {
 router.get("/getStats", async (req, res) => {
 
     if(statsCache.has("stats")){
-     
         res.json(statsCache.get("stats"));
         return;
     }
@@ -69,8 +67,6 @@ router.get("/getBucket", (req, res) => {
     res.json({ message: "test" });
 });
 
-
-
 router.post(
     "/upload",
     requireLogin,
@@ -86,10 +82,6 @@ router.post(
             .file(
                 `albumCovers/${req.file.originalname} + ${artist} + ${album}`
             );
-
-        // await storageRef.makePublic();
-
-        // console.log(req.file)
 
         if (
             req.file.mimetype !== "image/jpeg" &&
@@ -127,12 +119,7 @@ router.post("/uploadURL", requireLogin, async (req, res) => {
 
     const response = await axios.get(url, { responseType: "arraybuffer" });
 
-    
-
-   
-
     const contentType = response.headers["content-type"];
-
 
     const storageRef = storage
         .bucket()
@@ -155,10 +142,7 @@ router.post("/uploadURL", requireLogin, async (req, res) => {
             console.log(err);
             res.json({ success: false, message: "Error uploading file" });
         });
-
-    
 });
-
 
 router.use("/", showRouter);
 router.use("/", SongRouter);
