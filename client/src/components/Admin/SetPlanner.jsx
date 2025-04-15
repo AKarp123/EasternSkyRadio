@@ -146,7 +146,7 @@ const SetPlanner = () => {
                         xs={12}
                         lg={8}
                         sx={{
-                            height: { md: "100%" },
+                            height: { sm: "70vh", lg: "100%" },
                             width: {
                                 xs: "100%",
                             },
