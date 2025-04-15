@@ -39,6 +39,13 @@ const SongSearch = ({ dispatch, parent }) => {
             });
     }, 500);
 
+    const heightMap = {
+        "New Show": "40vh",
+        "Set Planner": "45vh",
+        "Edit Song": "60vh",
+    };
+    const height = heightMap[parent] || "60vh";
+
     return (
         <Box
             sx={{
@@ -51,22 +58,22 @@ const SongSearch = ({ dispatch, parent }) => {
                 label="Search"
                 onChange={(e) => searchDebounced(e.target.value)}
                 fullWidth
-                sx={{ mb: 1, mt: 1 }}
+                sx={{ mb: 1, mt: 1,  }}
             />
             <Box
                 sx={{
                     justifyContent: "center",
                     overflowY: "auto",
                     // Use vh units to scale with screen height:
-                    height: parent === "Set Planner" ? "40vh" : "60vh",
-                    maxHeight: parent === "Set Planner" ? "40vh" : "60vh",
+                    height: height,
+                    maxHeight: height,
                     paddingBottom: "16px", // Extra padding so the last card isn’t cut off
                     boxSizing: "border-box",
                     "&::-webkit-scrollbar": {
                         width: "0.4em",
                     },
                     "&::-webkit-scrollbar-track": {
-                        background: "#f1f1f1",
+                        background: "transparent",
                     },
                     "&::-webkit-scrollbar-thumb": {
                         background: "#888",

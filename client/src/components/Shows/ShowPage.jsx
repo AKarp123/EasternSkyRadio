@@ -1,5 +1,4 @@
 import PageBackdrop from "../PageBackdrop";
-import InfiniteScroll from "react-infinite-scroller";
 import { useContext, useEffect, useState } from "react";
 import {
     Container,
@@ -9,6 +8,7 @@ import {
     Divider,
     Stack,
     Link as MUILink,
+    Box,
 } from "@mui/material";
 import { Link } from "react-router-dom";
 import ErrorContext from "../../providers/ErrorContext";
@@ -36,6 +36,7 @@ const ShowPage = ({ parentRef }) => {
         <PageBackdrop>
             <PageHeader title="Shows" />
             <Divider />
+            <Box sx={{ flex: 1, overflowY: "auto" }}>
             {loading ? (
                 <CircularProgress />
             ) : (
@@ -45,6 +46,7 @@ const ShowPage = ({ parentRef }) => {
                     parentRef={parentRef}
                 />
             )}
+            </Box>
         </PageBackdrop>
     );
 };
@@ -79,7 +81,8 @@ const ShowPageMain = ({ showList, setShowList, parentref }) => {
                 display: "flex",
                 flexDirection: "column",
                 alignItems: "center",
-                justifyContent: "center",
+                justifyContent: "flex-start",
+                padding: "0px",
             }}
         >
             {/* <InfiniteScroll
@@ -91,9 +94,9 @@ const ShowPageMain = ({ showList, setShowList, parentref }) => {
                 getScrollParent={() => parentref.current}
                 threshold={1}
             > */}
-                {showList.map((show, index) => (
-                    <ShowListItem key={index} show={show} />
-                ))}
+            {showList.map((show, index) => (
+                <ShowListItem key={index} show={show} />
+            ))}
             {/* </InfiniteScroll> */}
         </Container>
     );

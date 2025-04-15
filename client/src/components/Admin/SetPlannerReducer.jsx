@@ -21,6 +21,7 @@ export const reducer = (state, action) => {
                     songReleaseLoc: [],
                     duration: "",
                 },
+                firstLoad: false,
             };
 
         case "editSong":
@@ -29,6 +30,7 @@ export const reducer = (state, action) => {
             return {
                 ...state,
                 songsList: newSongsList,
+                firstLoad: false,
             };
         case "swapUp":
             if (action.payload === 0) {
@@ -41,6 +43,7 @@ export const reducer = (state, action) => {
             return {
                 ...state,
                 songsList: [...state.songsList],
+                firstLoad: false,
             };
         case "swapDown":
             if (action.payload === state.songsList.length - 1) {
@@ -53,6 +56,7 @@ export const reducer = (state, action) => {
             return {
                 ...state,
                 songsList: [...state.songsList],
+                firstLoad: false,
             };
 
         case "removeSong":
@@ -68,6 +72,7 @@ export const reducer = (state, action) => {
                     ...state.songsList.slice(0, action.payload),
                     ...state.songsList.slice(action.payload + 1),
                 ],
+                firstLoad: false,
             };
         case "setLabel":
             return {
@@ -85,6 +90,8 @@ export const reducer = (state, action) => {
                         duration: parseFloat(state.duration),
                     },
                 ],
+                firstLoad: false,
+                
             };
         case "resetDurationForm":
             return {
@@ -236,7 +243,6 @@ export const reducer = (state, action) => {
             return {
                 ...state,
                 songsList: action.payload,
-                firstLoad: false
             }
         case "setSyncStatus": 
             return {

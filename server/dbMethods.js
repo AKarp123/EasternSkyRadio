@@ -131,32 +131,23 @@ export const generateStats = async () => {
         uniqueAlbums: 0,
     };
 
-    const shows = await ShowEntry.find();
-    data.totalShows = shows.length;
-    data.totalSongs = shows.reduce((acc, show) => {
-        return acc + show.songsList.length;
-    }, 0);
-
-    const uniqueArtists = {};
-    const uniqueAlbums = {};
-    const songs = await SongEntry.find();
-
-    songs.forEach((song) => {
-        if (uniqueArtists[song.artist] === undefined) {
-            uniqueArtists[song.artist] = 1;
-        } else {
-            uniqueArtists[song.artist]++;
-        }
-        if (uniqueAlbums[song.album] === undefined) {
-            uniqueAlbums[song.album] = 1;
-        } else {
-            uniqueAlbums[song.album]++;
-        }
+    
+    data.totalShows = await ShowEntry.estimatedDocumentCount();
+    ShowEntry.aggregate([
+        { $unwind: "$songsList" },
+        { $group: { _id: null, totalSongs: { $sum: 1 } } },
+    ]).then((result) => {
+        data.totalSongs = result[0].totalSongs;
     });
-    data.uniqueArtists = Object.keys(uniqueArtists).length;
-    data.uniqueAlbums = Object.keys(uniqueAlbums).length;
 
-    data.uniqueSongs = songs.length;
+    const songCount = await SongEntry.estimatedDocumentCount();
+    data.uniqueSongs = songCount;
+    const artistCount = await SongEntry.distinct("artist");
+
+    data.uniqueArtists = artistCount.length;
+    const albumCount = await SongEntry.distinct("album");
+
+    data.uniqueAlbums = albumCount.length;
 
     return data;
 };
