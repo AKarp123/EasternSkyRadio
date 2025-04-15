@@ -33,6 +33,7 @@ router.get("/getStats", async (req, res) => {
     }
 
     const stats = await generateStats();
+    console.log(stats)
     statsCache.set("stats", stats);
 
     res.json(stats);
