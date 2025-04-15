@@ -58,7 +58,7 @@ const SongSearch = ({ dispatch, parent }) => {
                 label="Search"
                 onChange={(e) => searchDebounced(e.target.value)}
                 fullWidth
-                sx={{ mb: 1, mt: 1 }}
+                sx={{ mb: 1, mt: 1,  }}
             />
             <Box
                 sx={{
@@ -73,7 +73,7 @@ const SongSearch = ({ dispatch, parent }) => {
                         width: "0.4em",
                     },
                     "&::-webkit-scrollbar-track": {
-                        background: "#f1f1f1",
+                        background: "transparent",
                     },
                     "&::-webkit-scrollbar-thumb": {
                         background: "#888",

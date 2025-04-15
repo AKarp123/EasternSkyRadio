@@ -132,6 +132,7 @@ const NewShow = () => {
                                         overflowY: "auto",
                                         overflowX: "hidden",
                                         height: "50vh",
+                                        pr: 2,
                                     }}
                                 >
                                     <SongForm

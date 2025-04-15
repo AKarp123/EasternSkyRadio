@@ -1,9 +1,4 @@
-import {
-    Divider,
-    Grid,
-    Container,
-    Box,
-} from "@mui/material";
+import { Divider, Grid, Container, Box } from "@mui/material";
 import PageBackdrop from "../PageBackdrop";
 import PageHeader from "../PageHeader";
 import { useReducer, useContext } from "react";
@@ -100,6 +95,7 @@ const reducer = (state, action) => {
                 genres: [],
                 specialNote: "",
                 songReleaseLoc: [],
+                duration: "",
             };
         default:
             return state;
@@ -136,29 +132,44 @@ const EditSongs = () => {
         });
     };
 
-    
     return (
         <PageBackdrop>
             <PageHeader title="Edit Songs" />
             <Divider sx={{ mb: 2 }} />
-            <Box sx={{
-                flex:1,
-                overflowY: {
-                    sm: "auto",
-                    md: "hidden",
-                }
-            }}>
+            <Box
+                sx={{
+                    flex: 1,
+                    overflowY: {
+                        sm: "auto",
+                        md: "hidden",
+                    },
+                }}
+            >
                 <Container>
                     <Grid container spacing={2}>
                         <Grid item sm={12} md={6}>
-                            <SongForm songData={editSong}
-                                dispatch={dispatch}
-                                type="edit"
-                                submit={handleSubmit}
-                            />
+                            <Box
+                                sx={{
+                                    flex: 1,
+                                    height: "80%",
+                                    overflowY: "auto",
+                                    overflowX: "hidden",
+                                    pr: 2,
+                                }}
+                            >
+                                <SongForm
+                                    songData={editSong}
+                                    dispatch={dispatch}
+                                    type="edit"
+                                    submit={handleSubmit}
+                                />
+                            </Box>
                         </Grid>
                         <Grid item sm={12} md={6}>
-                            <SongSearch dispatch={dispatch} parent="Edit Song" />
+                            <SongSearch
+                                dispatch={dispatch}
+                                parent="Edit Song"
+                            />
                         </Grid>
                     </Grid>
                 </Container>
