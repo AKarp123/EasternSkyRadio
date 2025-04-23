@@ -8,6 +8,9 @@ export default defineConfig(({ mode }) => {
             react(),
             svgr(),
         ],
+        build: {
+            sourcemap: true,
+        },
         server: {
             proxy: {
                 "/api": {
