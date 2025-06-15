@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 import session from "express-session";
 import MongoStore from "connect-mongo";
 import passport from "passport";
-import LocalStrategy from "passport-local";
+import {Strategy as LocalStrategy} from "passport-local";
 import { join } from "path";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
@@ -15,8 +15,8 @@ import "dotenv/config";
 const port = process.env.PORT || 3000;
 mongoose.connect(
     process.env.NODE_ENV === "production"
-        ? process.env.MONGODB_URI
-        : process.env.MONGODB_DEV_URI
+        ? process.env.MONGODB_URI || ""
+        : process.env.MONGODB_DEV_URI || ""
 );
 const db = mongoose.connection;
 
@@ -35,7 +35,7 @@ app.use(passport.initialize());
 
 app.use(
     session({
-        secret: process.env.EXP_SESSION_SECRET,
+        secret: process.env.EXP_SESSION_SECRET || "default",
         resave: false,
         saveUninitialized: false,
         cookie: { maxAge: 3600 * 3 * 1000 },
@@ -67,7 +67,7 @@ db.on("error", console.error.bind(console, "connection error:"));
 db.once("open", async function () {
     console.log("Connected to MongoDB");
 
-    if (!process.env.NODE_ENV === "production") {
+    if (!(process.env.NODE_ENV === "production")) {
         initializeTestData();
     }
 });

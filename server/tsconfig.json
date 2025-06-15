@@ -4,6 +4,8 @@
     "module": "ESNext",
     "moduleResolution": "node",
     "esModuleInterop": true,
+    "allowJs": true,
+    "checkJs": false,
     "outDir": "dist",
     "rootDir": ".",
     "strict": true,
