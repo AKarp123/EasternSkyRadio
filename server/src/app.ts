@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 import session from "express-session";
 import MongoStore from "connect-mongo";
 import passport from "passport";
-import {Strategy as LocalStrategy} from "passport-local";
+import { Strategy as LocalStrategy } from "passport-local";
 import { join } from "path";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
@@ -13,11 +13,7 @@ import apiRouter from "./routes/index.js";
 import "dotenv/config";
 
 const port = process.env.PORT || 3000;
-mongoose.connect(
-    process.env.NODE_ENV === "production"
-        ? process.env.MONGODB_URI || ""
-        : process.env.MONGODB_DEV_URI || ""
-);
+mongoose.connect(process.env.MONGODB_URI || "");
 const db = mongoose.connection;
 
 const app = express();
@@ -27,7 +23,6 @@ const __dirname = dirname(__filename);
 
 app.use(express.static(join(__dirname, "../client/public")));
 app.use(express.static(join(__dirname, "../client/dist")));
-
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -41,10 +36,7 @@ app.use(
         cookie: { maxAge: 3600 * 3 * 1000 },
         rolling: true,
         store: MongoStore.create({
-            mongoUrl:
-                process.env.NODE_ENV === "production"
-                    ? process.env.MONGODB_URI
-                    : process.env.MONGODB_DEV_URI,
+            mongoUrl: process.env.MONGODB_URI || "",
         }),
     })
 );
@@ -67,7 +59,7 @@ db.on("error", console.error.bind(console, "connection error:"));
 db.once("open", async function () {
     console.log("Connected to MongoDB");
 
-    if (!(process.env.NODE_ENV === "production")) {
-        initializeTestData();
-    }
+    // if (!(process.env.NODE_ENV === "production")) {
+    //     initializeTestData();
+    // }
 });

@@ -1,9 +1,8 @@
-import admin from "firebase-admin";
+import admin, { credential } from "firebase-admin";
 import { getStorage } from "firebase-admin/storage";
-import "dotenv/config"
+import "dotenv/config";
 
 
-const { credential } = admin;
 
 const serviceAccountKey = {
     type: "service_account",
@@ -19,7 +18,6 @@ const serviceAccountKey = {
     universe_domain: "googleapis.com",
 };
 
-
 const initializeAdmin = () => {
     admin.initializeApp({
         credential: credential.cert(serviceAccountKey),
@@ -27,10 +25,5 @@ const initializeAdmin = () => {
     });
     console.log("Connected to Firebase");
 };
-
-
-
-
-
 
 export default initializeAdmin;
