@@ -1,6 +1,7 @@
 import { Schema as schema, model } from "mongoose";
+import { IShowEntry } from "../types/IShowData";
 
-const showEntrySchema = new schema(
+const showEntrySchema = new schema<IShowEntry>(
     {
         showId: { type: Number, required: true, default: -1, index: true },
         showDate: { type: Date, required: true },
@@ -19,7 +20,7 @@ const showEntrySchema = new schema(
     {
         virtuals: {
             songListCount: {
-                get() {
+                get(this: IShowEntry): number {
                     return this.songsList.length;
                 },
             }

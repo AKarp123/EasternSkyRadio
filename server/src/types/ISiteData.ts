@@ -1,4 +1,3 @@
-
 interface ISiteData {
     onBreak: boolean;
     showDay: number;
@@ -13,4 +12,4 @@ interface ISiteDataVirtuals extends ISiteData {
     nextShowDate: Date;
 }
 
-export {ISiteData, ISiteDataVirtuals};
+export { ISiteData, ISiteDataVirtuals };
