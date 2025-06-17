@@ -13,6 +13,8 @@ import apiRouter from "./routes/index.js";
 import "dotenv/config";
 
 const port = process.env.PORT || 3000;
+
+
 mongoose.connect(process.env.MONGODB_URI || "");
 const db = mongoose.connection;
 
