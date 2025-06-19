@@ -3,10 +3,10 @@
     "version": "1.0.0",
     "description": "",
     "scripts": {
-      "server": "cd server && nodemon app.js",
+      "server": "cd server && pnpm run dev",
       "client": "cd client && pnpm run start",
       "dev": "concurrently \"pnpm run server\" \"pnpm run client\"",
-      "install" : "cd client && pnpm install",
+      "install" : "cd client && pnpm install; cd ../server && bun install",
       "build": "cd client && pnpm run build"
     },
     "keywords": [],

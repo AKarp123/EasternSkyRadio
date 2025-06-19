@@ -1,14 +1,14 @@
 import { Schema, model, Model } from "mongoose";
-import { ISiteData, ISiteDataVirtuals } from "../types/ISiteData";
+import { SiteData, SiteDataVirtuals } from "../types/SiteData";
 
 
 
-type SiteModelType = Model<ISiteData, {}, {}, ISiteDataVirtuals>;
+type SiteModelType = Model<SiteData, {}, {}, SiteDataVirtuals>;
 /**
  * showTime is day of week in 0-6 form (sunday is 0)
  * showLength is time in hours of show (will likely never change from one)
  */
-const siteDataSchema = new Schema<ISiteData, SiteModelType>(
+const siteDataSchema = new Schema<SiteData, SiteModelType>(
     {
         onBreak: { type: Boolean, required: true, default: false },
         showDay: { type: Number, required: true },
@@ -20,7 +20,7 @@ const siteDataSchema = new Schema<ISiteData, SiteModelType>(
 );
 
 
-siteDataSchema.virtual("lastShowDate").get(function (this: ISiteData): Date {
+siteDataSchema.virtual("lastShowDate").get(function (this: SiteData): Date {
     const now = new Date();
     const lastShow = new Date(now.getFullYear(), now.getMonth(), now.getDate(), this.showHour, 0, 0);
     if (this.showDay < now.getDay() || (this.showDay === now.getDay() && lastShow < now)) {
@@ -32,7 +32,7 @@ siteDataSchema.virtual("lastShowDate").get(function (this: ISiteData): Date {
 });
 
 
-siteDataSchema.virtual("nextShowDate").get(function (this: ISiteData): Date {
+siteDataSchema.virtual("nextShowDate").get(function (this: SiteData): Date {
     const now = new Date();
     const nextShow = new Date(now.getFullYear(), now.getMonth(), now.getDate(), this.showHour, 0, 0);       
 if (this.showDay > now.getDay() || (this.showDay === now.getDay() && nextShow > now)) {
@@ -44,6 +44,6 @@ if (this.showDay > now.getDay() || (this.showDay === now.getDay() && nextShow > 
     return nextShow;
 });
 
-const SiteData = model("SiteData", siteDataSchema);
+const SiteData = model<SiteData>("SiteData", siteDataSchema);
 
 export default SiteData;

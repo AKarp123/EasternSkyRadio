@@ -1,6 +1,6 @@
 import { Types } from "mongoose";
 
-export interface IShowEntry {
+export interface ShowEntry {
     showId: number;
     showDate: Date;
     showDescription?: string;

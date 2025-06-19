@@ -1,4 +1,4 @@
-interface ISiteData {
+interface SiteData {
     onBreak: boolean;
     showDay: number;
     showHour: number;
@@ -7,9 +7,9 @@ interface ISiteData {
     messageOfTheDay?: string;
 }
 
-interface ISiteDataVirtuals extends ISiteData {
+interface SiteDataVirtuals extends SiteData {
     lastShowDate: Date;
     nextShowDate: Date;
 }
 
-export { ISiteData, ISiteDataVirtuals };
+export { SiteData, SiteDataVirtuals };
