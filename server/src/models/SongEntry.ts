@@ -1,10 +1,14 @@
 import { Schema as schema, model } from "mongoose";
+import { SongEntry } from "../types/SongEntry";
+
+
 
 /**
  * Note that songId is only for elcro songs, a songID is the albumID in elcro + the track number. It is internal use only, will not be sent back to user client.
  *
  **/
-const songEntrySchema = new schema({
+
+const songEntrySchema = new schema<SongEntry>({
     songId: { type: Number, required: [true, "Missing songId field"] },
     elcroId: {
         type: String,
@@ -61,13 +65,14 @@ songEntrySchema.pre("validate", function (next) {
     if (this.elcroId) {
         this.set("elcroId", this.elcroId.trim());
     }
+
     this.set("artist", this.artist.trim());
     this.set("title", this.title.trim());
     this.set("album", this.album.trim());
-    this.set("origTitle", this.origTitle.trim());
-    this.set("origAlbum", this.origAlbum.trim());
-    this.set("specialNote", this.specialNote.trim());
-    if(isNaN(this.duration) || this.duration === null){
+    this.set("origTitle", this.origTitle?.trim());
+    this.set("origAlbum", this.origAlbum?.trim());
+    this.set("specialNote", this.specialNote?.trim());
+    if (!this.duration || isNaN(this.duration)) {
         this.duration = 0;
     }
 
@@ -79,7 +84,7 @@ songEntrySchema.pre("save", async function (next) {
         return next();
     }
 
-    this.songReleaseLoc.sort((a, b) => {
+    this.songReleaseLoc?.sort((a, b) => {
         if (a.service > b.service) {
             return 1;
         }
@@ -91,7 +96,7 @@ songEntrySchema.pre("save", async function (next) {
 
     const album = this.album;
     if (!(album === "Single" || album === "single")) {
-        const existingSong = await model("SongEntry").findOne({ album });
+        const existingSong  = await model<SongEntry>("SongEntry").findOne({ album });
         if (existingSong) {
             this.albumImageLoc = existingSong.albumImageLoc;
             this.origAlbum = existingSong.origAlbum;
@@ -101,6 +106,6 @@ songEntrySchema.pre("save", async function (next) {
     next();
 });
 
-const SongEntry = model("SongEntry", songEntrySchema);
+const SongEntry = model<SongEntry>("SongEntry", songEntrySchema);
 
 export default SongEntry;
