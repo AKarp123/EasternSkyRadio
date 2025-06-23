@@ -15,12 +15,12 @@ const songEntrySchema = new schema<SongEntry>({
         required: false,
         select: false,
         validate: {
-            validator: function (v) {
+            validator: function (v : string) {
                 return (
                     typeof v === "string" && (v.length === 6 || v.length === 0)
                 );
             },
-            message: (props) => `${props.value} is not a string of length 6`,
+            message: (props : { value: any }) => `${props.value} is not a string of length 6`,
         },
     },
     artist: { type: String, required: [true, "Missing artist field"] },

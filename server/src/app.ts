@@ -11,6 +11,7 @@ import { initializeTestData } from "./dbMethods.js";
 import User from "./models/UserModel.js";
 import apiRouter from "./routes/index.js";
 import "dotenv/config";
+import { UserDocument } from "./types/User.js";
 
 const port = process.env.PORT || 3000;
 
@@ -42,6 +43,13 @@ app.use(
         }),
     })
 );
+
+
+declare global {
+    namespace Express {
+        interface User extends UserDocument {}
+    }
+}
 
 app.use(passport.session());
 passport.use(new LocalStrategy(User.authenticate()));

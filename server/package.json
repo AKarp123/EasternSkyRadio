@@ -12,6 +12,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@types/passport-local-mongoose": "^6.1.5",
     "axios": "^1.7.4",
     "connect-mongo": "^5.1.0",
     "dotenv": "^16.4.5",
