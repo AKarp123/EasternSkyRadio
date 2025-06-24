@@ -10,3 +10,8 @@ export interface ShowEntry {
 
     songListCount?: number; // Virtual property, not stored in DB
 }
+
+
+export interface ShowEntrySubmission extends ShowEntry {
+    _id : Types.ObjectId; // Passed by UI, not stored in DB
+}

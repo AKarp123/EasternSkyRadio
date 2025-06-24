@@ -30,8 +30,10 @@ const showEntrySchema = new schema<ShowEntry>(
         },
         toJSON: { virtuals: true },
         toObject: { virtuals: true },
+        id: false,
     }
 );
+
 
 
 

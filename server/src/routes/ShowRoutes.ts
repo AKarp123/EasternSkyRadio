@@ -1,24 +1,40 @@
-import { Router } from "express";
+import { Router, Request, Response } from "express";
 import ShowEntry from "../models/ShowEntry.js";
 import requireLogin from "./requireLogin.js";
 import mongoose from "mongoose";
 import Increment from "../models/IncrementModel.js";
 import { removeMissingShows, updateLastPlayed } from "../dbMethods.js";
+import SongEntry from "../models/SongEntry.js";
+import { HydratedDocument } from "mongoose";
+import { ShowEntrySubmission } from "../types/ShowData.js";
+
+
 
 const showRouter = Router();
 
-showRouter.get("/getShowData", async (req, res) => {
+showRouter.get("/getShowData", async (req: Request, res: Response) => {
     if (
         req.query.showId === undefined ||
         req.query.showId === "" ||
-        isNaN(req.query.showId)
+        isNaN(parseInt(req.query.showId as string))
     ) {
         res.json({ success: false, message: "No Show ID provided." });
     } else {
         const showData = await ShowEntry.findOne(
-            { showId: req.query.showId },
+            { showId: req.query.showId as string },
             { _id: 0, __v: 0 }
-        ).populate({ path: "songsList", select: "-__v " });
+        ).lean().populate<{ songsList: SongEntry[] }>({ path: "songsList", select: "-__v " });
+        if (showData === null) {
+            res.json({ success: false, message: "Show not found." });
+            return;
+        }   
+
+
+
+        
+
+
+        
 
         // const nextShow = await ShowEntry.findOne(
         //     { showId: { $gt: req.query.showId } },
@@ -34,27 +50,33 @@ showRouter.get("/getShowData", async (req, res) => {
         //     .select("showId showDate");
 
         res.json({ showData });
+        return;
     }
 });
 
-showRouter.get("/getShows", async (req, res) => {
+showRouter.get("/getShows", async (req: Request, res: Response) => {
     if (req.query.offset) {
-        const offset = parseInt(req.query.offset);
+        const offset = parseInt(req.query.offset as string);
         const shows = await ShowEntry.find({}, { _id: 0, __v: 0 })
             .sort({ showId: "desc" })
             .skip(offset)
-            .limit(5);
+            .limit(5)
+
 
         // Remove songsList and id from each show object
-        let s2 = shows.map((show) => show.toObject());
-        s2 = s2.map(({ songsList, id, ...rest }) => rest);
+        let s2 = shows.map((show) => {
+            const { songsList, _id, ...rest } = show.toObject();
+            return rest;
+        });
         res.json(s2);
     } else {
         const shows = await ShowEntry.find({}, { _id: 0, __v: 0 })
-            .sort({ showId: "desc" })
-            
-        let s2 = shows.map((show) => show.toObject());
-        s2 = s2.map(({ songsList, id, ...rest }) => rest);
+            .sort({ showId: "desc" });
+
+        let s2 = shows.map((show) => {
+            const { songsList, _id, ...rest } = show.toObject();
+            return rest;
+        });
         res.json(s2);
     }
 });
@@ -63,7 +85,7 @@ showRouter.post("/addShow", requireLogin, async (req, res) => {
     const { showData } = req.body;
     delete showData.song;
     try {
-        showData.songsList = showData.songsList.map((song) => song._id);
+        showData.songsList = showData.songsList.map((song : ShowEntrySubmission) => song._id);
 
         showData.showDate = new Date(showData.showDate);
         showData.showDate.setHours(showData.showDate.getHours() + 5);
@@ -71,7 +93,7 @@ showRouter.post("/addShow", requireLogin, async (req, res) => {
         const nextShowId = await Increment.findOneAndUpdate(
             { model: "ShowEntry" },
             { $inc: { counter: 1 } },
-            { new: true }
+            { new: true, upsert: true, setDefaultsOnInsert: true }
         );
 
         const newShow = new ShowEntry({
