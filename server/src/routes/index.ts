@@ -1,4 +1,4 @@
-import { Router } from "express";
+import { Router, Request, Response } from "express";
 import SiteData from "../models/SiteData.js";
 import showRouter from "./ShowRoutes.js";
 import SongRouter from "./SongRoutes.js";
@@ -72,11 +72,13 @@ router.post(
     "/upload",
     requireLogin,
     upload.single("filename"),
-    async (req, res) => {
+    async (req : Request, res : Response) => {
         const { artist, album } = req.body;
         if(!req.file || !artist || !album){
-            return res.json({ success: false, message: "Missing required fields" });
+            res.json({ success: false, message: "Missing required fields" });
+            return;
         }
+
 
         const storageRef = storage
             .bucket()
@@ -89,7 +91,8 @@ router.post(
             req.file.mimetype !== "image/png" && 
             req.file.mimetype !== "image/webp"
         ) {
-            return res.json({ success: false, message: "Invalid file type" });
+            res.json({ success: false, message: "Invalid file type" });
+            return;
         }
         const metadata = {
             contentType: req.file.mimetype,
@@ -111,11 +114,12 @@ router.post(
     }
 );
 
-router.post("/uploadURL", requireLogin, async (req, res) => {
+router.post("/uploadURL", requireLogin, async (req: Request, res: Response) => {
     const { artist, album, url } = req.body;
 
     if (!artist || !album || !url) {
-        return res.json({ success: false, message: "Missing required fields" });
+        res.json({ success: false, message: "Missing required fields" });
+        return;
     }
 
     const response = await axios.get(url, { responseType: "arraybuffer" });

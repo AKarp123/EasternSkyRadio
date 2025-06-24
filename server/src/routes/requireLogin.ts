@@ -1,6 +1,6 @@
+import { Request, Response, NextFunction } from 'express';
+const requireLogin = (req: Request, res: Response, next: NextFunction) => {
 
-const requireLogin = (req, res, next) => {
-    
     if(req.user) {
         next();
         
