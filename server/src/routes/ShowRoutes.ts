@@ -1,12 +1,10 @@
 import { Router, Request, Response } from "express";
 import ShowEntry from "../models/ShowEntry.js";
 import requireLogin from "./requireLogin.js";
-import mongoose from "mongoose";
 import Increment from "../models/IncrementModel.js";
 import { removeMissingShows, updateLastPlayed } from "../dbMethods.js";
 import SongEntry from "../models/SongEntry.js";
-import { HydratedDocument } from "mongoose";
-import { ShowEntrySubmission } from "../types/ShowData.js";
+import {  ShowEntrySubmission } from "../types/ShowData.js";
 
 
 
@@ -81,11 +79,9 @@ showRouter.get("/getShows", async (req: Request, res: Response) => {
     }
 });
 
-showRouter.post("/addShow", requireLogin, async (req, res) => {
-    const { showData } = req.body;
-    delete showData.song;
+showRouter.post("/addShow", requireLogin, async (req : Request, res: Response) => {
+    const { songsList, ...showData} : ShowEntrySubmission = req.body;
     try {
-        showData.songsList = showData.songsList.map((song : ShowEntrySubmission) => song._id);
 
         showData.showDate = new Date(showData.showDate);
         showData.showDate.setHours(showData.showDate.getHours() + 5);
@@ -101,7 +97,7 @@ showRouter.post("/addShow", requireLogin, async (req, res) => {
             showId: nextShowId.counter,
         });
         await newShow.save();
-        await updateLastPlayed(showData.songsList, newShow.showDate);
+        await updateLastPlayed(songsList, newShow.showDate);
         res.json({ success: true, message: "Show added successfully." });
     } catch (err) {
         console.log(err);
@@ -113,8 +109,8 @@ showRouter.post("/addShow", requireLogin, async (req, res) => {
     }
 });
 
-showRouter.post("/editShow", requireLogin, async (req, res) => {
-    const { showData } = req.body;
+showRouter.post("/editShow", requireLogin, async (req: Request, res: Response) => {
+    const { ...showData } : Omit<ShowEntry, "songListCount"> = req.body;
     try{
 
     const show = await ShowEntry.findOne({ showId: showData.showId });
@@ -143,13 +139,19 @@ showRouter.post("/editShow", requireLogin, async (req, res) => {
     
 });
 
-showRouter.post("/deleteShow", requireLogin, async (req, res) => {
-    const { showId } = req.body;
+showRouter.post("/deleteShow", requireLogin, async (req: Request, res: Response) => {
+    const { showId } : { showId: number } = req.body;
     if (showId === undefined || isNaN(showId)) {
         res.json({ success: false, message: "No Show ID provided." });
     } else {
         try {
-            await ShowEntry.deleteOne({ showId });
+            let result = await ShowEntry.deleteOne({ showId });
+
+            if (result.deletedCount === 0) {
+                res.json({ success: false, message: "Show not found." });
+                return;
+            }
+
             removeMissingShows();
 
             res.json({ success: true, message: "Show deleted." });

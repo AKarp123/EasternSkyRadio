@@ -1,15 +1,16 @@
-import { Router } from "express";
+import { Router, Request, Response } from "express";
 import SongEntry from "../models/SongEntry.js";
 import { addSong, removeMissingShows, removeMissingSongs } from "../dbMethods.js";
 import requireLogin from "./requireLogin.js";
+import { SongEntry as ISongEntry } from "../types/SongEntry.js";
 
 const songRouter = Router();
 
-const escapeRegex = (string) => {
+const escapeRegex = (string : string) => {
     return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 };
 
-songRouter.get("/getSongInfo", async (req, res) => {
+songRouter.get("/getSongInfo", async (req : Request, res : Response) => {
     if (req.query.songId === undefined) {
         res.json({ success: false, message: "No Song ID provided." });
     } else {
@@ -21,7 +22,7 @@ songRouter.get("/getSongInfo", async (req, res) => {
     }
 });
 
-songRouter.get("/search", requireLogin, async (req, res) => {
+songRouter.get("/search", requireLogin, async (req: Request, res: Response) => {
     try {
         if (req.query.query === "") {
             res.json({ success: false, message: "No search query provided." });
@@ -33,7 +34,7 @@ songRouter.get("/search", requireLogin, async (req, res) => {
             );
             res.json(searchResults);
         } else {
-            const escapedQuery = escapeRegex(req.query.query);
+            const escapedQuery = escapeRegex(req.query.query as string);
             const searchResults = await SongEntry.find({
                 $or: [
                     { title: { $regex: new RegExp(escapedQuery, "i") } },
@@ -46,15 +47,16 @@ songRouter.get("/search", requireLogin, async (req, res) => {
             res.json({ success: true, searchResults: searchResults });
         }
     } catch (err) {
-        res.json({ success: false, message: err.message });
+        res.json({ success: false, message: err instanceof Error ? err.message : 'An unknown error occurred' });
     }
 });
 
-songRouter.post("/addSong", requireLogin, async (req, res) => {
-    const { songData } = req.body;
+songRouter.post("/addSong", requireLogin, async (req : Request, res : Response) => {
+    const { songData } : { songData : ISongEntry} = req.body;
 
     if (!songData) {
-        return res.json({ success: false, message: "No song data provided." });
+        res.json({ success: false, message: "No song data provided." });
+        return;
     }
 
     // Escape any special regex characters for each song field
@@ -74,11 +76,12 @@ songRouter.post("/addSong", requireLogin, async (req, res) => {
 
     
     if (checkDup) {
-        return res.json({
+        res.json({
             success: false,
             message: "Song already exists.",
             song: checkDup,
         });
+        return;
     }
 
     addSong(songData)
@@ -94,11 +97,12 @@ songRouter.post("/addSong", requireLogin, async (req, res) => {
         });
 });
 
-songRouter.delete("/song", requireLogin, async (req, res) => {
+songRouter.delete("/song", requireLogin, async (req: Request, res: Response) => {
     const { songId } = req.query;
 
     if (!songId) {
         res.json({ success: false, message: "No song ID provided." });
+        return;
     }
 
     SongEntry.deleteOne({ songId: songId })
@@ -111,11 +115,12 @@ songRouter.delete("/song", requireLogin, async (req, res) => {
         });
 });
 
-songRouter.post("/editSong", requireLogin, async (req, res) => {
-    const { songData } = req.body;
+songRouter.post("/editSong", requireLogin, async (req: Request, res: Response) => {
+    const { songData } : { songData : ISongEntry} = req.body;
 
     if (!songData) {
         res.json({ success: false, message: "No song data provided." });
+        return;
     }
 
     SongEntry.findOneAndUpdate({ songId: songData.songId }, songData, {
