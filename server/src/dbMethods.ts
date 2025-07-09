@@ -2,17 +2,18 @@ import SongEntry from "./models/SongEntry.js";
 import ShowEntry from "./models/ShowEntry.js";
 import Increment from "./models/IncrementModel.js";
 import SiteData from "./models/SiteData.js";
-import * as sD from "./sampleData.js";
 import mongoose from "mongoose";
 import User from "./models/UserModel.js";
+import { SongEntry as ISongEntry } from "./types/SongEntry.js";
+import { ShowEntrySubmission } from "./types/ShowData.js";
 
-export const addSong = async (songData) => {
+export const addSong = async (songData : ISongEntry) => {
     const nextSongId = await Increment.findOneAndUpdate(
         { model: "SongEntry" },
         { $inc: { counter: 1 } },
         { new: true }
     );
-    const newSong = new SongEntry({ ...songData, songId: nextSongId.counter });
+    const newSong = new SongEntry({ ...songData, songId: nextSongId!.counter });
     try {
         const song = await newSong.save();
 
@@ -27,31 +28,32 @@ export const addSong = async (songData) => {
             { model: "SongEntry" },
             { $inc: { counter: -1 } }
         );
-        throw new Error(err, "Error adding song");
+
+        throw new Error(`Error adding song: ${newSong.artist} - ${newSong.title}`);
     }
     // console.log("New song added: %s - %s", newSong.artist, newSong.title);
 };
 
-export const addShow = async (showData, songsList) => {
-    const nextShowId = await Increment.findOneAndUpdate(
-        { model: "ShowEntry" },
-        { $inc: { counter: 1 } },
-        { new: true }
-    );
-    const newShow = new ShowEntry({
-        ...showData,
-        songsList: songsList,
-        showId: nextShowId.counter,
-    });
-    try {
-        await newShow.save();
-    } catch (err) {
-        console.log("Error Adding Show: %s", newShow.showDescription);
-    }
-    // console.log("New show added! id: " + newShow.showId);
-};
+// export const addShow = async (showData : Show, songsList) => {
+//     const nextShowId = await Increment.findOneAndUpdate(
+//         { model: "ShowEntry" },
+//         { $inc: { counter: 1 } },
+//         { new: true }
+//     );
+//     const newShow = new ShowEntry({
+//         ...showData,
+//         songsList: songsList,
+//         showId: nextShowId.counter,
+//     });
+//     try {
+//         await newShow.save();
+//     } catch (err) {
+//         console.log("Error Adding Show: %s", newShow.showDescription);
+//     }
+//     // console.log("New show added! id: " + newShow.showId);
+// };
 
-export const findSong = async (songName) => {
+export const findSong = async (songName : string) => {
     return SongEntry.findOne({ title: { $regex: songName, $options: "i" } });
 };
 
@@ -63,15 +65,19 @@ export const initializeCounters = async () => {
     // console.log("Counters Initialized!");
 };
 
-export const addSongToShow = async (showId, songId) => {
-    const show = await ShowEntry.findOne({ showId: showId });
-    show.songsList.push(songId);
-    return await show.save();
-};
+// export const addSongToShow = async (showId, songId) => {
+//     const show = await ShowEntry.findOne({ showId: showId });
+//     show.songsList.push(songId);
+//     return await show.save();
+// };
 
 const createAdminAccount = async () => {
     const user = new User({ username: "admin" });
-    User.register(user, process.env.ADMIN_PASSWORD, (err, user) => {
+    const adminPassword = process.env.ADMIN_PASSWORD;
+    if (!adminPassword) {
+        throw new Error("ADMIN_PASSWORD environment variable is not set");
+    }
+    User.register(user, adminPassword, (err, user) => {
         if (err) {
             console.log(err);
         } else {
@@ -170,25 +176,25 @@ export const updateShowTimes = async () => {
     });
 };
 
-const addLastPlayed = async () => {
-    const allShows = await ShowEntry.find().sort({ showId: "desc"}).populate("songsList");
+// const addLastPlayed = async () => {
+//     const allShows = await ShowEntry.find().sort({ showId: "desc"}).populate("songsList");
  
-    allShows.forEach((show) => {
-        show.songsList.forEach(async (song) => {
-            if(song.lastPlayed === undefined) {
-                song.lastPlayed = show.showDate;
-                await song.save();
-            }
-        })
+//     allShows.forEach((show) => {
+//         show.songsList.forEach(async (song) => {
+//             if(song.lastPlayed === undefined) {
+//                 song.lastPlayed = show.showDate;
+//                 await song.save();
+//             }
+//         })
 
-    })
+//     })
 
-    console.log("Last played added!");
-}
+//     console.log("Last played added!");
+// }
 
 // addLastPlayed();
 
-export const updateLastPlayed = async (songsList, date) =>  {
+export const updateLastPlayed = async (songsList: ShowEntrySubmission["songsList"], date: Date) =>  {
 
     songsList.forEach(async (song) => {
         await SongEntry.findOneAndUpdate({ _id: song }, { lastPlayed: date }, { new: true });
@@ -198,37 +204,37 @@ export const updateLastPlayed = async (songsList, date) =>  {
 // addLastPlayed();
 
 
-export const initializeTestData = async () => {
-    // mongoose.connection.dropCollection("users")
-    // createAdminAccount();
-    // await resetData();
-    // const song = await addSong(sD.sampleSong);
-    // const song2 = await addSong(sD.sampleSong2);
-    // for(let i = 0; i< 3; i++) {
+// export const initializeTestData = async () => {
+//     // mongoose.connection.dropCollection("users")
+//     // createAdminAccount();
+//     // await resetData();
+//     // const song = await addSong(sD.sampleSong);
+//     // const song2 = await addSong(sD.sampleSong2);
+//     // for(let i = 0; i< 3; i++) {
 
-    //     await addShow(sD.sampleShow);
-    // }
+//     //     await addShow(sD.sampleShow);
+//     // }
 
-    // const allSongs = await SongEntry.find();
+//     // const allSongs = await SongEntry.find();
 
-    // allSongs.forEach(async (song) => {
-    //     song.genres = song.genres.map((genre) => {
-    //         genre.split(" ").map((word) => {
-    //             return word.charAt(0).toUpperCase() + word.slice(1);
-    //         }
-    //         ).join(" ");
-    //     })
-    //     song.save();
-    // });
+//     // allSongs.forEach(async (song) => {
+//     //     song.genres = song.genres.map((genre) => {
+//     //         genre.split(" ").map((word) => {
+//     //             return word.charAt(0).toUpperCase() + word.slice(1);
+//     //         }
+//     //         ).join(" ");
+//     //     })
+//     //     song.save();
+//     // });
 
     
 
 
-    // for(let i = 0; i< 5; i++) {
+//     // for(let i = 0; i< 5; i++) {
 
-    //     await addSongToShow(1, song)
-    //     await addSongToShow(1, song2)
-    // }
+//     //     await addSongToShow(1, song)
+//     //     await addSongToShow(1, song2)
+//     // }
 
-    console.log("Test data initialized!");
-};
+//     console.log("Test data initialized!");
+// };

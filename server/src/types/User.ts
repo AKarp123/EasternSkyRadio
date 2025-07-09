@@ -1,5 +1,8 @@
-import { Document } from 'mongoose';
 
-export type UserDocument = {
+import { PassportLocalDocument } from 'mongoose';
+
+interface UserDocument extends PassportLocalDocument {
     username: string;
-} & Document;
+}
+
+export { UserDocument}

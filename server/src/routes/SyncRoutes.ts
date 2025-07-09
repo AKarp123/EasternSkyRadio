@@ -1,4 +1,4 @@
-import { Router } from 'express';
+import { Router, Request, Response } from 'express';
 import SyncModel from '../models/SyncModel.js';
 import requireLogin from './requireLogin.js';
 
@@ -6,7 +6,7 @@ import requireLogin from './requireLogin.js';
 const SyncRouter = Router();
 
 
-SyncRouter.get("/sync", requireLogin, async (req, res) => {
+SyncRouter.get("/sync", requireLogin, async (req : Request, res : Response) => {
 
 
     const { type } = req.query;
@@ -14,7 +14,7 @@ SyncRouter.get("/sync", requireLogin, async (req, res) => {
         res.json({success: false, message: "No type provided."});
         return;
     }
-    const data = await SyncModel.findOne({ type });
+    const data = await SyncModel.findOne({ type }).lean();
     if(data === null){
         res.json({success: false, message: "No data found."});
         return;
@@ -22,9 +22,9 @@ SyncRouter.get("/sync", requireLogin, async (req, res) => {
     res.json({success: true, data: data.data, lastSynced: data.lastSynced})
 
 
-})
+            })
 
-SyncRouter.post("/sync", requireLogin, async (req, res) => {
+SyncRouter.post("/sync", requireLogin, async (req: Request, res: Response) => {
 
     const { type, data } = req.body;
     if(type === undefined || type === ""){
@@ -42,7 +42,7 @@ SyncRouter.post("/sync", requireLogin, async (req, res) => {
         await newData.save();
     } else {
         existingData.data = data;
-        existingData.lastSynced = timestamp;
+        existingData.lastSynced = new Date(timestamp);
         await existingData.save();
     }
 

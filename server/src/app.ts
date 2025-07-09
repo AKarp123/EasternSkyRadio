@@ -7,7 +7,6 @@ import { Strategy as LocalStrategy } from "passport-local";
 import { join } from "path";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
-import { initializeTestData } from "./dbMethods.js";
 import User from "./models/UserModel.js";
 import apiRouter from "./routes/index.js";
 import "dotenv/config";
@@ -68,8 +67,4 @@ app.listen(port, () => {
 db.on("error", console.error.bind(console, "connection error:"));
 db.once("open", async function () {
     console.log("Connected to MongoDB");
-
-    // if (!(process.env.NODE_ENV === "production")) {
-    //     initializeTestData();
-    // }
 });
