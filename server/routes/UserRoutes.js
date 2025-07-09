@@ -3,7 +3,7 @@ import UserModel from "../models/UserModel.js";
 
 const UserRouter = Router();
 
-UserRouter.patch("/password", async (req, res) => {
+UserRouter.patch("/password", requireLogin, async (req, res) => {
     try {
         const user = await UserModel.findOne({ username: req.user.username });
         if (!user) {
