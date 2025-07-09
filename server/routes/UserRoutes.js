@@ -1,5 +1,6 @@
 import { Router } from "express";
 import UserModel from "../models/UserModel.js";
+import requireLogin from "./requireLogin.js";
 
 const UserRouter = Router();
 
