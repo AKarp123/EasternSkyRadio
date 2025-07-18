@@ -4,7 +4,7 @@ import type { SongEntry } from "./Song";
 export interface ShowEntry {
     showId: number;
     showDate: Date;
-    showDescription?: string;
+    showDescription: string;
     showLink: string;
     songsList: SongEntry[];
     
