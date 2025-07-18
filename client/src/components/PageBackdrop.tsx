@@ -1,11 +1,19 @@
 import { Paper, Container, Box } from "@mui/material";
 import React, { useRef } from "react";
 
+
+type PageBackdropProps = {
+    children: React.ReactNode;
+    width?: string;
+    height?: string;
+}
+
+
 /**
  *
  * @todo Fix the height and layout cause im pretty sure its messing with the overflow scroll on other components
  */
-const PageBackdrop = ({ children, width = "100%", height = "85vh" }) => {
+const PageBackdrop = ({ children, width = "100%", height = "85vh" } : PageBackdropProps) => {
     const parentref = useRef(null);
     return (
         <Container
@@ -40,7 +48,10 @@ const PageBackdrop = ({ children, width = "100%", height = "85vh" }) => {
                 >
                     {React.Children.map(children, (child) => {
                         // Pass the parentRef to each child
-                        return React.cloneElement(child, { parentref });
+                        if (React.isValidElement(child)) {
+                            return React.cloneElement(child, { parentref } as any);
+                        }
+                        return child;
                     })}
                 </Box>
             </Paper>

@@ -2,9 +2,14 @@ import { useState, useEffect, useMemo, memo } from "react";
 import Particles, { initParticlesEngine } from "@tsparticles/react";
 import { loadSlim } from "@tsparticles/slim";
 import { loadStarsPreset } from "@tsparticles/preset-stars";
-import { FullScreen } from "@tsparticles/engine";
+import { FullScreen, type Container } from "@tsparticles/engine";
 
-const StarParticles = memo(({children}) => {
+
+type props = {
+    children?: React.ReactNode;
+}
+
+const StarParticles = memo(({children}: props) => {
     const [init, setInit] = useState(false);
 
     useEffect(() => {
@@ -15,7 +20,7 @@ const StarParticles = memo(({children}) => {
         });
     }, []);
 
-    const particlesLoaded = (container) => {
+    const particlesLoaded = async (container?: Container) => {
         console.log(container);
     };
 
@@ -38,13 +43,14 @@ const StarParticles = memo(({children}) => {
     );
     if (init) {
         return (
-            <Particles
-                id="tsparticles"
-                options={options}
-                particlesLoaded={particlesLoaded}
-            >
+            <>
+                <Particles
+                    id="tsparticles"
+                    options={options}
+                    particlesLoaded={particlesLoaded}
+                />
                 {children}
-            </Particles>
+            </>
         );
     }
 

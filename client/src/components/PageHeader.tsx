@@ -1,7 +1,7 @@
 import { Container, Typography } from "@mui/material";
 import BackButton from "./BackButton";
 
-const PageHeader = ({title}) => {
+const PageHeader = ({title} : {title: string}) => {
     return (
         <Container
             sx={{

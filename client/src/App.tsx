@@ -21,7 +21,7 @@ import EditSongs from "./components/Admin/EditSongs";
 import EditShows from "./components/Admin/EditShows";
 import Graphic from "./components/Shows/Graphic";
 import AuthRoute from "./AuthRoute";
-import Stats from "./Stats";
+import Stats from "./components/Stats";
 import SetPlanner from "./components/Admin/SetPlanner";
 import { ErrorVariant, DisplayError} from "./types/global";
 

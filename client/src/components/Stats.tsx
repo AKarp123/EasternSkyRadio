@@ -6,19 +6,21 @@ import {
     Stack,
     SvgIcon,
     Button,
+    CircularProgress,
 } from "@mui/material";
 import { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
+import type { Stats } from "../types/pages/Stats";
 
 import axios from "axios";
 const Stats = () => {
-    const [stats, setStats] = useState({});
+    const [stats, setStats] = useState<Partial<Stats>>({});
     const [loading, setLoading] = useState(true);
     const history = useHistory();
 
     useEffect(() => {
         axios
-            .get("/api/getStats")
+            .get<Stats>("/api/getStats")
             .then((res) => {
                 setStats(res.data);
                 setLoading(false);
@@ -111,21 +113,27 @@ const Stats = () => {
 
                 <Divider sx={{ mt: 2 }} />
                 <Stack spacing={3} sx={{ mt: 2 }}>
-                    <Typography variant="h4" align="center" sx={style}>
-                        Total Shows: {stats.totalShows}
-                    </Typography>
-                    <Typography variant="h4" align="center" sx={style}>
-                        Songs Played: {stats.totalSongs}
-                    </Typography>
-                    <Typography variant="h4" align="center" sx={style}>
-                        Unique Songs: {stats.uniqueSongs}
-                    </Typography>
-                    <Typography variant="h4" align="center" sx={style}>
-                        Unique Artists: {stats.uniqueArtists}
-                    </Typography>
-                    <Typography variant="h4" align="center" sx={style}>
-                        Unique Albums: {stats.uniqueAlbums}
-                    </Typography>
+                    {loading ? (
+                        <CircularProgress />
+                    ) : (
+                        <>
+                            <Typography variant="h4" align="center" sx={style}>
+                                Total Shows: {stats.totalShows}
+                            </Typography>
+                            <Typography variant="h4" align="center" sx={style}>
+                                Songs Played: {stats.totalSongs}
+                            </Typography>
+                            <Typography variant="h4" align="center" sx={style}>
+                                Unique Songs: {stats.uniqueSongs}
+                            </Typography>
+                            <Typography variant="h4" align="center" sx={style}>
+                                Unique Artists: {stats.uniqueArtists}
+                            </Typography>
+                            <Typography variant="h4" align="center" sx={style}>
+                                Unique Albums: {stats.uniqueAlbums}
+                            </Typography>
+                        </>
+                    )}
                 </Stack>
             </Paper>
         </Container>
