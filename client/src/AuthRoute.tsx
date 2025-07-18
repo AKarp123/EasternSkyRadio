@@ -3,8 +3,16 @@ import { Redirect, Route } from "react-router-dom";
 import { useContext } from "react";
 import UserContext, { useAuth } from "./providers/UserProvider";
 
-const AuthRoute = ({ component: Component, ...rest }) => {
-    const { user } = useAuth();
+
+
+type props = {
+    component: React.ComponentType<any>;
+    location?: Location;
+    [key: string]: any; // Allow other props to be passed
+}
+
+const AuthRoute = ({ component: Component, location, ...rest }: props) => {
+    const { user } = useAuth()!;
     if (user === "Loading") {
         return <></>;
     }
