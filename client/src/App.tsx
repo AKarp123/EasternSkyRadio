@@ -23,6 +23,7 @@ import Graphic from "./components/Shows/Graphic";
 import AuthRoute from "./AuthRoute";
 import Stats from "./Stats";
 import SetPlanner from "./components/Admin/SetPlanner";
+import { ErrorVariant, DisplayError} from "./types/global";
 
 let darkTheme = createTheme({
     palette: {
@@ -36,9 +37,9 @@ let darkTheme = createTheme({
 darkTheme = responsiveFontSizes(darkTheme);
 
 function App() {
-    const [error, setError] = useState(null);
+    const [error, setError] = useState<DisplayError | null>(null);
 
-    const displayError = (errorMessage, variant = "error") => {
+    const displayError = (errorMessage: string, variant: ErrorVariant) => {
         setError({ errorMessage, variant });
     };
 

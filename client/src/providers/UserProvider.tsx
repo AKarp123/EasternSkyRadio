@@ -1,14 +1,15 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import axios from "axios";
 import ErrorContext from "./ErrorContext";
+import { UserState, type UserContextType } from "../types/global";
 // Create the user context
-const UserContext = createContext();
+const UserContext = createContext<UserContextType | undefined | null>(undefined);
 
 export const useAuth = () => useContext(UserContext);
 
-const UserProvider = ({ children }) => {
-    const [user, setUser] = useState("Loading");
-    const setError = useContext(ErrorContext);
+const UserProvider = ({ children }: { children: React.ReactNode }) => {
+    const [user, setUser] = useState<UserState>("Loading");
+    const setError = useContext(ErrorContext)!;
 
     useEffect(() => {
         axios

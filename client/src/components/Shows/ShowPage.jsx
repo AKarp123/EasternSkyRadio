@@ -15,7 +15,7 @@ import ErrorContext from "../../providers/ErrorContext";
 import axios from "axios";
 import PageHeader from "../PageHeader";
 
-const ShowPage = ({ parentRef }) => {
+const ShowPage = () => {
     const [showList, setShowList] = useState([]);
     const [loading, setLoading] = useState(true);
     const setError = useContext(ErrorContext);
@@ -43,7 +43,6 @@ const ShowPage = ({ parentRef }) => {
                 <ShowPageMain
                     showList={showList}
                     setShowList={setShowList}
-                    parentRef={parentRef}
                 />
             )}
             </Box>
@@ -51,7 +50,7 @@ const ShowPage = ({ parentRef }) => {
     );
 };
 
-const ShowPageMain = ({ showList, setShowList, parentref }) => {
+const ShowPageMain = ({ showList, setShowList }) => {
     if (showList === undefined || showList.length === 0) {
         return (
             <Typography
