@@ -21,3 +21,8 @@ export type UserContextType = {
     user: UserState,
     setUser: (user: UserState) => void
 }
+
+export interface StandardResponse { 
+    success: boolean;
+    message?: string;
+}
