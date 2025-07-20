@@ -56,6 +56,7 @@ const songEntrySchema = new schema<SongEntry>({
             },
         ],
         required: false,
+        default: [],
     },
     duration: { type: Number, default: 0, select: false }, // approx duration in decimal time
     lastPlayed: { type: Date, required: false, select: false },

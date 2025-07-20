@@ -1,3 +1,5 @@
+/// <reference types="vite-plugin-svgr/client" />
+
 import {
     Typography,
     Divider,
@@ -22,15 +24,17 @@ import AppleIcon from "@mui/icons-material/Apple";
 import YouTubeIcon from "@mui/icons-material/YouTube";
 import MusicIcon from "@mui/icons-material/MusicNote";
 import DoNotDisturbIcon from "@mui/icons-material/DoNotDisturb";
-import SpotifyIcon from "../../icons/spotify.svg?react";
-import { useState, useEffect, useContext, useRef } from "react";
+import SpotifyIcon from "../../icons/spotify.svg?react"
+import { useState, useEffect, useContext, useRef, Key } from "react";
 import axios from "axios";
 import ErrorContext from "../../providers/ErrorContext";
 import PageHeader from "../PageHeader";
+import { SongEntry } from "../../types/Song";
+import { ShowEntry } from "../../types/Shows";
 
 const SetList = () => {
-    const { showId } = useParams();
-    const [showData, setShowData] = useState(null);
+    const { showId } = useParams<{ showId: string }>();
+    const [showData, setShowData] = useState<ShowEntry | null>(null);
     const [loading, setLoading] = useState(true);
     const setError = useContext(ErrorContext);
 
@@ -69,9 +73,9 @@ const SetList = () => {
                             {loading ? (
                                 <Typography>Loading...</Typography>
                             ) : (
-                                showData.songsList.map((song) => (
+                                showData?.songsList.map((song) => (
                                     <Grid item xs={12} sm={6} md={4}>
-                                        <SetListCard song={song} key={song._id} />
+                                        <SetListCard song={song} key={song._id as Key} />
                                     </Grid>
                                 ))
                             )}
@@ -82,10 +86,10 @@ const SetList = () => {
     );
 };
 
-const SetListCard = ({ song }) => {
+const SetListCard = ({ song } : { song: SongEntry}) => {
     const genreBoxRef = useRef(null);
 
-    const fontSwitch = (len) => {
+    const fontSwitch = (len: number) => {
         if (len < 24) {
             return "1.5rem !important";
         }
@@ -102,7 +106,7 @@ const SetListCard = ({ song }) => {
 
     const size = fontSwitch(song.title.length);
 
-    const iconSwitch = {
+    const iconSwitch: { [key: string]: React.ReactElement } = {
         Spotify: (
             <SvgIcon
                 component={SpotifyIcon}
@@ -257,7 +261,7 @@ const SetListCard = ({ song }) => {
                     {song.songReleaseLoc.map((release) => {
                         return (
                             <Tooltip
-                                key={release._id}
+                                key={release.service}
                                 title={
                                     release.service +
                                     (release.description

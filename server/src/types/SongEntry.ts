@@ -18,7 +18,16 @@ export interface SongEntry {
 
 
 type songReleaseLocation = {
-    service: string,
+    service: songReleaseService,
     link: string,
     description?: string,
+}
+
+type songReleaseService = {
+    Spotify: "Spotify",
+    AppleMusic: "Apple Music",
+    YouTube: "YouTube",
+    Other: "Other",
+    Purchase: "Purchase",
+    Download: "Download"
 }

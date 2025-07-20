@@ -10,6 +10,6 @@ export interface ShowEntry {
     
 }
 
-export interface ShowEntryMin extends Omit<ShowEntry, "songsList"> {
+export interface ShowEntryMin extends Omit<ShowEntry, "songsList"> { //This one is used for the listing shows page
     songListCount: number;
 }

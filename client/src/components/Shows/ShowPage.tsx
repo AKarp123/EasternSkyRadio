@@ -14,15 +14,19 @@ import { Link } from "react-router-dom";
 import ErrorContext from "../../providers/ErrorContext";
 import axios from "axios";
 import PageHeader from "../PageHeader";
+import type { ShowEntry, ShowEntryMin } from "../../types/Shows";
+
+
+
 
 const ShowPage = () => {
-    const [showList, setShowList] = useState([]);
+    const [showList, setShowList] = useState<ShowEntryMin[]>([]);
     const [loading, setLoading] = useState(true);
     const setError = useContext(ErrorContext);
 
     useEffect(() => {
         axios
-            .get("/api/getShows")
+            .get<ShowEntryMin[]>("/api/getShows")
             .then((res) => {
                 setShowList(res.data);
                 setLoading(false);
@@ -50,7 +54,12 @@ const ShowPage = () => {
     );
 };
 
-const ShowPageMain = ({ showList, setShowList }) => {
+type ShowPageProps = {
+    showList: ShowEntryMin[];
+    setShowList: (shows: ShowEntryMin[]) => void;
+};
+
+const ShowPageMain = ({ showList } : ShowPageProps) => {
     if (showList === undefined || showList.length === 0) {
         return (
             <Typography
@@ -62,17 +71,6 @@ const ShowPageMain = ({ showList, setShowList }) => {
         );
     }
 
-    const fetchMoreShows = () => {
-        axios
-            .get("/api/getShows", {
-                params: {
-                    offset: showList.length,
-                },
-            })
-            .then((res) => {
-                setShowList([...showList, ...res.data]);
-            });
-    };
 
     return (
         <Container
@@ -84,24 +82,16 @@ const ShowPageMain = ({ showList, setShowList }) => {
                 padding: "0px",
             }}
         >
-            {/* <InfiniteScroll
-                pageStart={0}
-                loadMore={fetchMoreShows}
-                hasMore={showList[showList.length - 1].showId > 1}
-                loader={<CircularProgress key={0} />}
-                useWindow={false}
-                getScrollParent={() => parentref.current}
-                threshold={1}
-            > */}
+            
             {showList.map((show, index) => (
                 <ShowListItem key={index} show={show} />
             ))}
-            {/* </InfiniteScroll> */}
+            
         </Container>
     );
 };
 
-const ShowListItem = ({ show }) => {
+const ShowListItem = ({ show } : { show: ShowEntryMin}) => {
     const showDate = new Date(show.showDate);
     return (
         <MUILink
