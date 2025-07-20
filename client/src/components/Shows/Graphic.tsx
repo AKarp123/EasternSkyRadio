@@ -1,4 +1,4 @@
-import { useEffect, useState, useContext } from "react";
+import { useEffect, useState, useContext, Key } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import ErrorContext from "../../providers/ErrorContext";
@@ -17,27 +17,22 @@ import {
     Stack,
     Button,
 } from "@mui/material";
+import { ShowEntry } from "../../types/Shows";
+import { SongEntry } from "../../types/Song";
 
 const Graphic = () => {
-    const { showId } = useParams();
-    const [showData, setShowData] = useState(null);
+    const { showId } = useParams<{ showId: string }>();
+    const [showData, setShowData] = useState<ShowEntry | null>(null);
     const [offset, setOffset] = useState(1);
-    const [songsList, setSongsList] = useState([]);
+    const [songsList, setSongsList] = useState<SongEntry[]>([]);
     const [loading, setLoading] = useState(true);
     const setError = useContext(ErrorContext);
 
     useEffect(() => {
         axios
-            .get("/api/getShowData/", { params: { showId } })
+            .get<{showData: ShowEntry}>("/api/getShowData/", { params: { showId } })
             .then((res) => {
                 setShowData(res.data.showData);
-                let tempSongList = [];
-                for (let i = 6 * (offset - 1); i < 6 * offset; i++) {
-                    if (i < res.data.showData.songsList.length) {
-                        tempSongList.push(res.data.showData.songsList[i]);
-                    }
-                }
-                setSongsList(tempSongList);
                 setLoading(false);
             })
             .catch((err) => {
@@ -46,32 +41,9 @@ const Graphic = () => {
             });
     }, []);
 
-    const handleNext = () => {
-        setOffset(offset + 1);
-        let tempSongList = [];
-        let tOffset = offset + 1;
-        for (let i = 6 * (tOffset - 1); i < 6 * tOffset; i++) {
-            if (i < showData.songsList.length) {
-                tempSongList.push(showData.songsList[i]);
-                console.log(i);
-            }
-        }
-        setSongsList(tempSongList);
-    };
+    
 
-    const handlePrev = () => {
-        setOffset(offset - 1);
-        let tempSongList = [];
-        let tOffset = offset - 1;
-        for (let i = 6 * (tOffset - 1); i < 6 * tOffset; i++) {
-            if (i < showData.songsList.length) {
-                tempSongList.push(showData.songsList[i]);
-            }
-        }
-        setSongsList(tempSongList);
-    };
-
-    if (loading) {
+    if (loading || showData === null) {
         return <div>Loading...</div>;
     }
 
@@ -132,7 +104,7 @@ const Graphic = () => {
                         <Grid container spacing={0}>
                             {showData.songsList.map((song) => {
                                 return (
-                                    <Grid item xs={12} sm={6} key={song._id}>
+                                    <Grid item xs={12} sm={6} key={song._id as Key}>
                                         <SetListItem song={song} />
                                     </Grid>
                                 );
@@ -170,7 +142,7 @@ const Graphic = () => {
     );
 };
 
-const SetListItem = ({ song }) => {
+const SetListItem = ({ song } : {song: SongEntry}) => {
     return (
         <Box
             sx={{
@@ -228,7 +200,7 @@ const SetListItem = ({ song }) => {
                     </AutoTextSize>
                 </Typography>
                 <Typography
-                    variant="body"
+                    variant="body1"
                     sx={{
                         fontFamily: "PixelOperator, Roboto",
                         fontSize: "20px !important",
@@ -249,7 +221,7 @@ const SetListItem = ({ song }) => {
     );
 };
 
-const SetListCard = ({ song }) => {
+const SetListCard = ({ song }: { song: SongEntry }) => {
     return (
         <Card
             sx={{
