@@ -13,14 +13,15 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import HomeButton from "./HomeButton";
 import ErrorContext from "../../providers/ErrorContext";
+import { SiteData } from "../../types/pages/home/Home";
 
 const Home = React.memo(() => {
-    const [siteData, setSiteData] = useState({});
+    const [siteData, setSiteData] = useState<SiteData | null>(null);
     const [loading, setLoading] = useState(true);
     const setError = useContext(ErrorContext);
     useEffect(() => {
         axios
-            .get("/api/getSiteInfo")
+            .get<SiteData>("/api/getSiteInfo")
             .then((res) => {
                 setSiteData(res.data);
                 setLoading(false);
@@ -34,6 +35,10 @@ const Home = React.memo(() => {
     }, []);
 
     const nextShowDate = () => {
+        if(!siteData) {
+            return;
+        }
+
         let now = new Date();
         let nextShow = new Date(
             now.getFullYear(),
@@ -47,7 +52,10 @@ const Home = React.memo(() => {
             daysUntilNextShow = 7;
         }
         nextShow.setDate(now.getDate() + daysUntilNextShow);
-        return nextShow;
+
+        return new Date(nextShow.toLocaleString("en-US", { timeZone: siteData.timezone }));
+        
+        
     };
 
     return (
@@ -62,13 +70,13 @@ const Home = React.memo(() => {
         >
             <Fade in={!loading} timeout={500}>
                 <Typography
-                    variant="p"
+                    variant="body1"
                     align="center"
                     sx={{ fontFamily: "Tiny5, Roboto" }}
                 >
                     {siteData == null ? "No Data Available" : siteData.onBreak
                         ? "On break for the semester"
-                        : `Next show: ${nextShowDate().toDateString()} at ${nextShowDate().toLocaleTimeString()}`}
+                        : `Next show: ${nextShowDate()?.toDateString()} at ${nextShowDate()?.toLocaleTimeString()}`}
                 </Typography>
             </Fade>
             <Paper
@@ -130,7 +138,7 @@ const Home = React.memo(() => {
                 </footer>
             </Paper>
             <Typography
-                variant="p"
+                variant="body1"
                 align="left"
                 sx={{ fontFamily: "Tiny5, Roboto", color: "white" }}
             >

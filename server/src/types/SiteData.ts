@@ -2,7 +2,7 @@ interface SiteData {
     onBreak: boolean;
     showDay: number;
     showHour: number;
-    timeZone: string;
+    timezone: string;
     showLength: number;
     messageOfTheDay?: string;
 }

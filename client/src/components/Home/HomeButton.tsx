@@ -15,7 +15,12 @@ const CustomButton = styled(Button)({
     fontSize: "1.5rem",
 });
 
-const HomeButton = ({ route, text, link }) => {
+type HomeButtonProps = 
+    | { route: string; text: string; link?: never }
+    | { route?: never; text: string; link: string };
+
+
+const HomeButton = ({ route, text, link } : HomeButtonProps) => {
     return (
         <Container
             sx={{
@@ -77,7 +82,7 @@ const HomeButton = ({ route, text, link }) => {
                 </MUILink>
             ) : (
                 <Link
-                    to={route}
+                    to={route!}
                     style={{
                         textDecoration: "none",
                         color: "white",
@@ -118,7 +123,7 @@ const HomeButton = ({ route, text, link }) => {
     );
 };
 
-export const HomeButtonNoRoute = ({ text }) => {
+export const HomeButtonNoRoute = ({ text } : { text: string }) => {
     return (
         <Container
             sx={{

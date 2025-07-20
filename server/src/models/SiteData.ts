@@ -13,7 +13,7 @@ const siteDataSchema = new Schema<SiteData, SiteModelType>(
         onBreak: { type: Boolean, required: true, default: false },
         showDay: { type: Number, required: true },
         showHour: { type: Number, required: true },
-        timeZone: { type: String, required: true, default: "America/New_York" },
+        timezone: { type: String, required: true, default: "America/New_York" },
         showLength: { type: Number, required: true, default: 1 },
         messageOfTheDay: { type: String, required: false },
     },
