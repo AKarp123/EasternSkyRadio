@@ -21,13 +21,13 @@ import Home from "../Home/Home";
 import ErrorContext from "../../providers/ErrorContext";
 
 const AdminPage = () => {
-    const { setUser } = useAuth();
+    const { setUser } = useAuth()!;
     const setError = useContext(ErrorContext);
     const [changePasswordDialog, setChangePasswordDialog] = useState(false);
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
 
-    const logout = (e) => {
+    const logout = (e : React.MouseEvent<HTMLDivElement, MouseEvent>) => {
         e.preventDefault();
         axios.post("/api/logout").then((res) => {
             console.log(res);

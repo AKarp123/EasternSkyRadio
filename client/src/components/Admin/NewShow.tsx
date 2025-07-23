@@ -18,32 +18,35 @@ import ErrorContext from "../../providers/ErrorContext";
 import { reducer } from "./NewShowReducer";
 import SongForm from "./SongForm";
 import SongSearch from "./SongSearch";
+import { NewShowActionType, NewShowState } from "../../types/pages/admin/NewShow";
+
+const InitialState : NewShowState = {
+    showDate: new Date(Date.now()).toISOString().split("T")[0],
+    showDescription: "",
+    songsList: [], // always include song object id
+    song: {
+        elcroId: "",
+        artist: "",
+        title: "",
+        origTitle: "",
+        album: "",
+        origAlbum: "",
+        albumImageLoc: "",
+        genres: [],
+        specialNote: "",
+        songReleaseLoc: [],
+        duration: 0,
+    },
+};
 
 const NewShow = () => {
     const setError = useContext(ErrorContext);
-    const [newShowInput, dispatch] = useReducer(reducer, {
-        showDate: new Date(Date.now()).toISOString().split("T")[0],
-        showDescription: "",
-        songsList: [], // always include song object id
-        song: {
-            elcroId: "",
-            artist: "",
-            title: "",
-            origTitle: "",
-            album: "",
-            origAlbum: "",
-            albumImageLoc: "",
-            genres: [],
-            specialNote: "",
-            songReleaseLoc: [],
-            duration: "",
-        },
-    });
+    const [state, dispatch] = useReducer(reducer, InitialState);
 
     useEffect(() => {
         let showState = localStorage.getItem("showState");
         if (showState) {
-            dispatch({ type: "load", payload: JSON.parse(showState) });
+            dispatch({ type: NewShowActionType.Load, payload: JSON.parse(showState) });
         }
     }, []);
 
@@ -51,14 +54,14 @@ const NewShow = () => {
 
     const addShow = () => {
         axios
-            .post("/api/addShow", { showData: newShowInput })
+            .post("/api/addShow", { showData: state })
             .then((res) => {
                 if (res.data.success === false) {
                     setError(res.data.message);
                     return;
                 }
                 setError("Show added successfully", "success");
-                dispatch({ type: "reset" });
+                dispatch({ type: NewShowActionType.Reset });
             })
             .catch((err) => {
                 setError(err.message);
@@ -81,10 +84,10 @@ const NewShow = () => {
                             <TextField
                                 label="Show Date"
                                 type="date"
-                                value={newShowInput.showDate}
+                                value={state.showDate}
                                 onChange={(e) =>
                                     dispatch({
-                                        type: "showDate",
+                                        type: NewShowActionType.ShowDate,
                                         payload: e.target.value,
                                     })
                                 }
@@ -94,10 +97,10 @@ const NewShow = () => {
                         <Grid item xs={12} md={6}>
                             <TextField
                                 label="Show Description"
-                                value={newShowInput.showDescription}
+                                value={state.showDescription}
                                 onChange={(e) =>
                                     dispatch({
-                                        type: "showDescription",
+                                        type: NewShowActionType.ShowDescription,
                                         payload: e.target.value,
                                     })
                                 }
@@ -123,7 +126,10 @@ const NewShow = () => {
                                         overflowX: "hidden",
                                     }}
                                 >
-                                    <SongSearch dispatch={dispatch} parent="New Show"/>
+                                    <SongSearch
+                                        dispatch={dispatch}
+                                        parent="New Show"
+                                    />
                                 </Box>
                             ) : (
                                 <Box
@@ -136,7 +142,7 @@ const NewShow = () => {
                                     }}
                                 >
                                     <SongForm
-                                        songData={newShowInput.song}
+                                        songData={state.song}
                                         dispatch={dispatch}
                                     />
                                 </Box>
@@ -150,12 +156,12 @@ const NewShow = () => {
                                 Songs List
                             </Typography>
                             <Stack spacing={1}>
-                                {newShowInput.songsList.map((song) => (
+                                {state.songsList.map((song) => (
                                     <Typography
                                         onClick={(e) => {
                                             e.preventDefault();
                                             dispatch({
-                                                type: "removeSong",
+                                                type: NewShowActionType.RemoveSong,
                                                 payload: song,
                                             });
                                         }}

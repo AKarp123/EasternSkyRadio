@@ -11,7 +11,7 @@ export interface SongEntry {
     genres: string[]
     specialNote?: string,
     songReleaseLoc? : songReleaseLocation[],
-    duration?: number,
+    duration: number,
     lastPlayed? : Date,
 
 }

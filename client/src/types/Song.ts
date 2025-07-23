@@ -1,5 +1,3 @@
-
-
 export interface SongEntry {
     _id: String;
     songId: number;
@@ -17,7 +15,8 @@ export interface SongEntry {
         link: string;
         description?: string;
     }[];
+    duration: number;
+    lastPlayed?: Date;
 }
 
-
-
+export type SongEntryForm = Omit<SongEntry, "_id" | "songId" | "lastPlayed">;

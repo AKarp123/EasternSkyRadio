@@ -3,7 +3,7 @@ import axios from "axios";
 import ErrorContext from "./ErrorContext";
 import { UserState, type UserContextType } from "../types/global";
 // Create the user context
-const UserContext = createContext<UserContextType | undefined | null>(undefined);
+const UserContext = createContext<UserContextType>({} as UserContextType);
 
 export const useAuth = () => useContext(UserContext);
 
