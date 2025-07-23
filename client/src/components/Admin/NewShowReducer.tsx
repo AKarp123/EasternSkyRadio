@@ -24,6 +24,13 @@ export const reducer = (state: NewShowState, action: NewShowReducerAction): NewS
                 ...state,
                 songsList: [...state.songsList, action.payload],
             };
+        case NewShowActionType.RemoveSong:
+            obj.songsList = state.songsList.filter((song) => song.songId !== action.payload.songId);
+            localStorage.setItem("showState", JSON.stringify(obj));
+            return {
+                ...state,
+                songsList: state.songsList.filter((song) => song.songId !== action.payload.songId),
+            };
         case NewShowActionType.Load:
             return action.payload;
         case NewShowActionType.Reset:

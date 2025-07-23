@@ -39,7 +39,7 @@ darkTheme = responsiveFontSizes(darkTheme);
 function App() {
     const [error, setError] = useState<DisplayError | null>(null);
 
-    const displayError = (errorMessage: string, variant: ErrorVariant) => {
+    const displayError = (errorMessage: string, variant: ErrorVariant = "error") => {
         setError({ errorMessage, variant });
     };
 
