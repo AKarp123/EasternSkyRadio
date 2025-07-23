@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, Key } from "react";
 import axios from "axios";
 import { useDebouncedCallback } from "use-debounce";
 import {
@@ -13,10 +13,19 @@ import {
     Button,
 } from "@mui/material";
 import ErrorContext from "../../providers/ErrorContext";
+import { SongEntry } from "../../types/Song";
+import { StandardResponse } from "../../types/global";
+import { createContext } from "react";
 
-const SongSearch = ({ dispatch, parent }) => {
+type SongSearchProps = {
+    dispatch: React.Dispatch<any>;
+    parent?: string;
+};
+
+const DispatchContext = createContext<React.Dispatch<any>>(() => {});
+const SongSearch = ({ dispatch, parent }: SongSearchProps) => {
     parent = parent === undefined ? "New Show" : parent;
-    const [searchResults, setSearchResults] = useState([]);
+    const [searchResults, setSearchResults] = useState<SongEntry[]>([]);
     const setError = useContext(ErrorContext);
     const searchDebounced = useDebouncedCallback((query) => {
         console.log(query);
@@ -25,10 +34,15 @@ const SongSearch = ({ dispatch, parent }) => {
             return;
         }
         axios
-            .get("/api/search", { params: { query } })
+            .get<StandardResponse<"searchResults", SongEntry[]>>(
+                "/api/search",
+                { params: { query } }
+            )
             .then((res) => {
                 if (res.data.success === false) {
-                    setError(res.data.message);
+                    if (res.data.message) {
+                        setError(res.data.message);
+                    }
                     return;
                 }
                 console.log(res.data);
@@ -39,7 +53,7 @@ const SongSearch = ({ dispatch, parent }) => {
             });
     }, 500);
 
-    const heightMap = {
+    const heightMap: Record<string, string> = {
         "New Show": "40vh",
         "Set Planner": "45vh",
         "Edit Song": "60vh",
@@ -54,54 +68,61 @@ const SongSearch = ({ dispatch, parent }) => {
                 pr: 1, // Padding right in case of a scrollbar
             }}
         >
-            <TextField
-                label="Search"
-                onChange={(e) => searchDebounced(e.target.value)}
-                fullWidth
-                sx={{ mb: 1, mt: 1,  }}
-            />
-            <Box
-                sx={{
-                    justifyContent: "center",
-                    overflowY: "auto",
-                    // Use vh units to scale with screen height:
-                    height: height,
-                    maxHeight: height,
-                    paddingBottom: "16px", // Extra padding so the last card isn’t cut off
-                    boxSizing: "border-box",
-                    "&::-webkit-scrollbar": {
-                        width: "0.4em",
-                    },
-                    "&::-webkit-scrollbar-track": {
-                        background: "transparent",
-                    },
-                    "&::-webkit-scrollbar-thumb": {
-                        background: "#888",
-                        borderRadius: "4px",
-                    },
-                }}
-            >
-                <Stack spacing={1} direction="column">
-                    {searchResults.length > 0 ? (
-                        searchResults.map((song) => (
-                            <SongSearchCard
-                                song={song}
-                                dispatch={dispatch}
-                                parent={parent}
-                                key={song._id}
-                            />
-                        ))
-                    ) : (
-                        <Typography>No results</Typography>
-                    )}
-                </Stack>
-            </Box>
+            <DispatchContext.Provider value={dispatch}>
+                <TextField
+                    label="Search"
+                    onChange={(e) => searchDebounced(e.target.value)}
+                    fullWidth
+                    sx={{ mb: 1, mt: 1 }}
+                />
+                <Box
+                    sx={{
+                        justifyContent: "center",
+                        overflowY: "auto",
+                        // Use vh units to scale with screen height:
+                        height: height,
+                        maxHeight: height,
+                        paddingBottom: "16px", // Extra padding so the last card isn’t cut off
+                        boxSizing: "border-box",
+                        "&::-webkit-scrollbar": {
+                            width: "0.4em",
+                        },
+                        "&::-webkit-scrollbar-track": {
+                            background: "transparent",
+                        },
+                        "&::-webkit-scrollbar-thumb": {
+                            background: "#888",
+                            borderRadius: "4px",
+                        },
+                    }}
+                >
+                    <Stack spacing={1} direction="column">
+                        {searchResults.length > 0 ? (
+                            searchResults.map((song) => (
+                                <SongSearchCard
+                                    song={song}
+                                    parent={parent}
+                                    key={song._id as Key}
+                                />
+                            ))
+                        ) : (
+                            <Typography>No results</Typography>
+                        )}
+                    </Stack>
+                </Box>
+            </DispatchContext.Provider>
         </Box>
     );
 };
 
-const SongSearchCard = ({ song, dispatch, parent }) => {
-    const lastPlayed = new Date(song.lastPlayed);
+type SongSearchCardProps = {
+    song: SongEntry;
+    parent: string;
+};
+const SongSearchCard = ({ song, parent }: SongSearchCardProps) => {
+    const lastPlayed = song.lastPlayed
+        ? new Date(song.lastPlayed)
+        : new Date("Invalid Date");
 
     return (
         <Card
@@ -150,7 +171,7 @@ const SongSearchCard = ({ song, dispatch, parent }) => {
                         parent === "Set Planner" ? "0px !important" : "",
                 }}
             >
-                <Buttons parent={parent} dispatch={dispatch} song={song} />
+                <Buttons parent={parent} song={song} />
             </CardActions>
 
             {parent === "Set Planner" && (
@@ -172,7 +193,12 @@ const SongSearchCard = ({ song, dispatch, parent }) => {
     );
 };
 
-const Buttons = ({ parent, dispatch, song }) => {
+type ButtonProps = {
+    parent: string;
+    song: SongEntry;
+};
+const Buttons = ({ parent, song }: ButtonProps) => {
+    const dispatch = useContext(DispatchContext);
     if (parent === "New Show") {
         return (
             <>

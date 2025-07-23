@@ -18,7 +18,7 @@ import { NewShowActionType } from "../../types/pages/admin/NewShow";
 import { SongFormReducer } from "./SongFormReducer";
 import { SongEntry, SongEntryForm } from "../../types/Song";
 import { StandardResponse } from "../../types/global";
-import { SongFormActionType } from "../../types/SongFormReducer";
+import { SongFormActionType } from "../../types/Song";
 
 /**
  *

@@ -1,17 +1,17 @@
-import { SongEntry, SongEntryForm} from "../../Song";
+import { SongEntry, SongEntryForm } from "../../Song";
 
 export type NewShowReducerAction = {
-  type: NewShowActionType;
-  payload?: any;
-}
+    type: NewShowActionType;
+    payload?: any;
+};
 
 export enum NewShowActionType {
-  ShowDate        = "showDate",
-  ShowDescription = "showDescription",
-  AddSong         = "addSong",
-  RemoveSong      = "removeSong",
-  Load            = "load",
-  Reset           = "reset",
+    ShowDate = "showDate",
+    ShowDescription = "showDescription",
+    AddSong = "addSong",
+    RemoveSong = "removeSong",
+    Load = "load",
+    Reset = "reset",
 }
 
 export interface NewShowState {

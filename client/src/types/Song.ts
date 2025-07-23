@@ -16,7 +16,31 @@ export interface SongEntry {
         description?: string;
     }[];
     duration: number;
-    lastPlayed?: Date;
+    lastPlayed?: string; // ISO date string
 }
 
 export type SongEntryForm = Omit<SongEntry, "_id" | "lastPlayed">;
+
+export enum SongFormActionType {
+    SongId = "songId",
+    ElcroId = "elcroId",
+    Artist = "artist",
+    Title = "title",
+    OrigTitle = "origTitle",
+    Album = "album",
+    OrigAlbum = "origAlbum",
+    AlbumImageLoc = "albumImageLoc",
+    AddGenre = "addGenre",
+    RemoveGenre = "removeGenre",
+    SpecialNote = "specialNote",
+    SetDuration = "setDuration",
+    AddSongReleaseLoc = "addSongReleaseLoc",
+    SetSongReleaseLoc = "setSongReleaseLoc",
+    RemoveSongReleaseLoc = "removeSongReleaseLoc",
+    Fill = "fill",
+}
+
+export type SongFormAction = {
+    type: SongFormActionType;
+    payload: any;
+};
