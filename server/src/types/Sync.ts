@@ -1,6 +1,6 @@
 
-export interface Sync {
+export interface Sync<T> {
     type: string;
-    data: any;
+    data: T;
     lastSynced: Date;
 }

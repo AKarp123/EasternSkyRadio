@@ -38,5 +38,10 @@ export type StandardResponseNoData = {
     message?: string;
 }
 
+export type Sync<T> = {
+    type: string;
+    lastSynced: Date;
+    data: T;
+}
 
 
