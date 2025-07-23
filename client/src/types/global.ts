@@ -22,7 +22,18 @@ export type UserContextType = {
     setUser: (user: UserState) => void
 }
 
-export interface StandardResponse { 
+
+/**
+ * K is the name of the field that contains the data, T is the type of the data
+ */
+export type StandardResponse<K extends string, T> = {
+    success: boolean;
+    message?: string;
+} & {
+    [key in K]: T;
+}
+
+export type StandardResponseNoData = {
     success: boolean;
     message?: string;
 }

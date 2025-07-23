@@ -9,45 +9,99 @@ import {
     InputLabel,
     Tooltip,
 } from "@mui/material";
-import { useContext, useState } from "react";
+import { useContext, useReducer, useState } from "react";
 import { useDebouncedCallback } from "use-debounce";
 import axios from "axios";
 import ErrorContext from "../../providers/ErrorContext";
 import InputFileUpload from "./InputFileUpload";
-
+import { NewShowActionType } from "../../types/pages/admin/NewShow";
+import { SongFormReducer } from "./SongFormReducer";
+import { SongEntry, SongEntryForm } from "../../types/Song";
+import { StandardResponse } from "../../types/global";
+import { SongFormActionType } from "../../types/SongFormReducer";
 
 /**
- * 
+ *
  * SongData - State of current song object
  * Dispatch - Must implement the following actions: addS
- * 
+ *
  */
-const SongForm = ({ songData, dispatch, type, submit }) => {
+
+const InitialState = {
+    songId: -1,
+    elcroId: "",
+    artist: "",
+    title: "",
+    origTitle: "",
+    album: "",
+    origAlbum: "",
+    albumImageLoc: "",
+    genres: [],
+    specialNote: "",
+    songReleaseLoc: [],
+    duration: 0,
+};
+type AddProps = SongFormProps & {
+    songData?: never;
+    type: "add";
+    submit?: never;
+};
+type EditProps = SongFormProps & {
+    songData: SongEntry;
+    type: "edit";
+    submit: (e: React.FormEvent<HTMLFormElement>) => void;
+};
+
+type SongFormProps = {
+    parentDispatch: React.Dispatch<any>;
+};
+
+
+
+const toSongEntryForm: (song: SongEntry) => SongEntryForm = (song) => {
+    const { _id, lastPlayed, ...rest } = song;
+    return {
+        ...rest,
+    };
+}
+
+const SongForm = ({
+    songData,
+    type,
+    submit,
+    parentDispatch,
+}: AddProps | EditProps) => {
     const setError = useContext(ErrorContext);
+
+    const [state, dispatch] = useReducer(
+        SongFormReducer,
+        type === "edit" ? toSongEntryForm(songData) : InitialState
+    );
     const [genreInput, setGenreInput] = useState("");
     const [songReleaseInput, setSongReleaseInput] = useState("");
     const [songReleaseType, setSongReleaseType] = useState("");
     const [songReleaseDesc, setSongReleaseDesc] = useState("");
-    const handleSubmit = (e) => {
+    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         if (type === "edit") {
             submit(e);
             return;
         }
-        const songObj = songData;
-        delete songObj._id;
+        const songObj = state;
         e.preventDefault();
         axios
-            .post("/api/addSong", { songData: songObj })
+            .post<StandardResponse<"song", SongEntry>>("/api/addSong", {
+                songData: songObj,
+            })
             .then((res) => {
                 if (res.data.success) {
                     setError("Song added successfully!", "success");
-                    dispatch({
+                    parentDispatch({
                         type: "addSong",
                         payload: res.data.song,
                     });
                 } else {
                     if (res.data.message === "Song already exists.") {
-                        dispatch({
+                        parentDispatch({
                             type: "addSong",
                             payload: res.data.song,
                         });
@@ -56,7 +110,9 @@ const SongForm = ({ songData, dispatch, type, submit }) => {
                             "info"
                         );
                     } else {
-                        setError(res.data.message);
+                        if (res.data.message) {
+                            setError(res.data.message);
+                        }
                     }
                 }
             })
@@ -65,7 +121,7 @@ const SongForm = ({ songData, dispatch, type, submit }) => {
             });
     };
 
-    const handleUrlType = (url) => {
+    const handleUrlType = (url: string) => {
         // console.log(typeof url)
         if (url.includes("spotify")) {
             setSongReleaseType("Spotify");
@@ -84,24 +140,24 @@ const SongForm = ({ songData, dispatch, type, submit }) => {
         }
     };
 
-    const handleDrop = async (e) => {
+    const handleDrop = async (e: React.DragEvent<HTMLDivElement>) => {
         e.preventDefault();
         const textData = e.dataTransfer.getData("text/plain");
 
         setError("Uploading Image...", "info");
         axios
-            .post("/api/uploadURL", {
-                artist: songData.artist,
-                album: songData.album,
+            .post<StandardResponse<"url", string>>("/api/uploadURL", {
+                artist: state.artist,
+                album: state.album,
                 url: textData,
             })
             .then((res) => {
                 if (res.data.success === false) {
-                    setError(res.data.message);
+                    setError(res.data.message || "Error uploading image");
                     return;
                 }
                 dispatch({
-                    type: "albumImageLoc",
+                    type: SongFormActionType.AlbumImageLoc,
                     payload: res.data.url,
                 });
                 setError("Image uploaded successfully!", "success");
@@ -111,9 +167,9 @@ const SongForm = ({ songData, dispatch, type, submit }) => {
             });
     };
 
-    const uploadImage = (file) => {
+    const uploadImage = (file: File) => {
         // e.preventDefault();
-        const { artist, album } = songData;
+        const { artist, album } = state;
         if (artist === "" || album === "") {
             setError("Please enter artist and album before uploading image");
             return;
@@ -143,7 +199,7 @@ const SongForm = ({ songData, dispatch, type, submit }) => {
                     return;
                 }
                 dispatch({
-                    type: "albumImageLoc",
+                    type: SongFormActionType.AlbumImageLoc,
                     payload: res.data.url,
                 });
                 setError("Image uploaded successfully!", "success");
@@ -161,36 +217,30 @@ const SongForm = ({ songData, dispatch, type, submit }) => {
             return;
         }
         axios
-            .get("/api/search", { params: { elcroId } })
+            .get<StandardResponse<"searchResults", SongEntry[]>>(
+                "/api/search",
+                { params: { elcroId } }
+            )
             .then((res) => {
-                if (res.data.length > 0) {
+                if (res.data.searchResults.length > 0) {
                     dispatch({
-                        type: "fill",
-                        payload: res.data[0],
+                        type: SongFormActionType.Fill,
+                        payload: res.data.searchResults[0],
                     });
                     dispatch({
-                        type: "title",
+                        type: SongFormActionType.Title,
                         payload: "",
                     });
                     dispatch({
-                        type: "origTitle",
+                        type: SongFormActionType.OrigTitle,
                         payload: "",
                     });
                 } else {
                     setError("No song found with that Elcro ID");
                     dispatch({
-                        type: "fill",
+                        type: SongFormActionType.Fill,
                         payload: {
                             elcroId: elcroId,
-                            artist: "",
-                            title: "",
-                            origTitle: "",
-                            album: "",
-                            origAlbum: "",
-                            albumImageLoc: "",
-                            genres: [],
-                            specialNote: "",
-                            songReleaseLoc: [],
                         },
                     });
                 }
@@ -217,23 +267,23 @@ const SongForm = ({ songData, dispatch, type, submit }) => {
                         album.toUpperCase()
                     ) {
                         dispatch({
-                            type: "elcroId",
+                            type: SongFormActionType.Fill,
                             payload: res.data.searchResults[0].elcroId,
-                        })
+                        });
                         dispatch({
-                            type: "album",
+                            type: SongFormActionType.Album,
                             payload: res.data.searchResults[0].album,
                         });
                         dispatch({
-                            type: "origAlbum",
+                            type: SongFormActionType.OrigAlbum,
                             payload: res.data.searchResults[0].origAlbum,
                         });
                         dispatch({
-                            type: "albumImageLoc",
+                            type: SongFormActionType.AlbumImageLoc,
                             payload: res.data.searchResults[0].albumImageLoc,
                         });
                         dispatch({
-                            type: "setSongReleaseLoc",
+                            type: SongFormActionType.SetSongReleaseLoc,
                             payload: res.data.searchResults[0].songReleaseLoc,
                         });
                     }
@@ -252,10 +302,10 @@ const SongForm = ({ songData, dispatch, type, submit }) => {
             <Stack direction="row" spacing={1} sx={{ mt: 1 }}>
                 <TextField
                     label="Elcro ID"
-                    value={songData.elcroId}
+                    value={state.elcroId}
                     onChange={(e) => {
                         dispatch({
-                            type: "elcroId",
+                            type: SongFormActionType.ElcroId,
                             payload: e.target.value,
                         });
 
@@ -267,10 +317,10 @@ const SongForm = ({ songData, dispatch, type, submit }) => {
                 {type === "edit" && (
                     <TextField
                         label="Song ID"
-                        value={songData.songId}
+                        value={state.songId as SongEntry["songId"]}
                         onChange={(e) =>
                             dispatch({
-                                type: "songId",
+                                type: SongFormActionType.SongId,
                                 payload: e.target.value,
                             })
                         }
@@ -283,10 +333,10 @@ const SongForm = ({ songData, dispatch, type, submit }) => {
             <Stack direction="row" spacing={1} sx={{ mt: "8px" }}>
                 <TextField
                     label="Title"
-                    value={songData.title}
+                    value={state.title}
                     onChange={(e) =>
                         dispatch({
-                            type: "title",
+                            type: SongFormActionType.Title,
                             payload: e.target.value,
                         })
                     }
@@ -295,10 +345,10 @@ const SongForm = ({ songData, dispatch, type, submit }) => {
                 />
                 <TextField
                     label="Artist"
-                    value={songData.artist}
+                    value={state.artist}
                     onChange={(e) =>
                         dispatch({
-                            type: "artist",
+                            type: SongFormActionType.Artist,
                             payload: e.target.value,
                         })
                     }
@@ -308,10 +358,10 @@ const SongForm = ({ songData, dispatch, type, submit }) => {
             </Stack>
             <TextField
                 label="Original Title"
-                value={songData.origTitle}
+                value={state.origTitle}
                 onChange={(e) =>
                     dispatch({
-                        type: "origTitle",
+                        type: SongFormActionType.OrigTitle,
                         payload: e.target.value,
                     })
                 }
@@ -321,10 +371,10 @@ const SongForm = ({ songData, dispatch, type, submit }) => {
             <Stack direction="row" spacing={1} sx={{ mt: "8px" }}>
                 <TextField
                     label="Album"
-                    value={songData.album}
+                    value={state.album}
                     onChange={(e) => {
                         dispatch({
-                            type: "album",
+                            type: SongFormActionType.Album,
                             payload: e.target.value,
                         });
 
@@ -335,10 +385,10 @@ const SongForm = ({ songData, dispatch, type, submit }) => {
                 />
                 <TextField
                     label="Original Album"
-                    value={songData.origAlbum}
+                    value={state.origAlbum}
                     onChange={(e) =>
                         dispatch({
-                            type: "origAlbum",
+                            type: SongFormActionType.OrigAlbum,
                             payload: e.target.value,
                         })
                     }
@@ -349,10 +399,10 @@ const SongForm = ({ songData, dispatch, type, submit }) => {
             <Stack direction="row" spacing={1} sx={{ mt: "8px" }}>
                 <TextField
                     label="Album Image Location"
-                    value={songData.albumImageLoc}
+                    value={state.albumImageLoc}
                     onChange={(e) =>
                         dispatch({
-                            type: "albumImageLoc",
+                            type: SongFormActionType.AlbumImageLoc,
                             payload: e.target.value,
                         })
                     }
@@ -361,7 +411,9 @@ const SongForm = ({ songData, dispatch, type, submit }) => {
                         for (const item of e.clipboardData.items) {
                             if (item.type.startsWith("image/")) {
                                 const file = item.getAsFile();
-                                uploadImage(file);
+                                if (file) {
+                                    uploadImage(file);
+                                }
                             }
                         }
                     }}
@@ -385,7 +437,7 @@ const SongForm = ({ songData, dispatch, type, submit }) => {
                         if (e.key === "Enter") {
                             e.preventDefault();
                             dispatch({
-                                type: "addGenre",
+                                type: SongFormActionType.AddGenre,
                                 payload: genreInput
                                     .split(",")
                                     .map((genre) => genre.trim()),
@@ -400,7 +452,7 @@ const SongForm = ({ songData, dispatch, type, submit }) => {
                     variant="contained"
                     onClick={() => {
                         dispatch({
-                            type: "addGenre",
+                            type: SongFormActionType.AddGenre,
                             payload: genreInput
                                 .split(",")
                                 .map((genre) => genre.trim()),
@@ -422,10 +474,10 @@ const SongForm = ({ songData, dispatch, type, submit }) => {
                     "&::-webkit-scrollbar": {
                         display: "none",
                     },
-                    mt: songData.genres.length > 0 ? 1 : 0,
+                    mt: state.genres.length > 0 ? 1 : 0,
                 }}
             >
-                {songData.genres.map((genre, i) => (
+                {state.genres.map((genre, i) => (
                     <Chip
                         key={i}
                         label={genre}
@@ -433,7 +485,7 @@ const SongForm = ({ songData, dispatch, type, submit }) => {
                         sx={{ margin: "2px" }}
                         onDelete={() =>
                             dispatch({
-                                type: "removeGenre",
+                                type: SongFormActionType.RemoveGenre,
                                 payload: genre,
                             })
                         }
@@ -481,7 +533,7 @@ const SongForm = ({ songData, dispatch, type, submit }) => {
                                 // handle additional field if needed
                             } else {
                                 dispatch({
-                                    type: "addSongReleaseLoc",
+                                    type: SongFormActionType.AddSongReleaseLoc,
                                     payload: {
                                         service: songReleaseType,
                                         link: songReleaseInput,
@@ -506,7 +558,7 @@ const SongForm = ({ songData, dispatch, type, submit }) => {
                             if (e.key === "Enter") {
                                 e.preventDefault();
                                 dispatch({
-                                    type: "addSongReleaseLoc",
+                                    type: SongFormActionType.AddSongReleaseLoc,
                                     payload: {
                                         service: songReleaseType,
                                         link: songReleaseInput,
@@ -526,7 +578,7 @@ const SongForm = ({ songData, dispatch, type, submit }) => {
                     variant="contained"
                     onClick={() => {
                         dispatch({
-                            type: "addSongReleaseLoc",
+                            type: SongFormActionType.AddSongReleaseLoc,
                             payload: {
                                 service: songReleaseType,
                                 link: songReleaseInput,
@@ -549,10 +601,10 @@ const SongForm = ({ songData, dispatch, type, submit }) => {
                     "&::-webkit-scrollbar": {
                         display: "none",
                     },
-                    mt: songData.songReleaseLoc.length > 0 ? 1 : 0,
+                    mt: state.songReleaseLoc.length > 0 ? 1 : 0,
                 }}
             >
-                {songData.songReleaseLoc.map((release) => (
+                {state.songReleaseLoc.map((release) => (
                     <Tooltip
                         title={release.link}
                         key={release.link}
@@ -565,7 +617,7 @@ const SongForm = ({ songData, dispatch, type, submit }) => {
                             sx={{ margin: "2px" }}
                             onDelete={() =>
                                 dispatch({
-                                    type: "removeSongReleaseLoc",
+                                    type: SongFormActionType.RemoveSongReleaseLoc,
                                     payload: release.link,
                                 })
                             }
@@ -576,12 +628,12 @@ const SongForm = ({ songData, dispatch, type, submit }) => {
 
             <TextField
                 label="Duration"
-                value={songData.duration}
+                value={state.duration}
                 type="number"
-                step="any"
+                inputProps={{ step: "any" }}
                 onChange={(e) =>
                     dispatch({
-                        type: "duration",
+                        type: SongFormActionType.SetDuration,
                         payload: e.target.value,
                     })
                 }
@@ -590,11 +642,11 @@ const SongForm = ({ songData, dispatch, type, submit }) => {
                     mt: 1,
                     "input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button":
                         {
-                            "WebkitAppearance": "none",
+                            WebkitAppearance: "none",
                             margin: 0,
                         },
                     "input[type=number]": {
-                        "MozAppearance": "textfield",
+                        MozAppearance: "textfield",
                     },
                 }}
             />

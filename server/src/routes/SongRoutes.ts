@@ -32,7 +32,10 @@ songRouter.get("/search", requireLogin, async (req: Request, res: Response) => {
             }).select(
                 "-__v" + (req.user ? " +elcroId +duration +lastPlayed" : "")
             );
-            res.json(searchResults);
+            res.json({
+                success: true,
+                searchResults: searchResults,
+            });
         } else {
             const escapedQuery = escapeRegex(req.query.query as string);
             const searchResults = await SongEntry.find({
@@ -52,7 +55,7 @@ songRouter.get("/search", requireLogin, async (req: Request, res: Response) => {
 });
 
 songRouter.post("/addSong", requireLogin, async (req : Request, res : Response) => {
-    const { songData } : { songData : ISongEntry} = req.body;
+    const { songData } : { songData : Omit<ISongEntry, "songId">} = req.body;
 
     if (!songData) {
         res.json({ success: false, message: "No song data provided." });

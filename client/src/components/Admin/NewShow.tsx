@@ -24,19 +24,7 @@ const InitialState : NewShowState = {
     showDate: new Date(Date.now()).toISOString().split("T")[0],
     showDescription: "",
     songsList: [], // always include song object id
-    song: {
-        elcroId: "",
-        artist: "",
-        title: "",
-        origTitle: "",
-        album: "",
-        origAlbum: "",
-        albumImageLoc: "",
-        genres: [],
-        specialNote: "",
-        songReleaseLoc: [],
-        duration: 0,
-    },
+    
 };
 
 const NewShow = () => {
@@ -142,8 +130,8 @@ const NewShow = () => {
                                     }}
                                 >
                                     <SongForm
-                                        songData={state.song}
-                                        dispatch={dispatch}
+                                        type="add"
+                                        parentDispatch={dispatch}
                                     />
                                 </Box>
                             )}

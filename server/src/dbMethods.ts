@@ -7,7 +7,7 @@ import User from "./models/UserModel.js";
 import { SongEntry as ISongEntry } from "./types/SongEntry.js";
 import { ShowEntrySubmission } from "./types/ShowData.js";
 
-export const addSong = async (songData : ISongEntry) => {
+export const addSong = async (songData : Omit<ISongEntry, "songId">) => {
     const nextSongId = await Increment.findOneAndUpdate(
         { model: "SongEntry" },
         { $inc: { counter: 1 } },

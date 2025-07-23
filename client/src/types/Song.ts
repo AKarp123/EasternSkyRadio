@@ -19,4 +19,4 @@ export interface SongEntry {
     lastPlayed?: Date;
 }
 
-export type SongEntryForm = Omit<SongEntry, "_id" | "songId" | "lastPlayed">;
+export type SongEntryForm = Omit<SongEntry, "_id" | "lastPlayed">;
