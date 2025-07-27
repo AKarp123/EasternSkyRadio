@@ -6,7 +6,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node app.js",
-    "dev": "bun --watch src/app.ts"
+    "dev": "bun --watch src/app.ts",
+    "lint": "bunx eslint src/**/*.ts",
+    "lint:fix": "bunx eslint src/**/*.ts --fix"
   },
   "keywords": [],
   "author": "",
@@ -29,7 +31,6 @@
   "type": "module",
   "devDependencies": {
     "@stylistic/eslint-plugin": "^5.2.2",
-    "@types/connect-mongo": "^3.1.6",
     "@types/express": "^5.0.3",
     "@types/express-session": "^1.18.2",
     "@types/multer": "~2.0.0",

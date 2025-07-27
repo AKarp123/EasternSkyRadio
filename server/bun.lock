@@ -20,7 +20,6 @@
       },
       "devDependencies": {
         "@stylistic/eslint-plugin": "^5.2.2",
-        "@types/connect-mongo": "^3.1.6",
         "@types/express": "^5.0.3",
         "@types/express-session": "^1.18.2",
         "@types/multer": "~2.0.0",
@@ -272,8 +271,6 @@
     "@types/caseless": ["@types/caseless@0.12.5", "", {}, "sha512-hWtVTC2q7hc7xZ/RLbxapMvDMgUnDvKvMOpKal4DrMyfGBUfB1oKaZlIRr6mJL+If3bAP6sV/QneGzF6tJjZDg=="],
 
     "@types/connect": ["@types/connect@3.4.38", "", { "dependencies": { "@types/node": "*" } }, "sha512-K6uROf1LD88uDQqJCktA4yzL1YYAK6NgfsI0v/mTgyPKWsX1CnJ0XPSDhViejru1GcRkLWb8RlzFYJRqGUbaug=="],
-
-    "@types/connect-mongo": ["@types/connect-mongo@3.1.6", "", { "dependencies": { "connect-mongo": "*" } }, "sha512-g/zB46xByucc4PJEw8zzTMtlQCAJBIOqqYfh3BDgps1xLahQZMa8925XXAhsa6eJ9YSSpE54UZc+34r7PdVRqw=="],
 
     "@types/estree": ["@types/estree@1.0.8", "", {}, "sha512-dWHzHa2WqEXI/O1E9OjrocMTKJl2mSrEolh1Iomrv6U+JuNwaHXsXx9bLu5gG7BUWFIN0skIQJQ/L1rIex4X6w=="],
 
