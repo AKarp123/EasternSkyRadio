@@ -31,16 +31,16 @@ app.use(express.urlencoded({ extended: true }));
 app.use(passport.initialize());
 
 app.use(
-    session({
-        secret: process.env.EXP_SESSION_SECRET || "default",
-        resave: false,
-        saveUninitialized: false,
-        cookie: { maxAge: 3600 * 3 * 1000 },
-        rolling: true,
-        store: MongoStore.create({
-            mongoUrl: process.env.MONGODB_URI || "",
-        }),
-    })
+	session({
+		secret: process.env.EXP_SESSION_SECRET || "default",
+		resave: false,
+		saveUninitialized: false,
+		cookie: { maxAge: 3600 * 3 * 1000 },
+		rolling: true,
+		store: MongoStore.create({
+			mongoUrl: process.env.MONGODB_URI || "",
+		}),
+	})
 );
 
 
@@ -59,10 +59,10 @@ app.use("/api", apiRouter);
 
 
 app.listen(port, () => {
-    console.log(`Server running on port ${port}`);
+	console.log(`Server running on port ${port}`);
 });
 
 db.on("error", console.error.bind(console, "connection error:"));
 db.once("open", async function () {
-    console.log("Connected to MongoDB");
+	console.log("Connected to MongoDB");
 });
