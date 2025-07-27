@@ -15,7 +15,7 @@ import axios from "axios";
 import ErrorContext from "../../providers/ErrorContext";
 import InputFileUpload from "./InputFileUpload";
 import { NewShowActionType } from "../../types/pages/admin/NewShow";
-import { SongFormReducer } from "./SongFormReducer";
+import { SongFormReducer } from "../../reducers/SongFormReducer";
 import { SongEntry, SongEntryForm } from "../../types/Song";
 import { StandardResponse } from "../../types/global";
 import { SongFormActionType } from "../../types/Song";
@@ -27,7 +27,7 @@ import { SongFormActionType } from "../../types/Song";
  *
  */
 
-const InitialState = {
+const InitialState: SongEntryForm = {
     songId: -1,
     elcroId: "",
     artist: "",

@@ -1,4 +1,4 @@
-import {  NewShowState, NewShowReducerAction, NewShowActionType } from "../../types/pages/admin/NewShow";
+import {  NewShowState, NewShowReducerAction, NewShowActionType } from "../types/pages/admin/NewShow";
 
 export const reducer = (state: NewShowState, action: NewShowReducerAction): NewShowState => {
     let obj : NewShowState = JSON.parse(localStorage.getItem("showState") || "{}");

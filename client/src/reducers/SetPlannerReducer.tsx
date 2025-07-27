@@ -1,4 +1,4 @@
-import { SetPlannerActionType, SetPlannerState, SetPlannerAction } from "../../types/pages/admin/SetPlanner";
+import { SetPlannerActionType, SetPlannerState, SetPlannerAction } from "../types/pages/admin/SetPlanner";
 
 export const reducer = (state: SetPlannerState, action: SetPlannerAction) => {
     switch (action.type) {

@@ -15,7 +15,7 @@ import PageHeader from "../PageHeader";
 import { useContext, useEffect, useReducer, useState } from "react";
 import axios from "axios";
 import ErrorContext from "../../providers/ErrorContext";
-import { reducer } from "./NewShowReducer";
+import { reducer } from "../../reducers/NewShowReducer";
 import SongForm from "./SongForm";
 import SongSearch from "./SongSearch";
 import { NewShowActionType, NewShowState } from "../../types/pages/admin/NewShow";

@@ -1,5 +1,5 @@
-import { SongEntryForm, SongEntry } from "../../types/Song";
-import { SongFormActionType, SongFormAction } from "../../types/Song";
+import { SongFormActionType, SongFormAction } from "../types/Song";
+import { SongEntryForm, SongEntry } from "../types/Song";
 
 export const SongFormReducer = (state: SongEntryForm, action: SongFormAction): SongEntryForm | SongEntry => {
     switch (action.type) {

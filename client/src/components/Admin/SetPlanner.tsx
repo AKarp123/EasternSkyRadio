@@ -24,7 +24,7 @@ import SongSearch from "./SongSearch";
 import axios from "axios";
 import ErrorContext from "../../providers/ErrorContext";
 import SongForm from "./SongForm";
-import { reducer } from "./SetPlannerReducer";
+import { reducer } from "../../reducers/SetPlannerReducer";
 import { SetPlannerActionType, SetPlannerItem, SetPlannerAction, SetPlannerState } from "../../types/pages/admin/SetPlanner";
 import { Sync } from "../../types/global";
 
