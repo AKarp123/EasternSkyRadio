@@ -25,23 +25,12 @@ import axios from "axios";
 import ErrorContext from "../../providers/ErrorContext";
 import SongForm from "./SongForm";
 import { reducer } from "./SetPlannerReducer";
+import { SetPlannerActionType, SetPlannerItem, SetPlannerAction, SetPlannerState } from "../../types/pages/admin/SetPlanner";
+import { Sync } from "../../types/global";
 
 const SetPlanner = () => {
     const [state, dispatch] = useReducer(reducer, {
         songsList: [], //includes events such as mic breaks, announcements, etc. (too lazy to rename everything lol)
-        curSong: {
-            elcroId: "",
-            artist: "",
-            title: "",
-            origTitle: "",
-            album: "",
-            origAlbum: "",
-            albumImageLoc: "",
-            genres: [],
-            specialNote: "",
-            songReleaseLoc: [],
-            duration: "",
-        },
         tabState: 0,
         label: "",
         toggleNewSongForm: false,
@@ -51,18 +40,18 @@ const SetPlanner = () => {
         firstLoad: true,
     });
 
+
     useEffect(() => {
         axios
-            .get("/api/sync", { params: { type: "SetPlanner" } })
+            .get<Sync<SetPlannerItem[]>>("/api/sync", { params: { type: "SetPlanner" } })
             .then((res) => {
                 let data = res.data;
                 if (
-                    res.data.success === false &&
-                    res.data.message === "No data provided."
+                    res.data.success === false
                 ) {
                     return;
                 } else {
-                    dispatch({ type: "loadSync", payload: data.data });
+                    dispatch({ type: SetPlannerActionType.LoadSync, payload: data.data });
                     const timeStr = new Date(res.data.lastSynced)
                     .toLocaleTimeString("en-US", {
                         hour: "numeric",
@@ -71,7 +60,7 @@ const SetPlanner = () => {
                     .toLowerCase()
                     .replace(/\s/g, "");
                     dispatch({
-                        type: "setSyncStatus",
+                        type: SetPlannerActionType.SetSyncStatus,
                         payload: `Last synced at ${timeStr}`,
                     });
                 }
@@ -82,7 +71,7 @@ const SetPlanner = () => {
         if (state.firstLoad) {
             return;
         }
-        dispatch({ type: "setSyncStatus", payload: "Syncing..." });
+        dispatch({ type: SetPlannerActionType.SetSyncStatus, payload: "Syncing..." });
         axios
             .post("/api/sync", { type: "SetPlanner", data: state.songsList })
             .then((res) => {
@@ -90,7 +79,7 @@ const SetPlanner = () => {
                     console.log(res.data.message);
 
                     dispatch({
-                        type: "setSyncStatus",
+                        type: SetPlannerActionType.SetSyncStatus,
                         payload: "Error syncing",
                     });
                 }
@@ -102,19 +91,25 @@ const SetPlanner = () => {
                     .toLowerCase()
                     .replace(/\s/g, "");
                 dispatch({
-                    type: "setSyncStatus",
+                    type: SetPlannerActionType.SetSyncStatus,
                     payload: `Last synced at ${timeStr}`,
                 });
             });
     }, [state.songsList]);
 
     const calculateDurationAtPoint = () => {
-        let arr = [];
+        let arr : number[] = [];
         for (let i = 0; i < state.songsList.length; i++) {
+            let duration = 0;
+            if (state.songsList[i].type === "Break") {
+                duration = state.songsList[i].item.duration;
+            } else if (state.songsList[i].type === "Song") {
+                duration = state.songsList[i].item.duration;
+            }
             arr[i] =
                 arr[i - 1] !== undefined
-                    ? arr[i - 1] + parseFloat(state.songsList[i].duration)
-                    : parseFloat(state.songsList[i].duration);
+                    ? arr[i - 1] + duration
+                    : duration;
         }
 
         return arr;
@@ -179,12 +174,12 @@ const SetPlanner = () => {
 
                             }}
                         >
-                            {state.songsList.map((song, index) => (
+                            {state.songsList.map((entry, index) => (
                                 <Box sx={{
                                     mb: 1,
                                 }}>
                                     <SetPlannerCard
-                                        song={song}
+                                        entry={entry}
                                         state={state}
                                         dispatch={dispatch}
                                         durationAtPoint={duration[index]}
@@ -198,7 +193,7 @@ const SetPlanner = () => {
                         <Button
                             onClick={() => {
                                 dispatch({
-                                    type: "clearList",
+                                    type: SetPlannerActionType.ClearList,
                                 });
                             }}
                         >
@@ -227,7 +222,7 @@ const SetPlanner = () => {
                         <Tabs
                             value={state.tabState}
                             onChange={(e, val) =>
-                                dispatch({ type: "setTabState", payload: val })
+                                dispatch({ type: SetPlannerActionType.SetTabState, payload: val })
                             }
                             centered
                             sx={{ mb: 2 }}
@@ -258,15 +253,15 @@ const SetPlanner = () => {
                                         <DialogTitle>Add New Song</DialogTitle>
                                         <DialogContent>
                                             <SongForm
-                                                dispatch={dispatch}
-                                                songData={state.curSong}
+                                                parentDispatch={dispatch}
+                                                type="add"
                                             />
                                         </DialogContent>
                                         <DialogActions>
                                             <Button
                                                 onClick={() =>
                                                     dispatch({
-                                                        type: "toggleNewSongForm",
+                                                        type: SetPlannerActionType.ToggleNewSongForm,
                                                     })
                                                 }
                                             >
@@ -285,17 +280,17 @@ const SetPlanner = () => {
     );
 };
 
-const SetPlannerButtons = ({ dispatch }) => {
+const SetPlannerButtons = ({ dispatch } : { dispatch: React.Dispatch<SetPlannerAction> }) => {
     return (
         <Stack spacing={1}>
             <Button
                 onClick={() => {
                     dispatch({
-                        type: "setLabel",
+                        type: SetPlannerActionType.SetLabel,
                         payload: "Mic Break",
                     });
                     dispatch({
-                        type: "toggleDurationForm",
+                        type: SetPlannerActionType.ToggleDurationForm,
                     });
                 }}
             >
@@ -304,11 +299,11 @@ const SetPlannerButtons = ({ dispatch }) => {
             <Button
                 onClick={() => {
                     dispatch({
-                        type: "setLabel",
+                        type: SetPlannerActionType.SetLabel,
                         payload: "Announcement",
                     });
                     dispatch({
-                        type: "toggleDurationForm",
+                        type: SetPlannerActionType.ToggleDurationForm,
                     });
                 }}
             >
@@ -317,7 +312,7 @@ const SetPlannerButtons = ({ dispatch }) => {
             <Button
                 onClick={() =>
                     dispatch({
-                        type: "toggleNewSongForm",
+                        type: SetPlannerActionType.ToggleNewSongForm,
                     })
                 }
             >
@@ -327,11 +322,19 @@ const SetPlannerButtons = ({ dispatch }) => {
     );
 };
 
-const SetPlannerCard = ({ song, state, dispatch, durationAtPoint, index }) => {
-    if (song.type === "Song" && song.duration === 0) {
-        return <SetPlannerForm dispatch={dispatch} song={song} index={index} />;
+
+type SetPlannerCardProps = {
+    entry: SetPlannerItem;
+    state: SetPlannerState;
+    dispatch: React.Dispatch<SetPlannerAction>;
+    durationAtPoint: number;
+    index: number;
+};
+const SetPlannerCard = ({ entry, state, dispatch, durationAtPoint, index }: SetPlannerCardProps) => {
+    if (entry.type === "Song" && entry.item.duration === 0) {
+        return <SetPlannerForm dispatch={dispatch} entry={entry} index={index} />;
     }
-    if (song.type === "Break") {
+    if (entry.type === "Break") {
         return (
             <Paper sx={{}}>
                 <Container
@@ -342,9 +345,9 @@ const SetPlannerCard = ({ song, state, dispatch, durationAtPoint, index }) => {
                         alignItems: "center",
                     }}
                 >
-                    <Typography>{song.label}</Typography>
+                    <Typography>{entry.item.label}</Typography>
 
-                    <Typography>({song.duration}min)</Typography>
+                    <Typography>({entry.item.duration}min)</Typography>
                     <Typography
                         sx={{
                             // put it at the right end
@@ -356,7 +359,7 @@ const SetPlannerCard = ({ song, state, dispatch, durationAtPoint, index }) => {
                     <Button
                         onClick={() =>
                             dispatch({
-                                type: "removeSong",
+                                type: SetPlannerActionType.RemoveSong,
                                 payload: index,
                             })
                         }
@@ -367,7 +370,7 @@ const SetPlannerCard = ({ song, state, dispatch, durationAtPoint, index }) => {
                         <Button
                             onClick={() => {
                                 dispatch({
-                                    type: "swapUp",
+                                    type: SetPlannerActionType.SwapUp,
                                     payload: index,
                                 });
                             }}
@@ -378,7 +381,7 @@ const SetPlannerCard = ({ song, state, dispatch, durationAtPoint, index }) => {
                         <Button
                             onClick={() => {
                                 dispatch({
-                                    type: "swapDown",
+                                    type: SetPlannerActionType.SwapDown,
                                     payload: index,
                                 });
                             }}
@@ -415,7 +418,7 @@ const SetPlannerCard = ({ song, state, dispatch, durationAtPoint, index }) => {
                     }}
                 >
                     <img
-                        src={song.albumImageLoc}
+                        src={entry.item.albumImageLoc}
                         alt="Album Art"
                         style={{
                             height: "50px",
@@ -442,7 +445,7 @@ const SetPlannerCard = ({ song, state, dispatch, durationAtPoint, index }) => {
                         }}
                     >
                         <Box sx={{ display: "flex", alignItems: "center" }}>
-                            {song.elcroId && (
+                            {entry.item.elcroId && (
                                 <>
                                     <Typography
                                         sx={{
@@ -450,7 +453,7 @@ const SetPlannerCard = ({ song, state, dispatch, durationAtPoint, index }) => {
                                         }}
                                     >
                                         <Link
-                                            href={`https://thecore.fm/djsonly/music-album-detail.php?id=${song.elcroId}`}
+                                            href={`https://thecore.fm/djsonly/music-album-detail.php?id=${entry.item.elcroId}`}
                                             sx={{
                                                 color: "red",
                                                 textDecoration: "none",
@@ -458,21 +461,20 @@ const SetPlannerCard = ({ song, state, dispatch, durationAtPoint, index }) => {
                                             target="_blank"
                                             rel="noopener noreferrer"
                                         >
-                                            {song.elcroId}&nbsp;-&nbsp;
+                                            {entry.item.elcroId}&nbsp;-&nbsp;
                                         </Link>
                                     </Typography>
                                 </>
                             )}
                             <Tooltip
-                                variant="outlined"
-                                title={song.origTitle}
+                                title={entry.item.origTitle}
                                 placement="top-start"
                                 arrow
                             >
                                 <Typography sx={{}}>
-                                    {song.title}&nbsp;-&nbsp;{song.artist}
+                                    {entry.item.title}&nbsp;-&nbsp;{entry.item.artist}
                                     &nbsp;(
-                                    {song.duration}min)
+                                    {entry.item.duration}min)
                                 </Typography>
                             </Tooltip>
                         </Box>
@@ -485,7 +487,7 @@ const SetPlannerCard = ({ song, state, dispatch, durationAtPoint, index }) => {
                             textAlign: "left",
                         }}
                     >
-                        {song.album}
+                        {entry.item.album}
                     </Typography>
                 </Box>
                 <Box
@@ -501,7 +503,7 @@ const SetPlannerCard = ({ song, state, dispatch, durationAtPoint, index }) => {
                     <Button
                         onClick={() =>
                             dispatch({
-                                type: "removeSong",
+                                type: SetPlannerActionType.RemoveSong,
                                 payload: index,
                             })
                         }
@@ -513,7 +515,7 @@ const SetPlannerCard = ({ song, state, dispatch, durationAtPoint, index }) => {
                     <Button
                         onClick={() => {
                             dispatch({
-                                type: "swapUp",
+                                type: SetPlannerActionType.SwapUp,
                                 payload: index,
                             });
                         }}
@@ -524,7 +526,7 @@ const SetPlannerCard = ({ song, state, dispatch, durationAtPoint, index }) => {
                     <Button
                         onClick={() => {
                             dispatch({
-                                type: "swapDown",
+                                type: SetPlannerActionType.SwapDown,
                                 payload: index,
                             });
                         }}
@@ -538,12 +540,18 @@ const SetPlannerCard = ({ song, state, dispatch, durationAtPoint, index }) => {
     );
 };
 
-const SetPlannerForm = ({ dispatch, song, index }) => {
+
+type SetPlannerFormProps = {
+    dispatch: React.Dispatch<SetPlannerAction>;
+    entry: SetPlannerItem;
+    index: number;
+}
+const SetPlannerForm = ({ dispatch, entry, index }: SetPlannerFormProps) => {
     const setError = useContext(ErrorContext);
     const [duration, setDuration] = useState(0);
     const editSong = () => {
         axios
-            .post(`/api/editSong`, { songData: { ...song, duration } })
+            .post(`/api/editSong`, { songData: { ...entry.item, duration } })
             .then((res) => {
                 if (res.data.success === false) {
                     setError(res.data.message);
@@ -552,8 +560,8 @@ const SetPlannerForm = ({ dispatch, song, index }) => {
                 console.log("Updated song duration");
             });
         dispatch({
-            type: "editSong",
-            payload: { song: { ...song, duration }, index },
+            type: SetPlannerActionType.EditSong,
+            payload: { song: { ...entry.item, duration }, index },
         });
     };
     return (
@@ -561,7 +569,7 @@ const SetPlannerForm = ({ dispatch, song, index }) => {
             <TextField
                 label="Duration"
                 value={duration}
-                onChange={(e) => setDuration(e.target.value)}
+                onChange={(e) => setDuration(parseFloat(e.target.value))}
                 fullWidth
             />
             <Button
@@ -576,7 +584,7 @@ const SetPlannerForm = ({ dispatch, song, index }) => {
             <Button
                 onClick={() =>
                     dispatch({
-                        type: "removeSong",
+                        type: SetPlannerActionType.RemoveSong,
                         payload: index,
                     })
                 }
@@ -587,7 +595,12 @@ const SetPlannerForm = ({ dispatch, song, index }) => {
     );
 };
 
-function DurationForm({ state, dispatch }) {
+
+type DurationFormProps = {
+    state: SetPlannerState;
+    dispatch: React.Dispatch<SetPlannerAction>;
+}
+function DurationForm({ state, dispatch }: DurationFormProps) {
     return (
         <Dialog open={state.toggleDurationForm}>
             <DialogTitle>{state.label} Duration</DialogTitle>
@@ -599,7 +612,7 @@ function DurationForm({ state, dispatch }) {
                         value={state.duration}
                         onChange={(e) =>
                             dispatch({
-                                type: "setDuration",
+                                type: SetPlannerActionType.SetDuration,
                                 payload: e.target.value,
                             })
                         }
@@ -621,7 +634,7 @@ function DurationForm({ state, dispatch }) {
                     <Button
                         onClick={() =>
                             dispatch({
-                                type: "toggleDurationForm",
+                                type: SetPlannerActionType.ToggleDurationForm,
                             })
                         }
                     >
@@ -631,10 +644,10 @@ function DurationForm({ state, dispatch }) {
                         onClick={(e) => {
                             e.preventDefault();
                             dispatch({
-                                type: "addBreak",
+                                type: SetPlannerActionType.AddBreak,
                             });
                             dispatch({
-                                type: "resetDurationForm",
+                                type: SetPlannerActionType.ResetDurationForm,
                             });
                         }}
                         type="submit"

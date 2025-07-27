@@ -16,7 +16,7 @@ SyncRouter.get("/sync", requireLogin, async (req: Request, res: Response) => {
         res.json({ success: false, message: "No data found." });
         return;
     }
-    res.json({ success: true, data: data, lastSynced: data.lastSynced });
+    res.json({ success: true, data: data.data, lastSynced: data.lastSynced });
 });
 
 SyncRouter.post("/sync", requireLogin, async (req: Request, res: Response) => {

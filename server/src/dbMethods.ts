@@ -20,9 +20,7 @@ export const addSong = async (songData : Omit<ISongEntry, "songId">) => {
         return song;
     } catch (err) {
         console.log(
-            "Error Adding Song: %s - %s",
-            newSong.artist,
-            newSong.title
+            err
         );
         await Increment.findOneAndUpdate(
             { model: "SongEntry" },

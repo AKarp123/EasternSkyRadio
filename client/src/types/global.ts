@@ -39,9 +39,11 @@ export type StandardResponseNoData = {
 }
 
 export type Sync<T> = {
+    success: boolean;
     type: string;
     lastSynced: Date;
     data: T;
+    message?: string;
 }
 
 
