@@ -19,7 +19,7 @@ export interface SongEntry {
     lastPlayed?: string; // ISO date string
 }
 
-export type SongEntryForm = Omit<SongEntry, "_id" | "lastPlayed">;
+export type SongEntryForm = Omit<SongEntry, "_id" | "lastPlayed">
 
 export enum SongFormActionType {
     SongId = "songId",

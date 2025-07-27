@@ -20,7 +20,7 @@ const Login = () => {
     const history = useHistory();
     const location = useLocation();
 
-    const { from } = location.state || { from: { pathname: "/admin" } };
+    const { from } = (location.state as { from?: { pathname: string } }) || { from: { pathname: "/admin" } };
     const login = () => {
         axios
             .post("/api/login", { username: "admin", password })
@@ -38,7 +38,7 @@ const Login = () => {
     };
 
     if (user) {
-        history.replace(from);
+        history.replace(from || "/admin");
     }
     return (
         <Container

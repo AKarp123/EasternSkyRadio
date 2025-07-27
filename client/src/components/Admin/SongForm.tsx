@@ -9,7 +9,7 @@ import {
     InputLabel,
     Tooltip,
 } from "@mui/material";
-import { useContext, useReducer, useState } from "react";
+import { useContext, useReducer, useState, useEffect } from "react";
 import { useDebouncedCallback } from "use-debounce";
 import axios from "axios";
 import ErrorContext from "../../providers/ErrorContext";
@@ -49,7 +49,7 @@ type AddProps = SongFormProps & {
 type EditProps = SongFormProps & {
     songData: SongEntry;
     type: "edit";
-    submit: (e: React.FormEvent<HTMLFormElement>) => void;
+    submit: (e: React.FormEvent<HTMLFormElement>, songData: SongEntryForm) => void;
 };
 
 type SongFormProps = {
@@ -72,7 +72,6 @@ const SongForm = ({
     parentDispatch,
 }: AddProps | EditProps) => {
     const setError = useContext(ErrorContext);
-
     const [state, dispatch] = useReducer(
         SongFormReducer,
         type === "edit" ? toSongEntryForm(songData) : InitialState
@@ -81,9 +80,19 @@ const SongForm = ({
     const [songReleaseInput, setSongReleaseInput] = useState("");
     const [songReleaseType, setSongReleaseType] = useState("");
     const [songReleaseDesc, setSongReleaseDesc] = useState("");
+
+
+    useEffect(() => {
+        if (type === "edit") {
+            dispatch({
+                type: SongFormActionType.Fill,
+                payload: songData,
+            });
+        }
+    }, [type, songData]);
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         if (type === "edit") {
-            submit(e);
+            submit(e, state);
             return;
         }
         const songObj = state;
@@ -628,7 +637,7 @@ const SongForm = ({
 
             <TextField
                 label="Duration"
-                value={state.duration}
+                value={state.duration.toString() ?? ""}
                 type="number"
                 inputProps={{ step: "any" }}
                 onChange={(e) =>
