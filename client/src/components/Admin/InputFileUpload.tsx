@@ -16,7 +16,11 @@ const VisuallyHiddenInput = styled("input")({
     width: 1,
 });
 
-export default function InputFileUpload({ uploadImage }) {
+
+type InputFileUploadProps = {
+    uploadImage: (file: File) => void;
+};
+export default function InputFileUpload({ uploadImage }: InputFileUploadProps) {
 
     const fileTypes = ["JPG", "PNG", "GIF"];
     

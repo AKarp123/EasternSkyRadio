@@ -20,8 +20,10 @@ import { useDebouncedCallback } from "use-debounce";
 import axios from "axios";
 import ErrorContext from "../../providers/ErrorContext";
 import { SongSearch } from "./NewShow";
+import { EditShowState } from "../../types/pages/admin/EditShow";
+import { SongEntry } from "../../types/Song";
 
-const reducer = (state, action) => {
+const reducer = (state: EditShowState, action: { type: string; payload?: any }) => {
     switch (action.type) {
         case "showDate":
             return { ...state, showDate: action.payload };
@@ -103,7 +105,7 @@ const EditShows = () => {
         });
     };
 
-    const editOrder = (curIndex, newIndex) => {
+    const editOrder = (curIndex: number, newIndex: number) => {
         let temp = showData.songsList;
         let tempSong = temp[curIndex];
         temp.splice(newIndex, 0, tempSong);
@@ -111,7 +113,7 @@ const EditShows = () => {
         dispatch({ type: "editSongsList", payload: temp });
     };
 
-    const removeSong = (index) => {
+    const removeSong = (index: number) => {
         let temp = showData.songsList;
         temp.splice(index, 1);
         dispatch({ type: "editSongsList", payload: temp });
@@ -215,7 +217,13 @@ const EditShows = () => {
     );
 };
 
-const SongListItem = ({ song, removeSong, index }) => (
+type SongListProps = {
+    song: SongEntry;
+    removeSong: (index: number) => void;
+    index: number;
+}
+
+const SongListItem = ({ song, removeSong, index }: SongListProps) => (
     <Tooltip title={index + 1} placement="top">
         <ListItem key={song.songId} onClick={(e) => removeSong(index)}>
             <ListItemText primary={song.title} secondary={song.artist} />
@@ -223,7 +231,9 @@ const SongListItem = ({ song, removeSong, index }) => (
     </Tooltip>
 );
 
-const EditSongOrder = ({ editOrder }) => {
+const EditSongOrder = ({ editOrder } : {
+    editOrder: (curIndex: number, newIndex: number) => void;
+}) => {
     const [curIndex, setCurIndex] = useState(-1);
     const [newIndex, setNewIndex] = useState(-1);
 
@@ -235,9 +245,9 @@ const EditSongOrder = ({ editOrder }) => {
                     <TextField
                         type="number"
                         value={curIndex}
-                        onChange={(e) => {
+                        onChange={(e ) => {
                             e.preventDefault();
-                            setCurIndex(e.target.value);
+                            setCurIndex(Number(e.target.value));
                         }}
                     />
                 </ListItem>
@@ -248,7 +258,7 @@ const EditSongOrder = ({ editOrder }) => {
                         value={newIndex}
                         onChange={(e) => {
                             e.preventDefault();
-                            setNewIndex(e.target.value);
+                            setNewIndex(Number(e.target.value));
                         }}
                     />
                 </ListItem>
