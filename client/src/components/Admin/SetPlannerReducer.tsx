@@ -77,7 +77,7 @@ export const reducer = (state: SetPlannerState, action: SetPlannerAction) => {
                         type: "Break",
                         item: {
                             label: state.label,
-                            duration: state.duration === "" ? 0 : parseFloat(state.duration),
+                            duration: isNaN(Number(state.duration)) ? 0 : parseFloat(state.duration),
                         },
                     },
                 ],
