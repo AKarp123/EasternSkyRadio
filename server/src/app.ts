@@ -56,9 +56,7 @@ passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
 app.use("/api", apiRouter);
-app.use("*", (req, res) => {
-    res.sendFile(join(__dirname, "../client/dist/index.html"));
-});
+
 
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);
