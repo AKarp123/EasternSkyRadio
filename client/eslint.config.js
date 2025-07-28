@@ -1,14 +1,24 @@
+import js from '@eslint/js'
 import { defineConfig } from 'eslint/config';
 import parser from '@typescript-eslint/parser';
-import unicorn from 'eslint-plugin-unicorn';
-export default defineConfig([
-    unicorn.configs.recommended,
-	{
-        files: ['**/*.ts'],
+import eslintPluginUnicorn from 'eslint-plugin-unicorn';
+import typescript from '@typescript-eslint/eslint-plugin';
 
-        plugins: {
-            '@typescript-eslint': typescript,
+export default defineConfig([
+
+    eslintPluginUnicorn.configs.recommended,
+    {
+        files: ['**/*.ts', '**/*.tsx'],
+        ignores: ['**/node_modules/**', '**/dist/**'],
+        languageOptions: {
+            parser: parser,
+            parserOptions: {
+                project: './tsconfig.json',
+            },
         },
+        plugins: {
+                '@typescript-eslint': typescript,
+            },
         rules: {
             'camelcase': 'off',
             'indent': ['error', 'tab'],
@@ -26,11 +36,15 @@ export default defineConfig([
             
             
         },
-		languageOptions: {
-			parser,
+    },
+    {
+        files: ['vite.config.ts'],
+        languageOptions: {
+            parser: parser,
             parserOptions: {
-                project: './tsconfig.json',
+                project: './tsconfig.node.json',
             },
-		},
-	},
-]);
+        },
+    }
+  
+])
