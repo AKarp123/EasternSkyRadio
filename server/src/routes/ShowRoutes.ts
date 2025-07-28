@@ -14,7 +14,7 @@ showRouter.get("/getShowData", async (req: Request, res: Response) => {
 	if (
 		req.query.showId === undefined ||
         req.query.showId === "" ||
-        isNaN(parseInt(req.query.showId as string))
+        isNaN(Number.parseInt(req.query.showId as string))
 	) {
 		res.json({ success: false, message: "No Show ID provided." });
 	} else {
@@ -54,7 +54,7 @@ showRouter.get("/getShowData", async (req: Request, res: Response) => {
 
 showRouter.get("/getShows", async (req: Request, res: Response) => {
 	if (req.query.offset) {
-		const offset = parseInt(req.query.offset as string);
+		const offset = Number.parseInt(req.query.offset as string);
 		const shows = await ShowEntry.find({}, { _id: 0, __v: 0 })
 			.sort({ showId: "desc" })
 			.skip(offset)
@@ -99,8 +99,8 @@ showRouter.post("/addShow", requireLogin, async (req : Request, res: Response) =
 		await newShow.save();
 		await updateLastPlayed(songsList, newShow.showDate);
 		res.json({ success: true, message: "Show added successfully." });
-	} catch (err) {
-		console.log(err);
+	} catch (error) {
+		console.log(error);
 		await Increment.findOneAndUpdate(
 			{ model: "ShowEntry" },
 			{ $inc: { counter: -1 } }
@@ -128,11 +128,11 @@ showRouter.post("/editShow", requireLogin, async (req: Request, res: Response) =
 			.then(() => {
 				res.json({ success: true, message: "Show Updated!" });
 			})
-			.catch((err) => {
+			.catch((error) => {
 				res.json({ success: false, message: "Error adding song to show." });
 			});
-	} catch(err){
-		console.log(err);
+	} catch(error){
+		console.log(error);
 		res.json({ success: false, message: "Error updating show." });
 	}
     
@@ -155,8 +155,8 @@ showRouter.post("/deleteShow", requireLogin, async (req: Request, res: Response)
 			removeMissingShows();
 
 			res.json({ success: true, message: "Show deleted." });
-		} catch (err) {
-			console.log(err);
+		} catch (error) {
+			console.log(error);
 			res.json({ success: false, message: "Error deleting show." });
 		}
 	}

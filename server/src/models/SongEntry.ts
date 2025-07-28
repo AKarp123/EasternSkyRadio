@@ -73,7 +73,7 @@ songEntrySchema.pre("validate", function (next) {
 	this.set("origTitle", this.origTitle?.trim());
 	this.set("origAlbum", this.origAlbum?.trim());
 	this.set("specialNote", this.specialNote?.trim());
-	if (!this.duration || isNaN(this.duration)) {
+	if (!this.duration || Number.isNaN(this.duration)) {
 		this.duration = 0;
 	}
 

@@ -14,7 +14,7 @@ UserRouter.patch("/password", requireLogin,  async (req: Request, res: Response)
 		await user.setPassword(req.body.password);
 		await user.save();
 		res.json({ success: true, message: "Password set." });
-	} catch (error) {
+	} catch {
 		res.json({ success: false, message: "Server error." });
 	}
 

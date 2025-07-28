@@ -7,7 +7,7 @@ import { SongEntry as ISongEntry } from "../types/SongEntry.js";
 const songRouter = Router();
 
 const escapeRegex = (string : string) => {
-	return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+	return string.replaceAll(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`);
 };
 
 songRouter.get("/getSongInfo", async (req : Request, res : Response) => {
@@ -49,8 +49,8 @@ songRouter.get("/search", requireLogin, async (req: Request, res: Response) => {
 			);
 			res.json({ success: true, searchResults: searchResults });
 		}
-	} catch (err) {
-		res.json({ success: false, message: err instanceof Error ? err.message : 'An unknown error occurred' });
+	} catch (error) {
+		res.json({ success: false, message: error instanceof Error ? error.message : 'An unknown error occurred' });
 	}
 });
 
@@ -95,8 +95,8 @@ songRouter.post("/addSong", requireLogin, async (req : Request, res : Response) 
 				song: newSong,
 			});
 		})
-		.catch((err) => {
-			res.json({ success: false, message: err.message });
+		.catch((error) => {
+			res.json({ success: false, message: error.message });
 		});
 });
 
@@ -113,8 +113,8 @@ songRouter.delete("/song", requireLogin, async (req: Request, res: Response) => 
 			await removeMissingSongs();
 			res.json({ success: true, message: "Song deleted successfully." });
 		})
-		.catch((err) => {
-			res.json({ success: false, message: err.message });
+		.catch((error) => {
+			res.json({ success: false, message: error.message });
 		});
 });
 
@@ -137,8 +137,8 @@ songRouter.post("/editSong", requireLogin, async (req: Request, res: Response) =
 				song: updatedSong,
 			});
 		})
-		.catch((err) => {
-			res.json({ success: false, message: err.message });
+		.catch((error) => {
+			res.json({ success: false, message: error.message });
 		});
 });
 

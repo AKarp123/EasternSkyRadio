@@ -1,6 +1,7 @@
 import { defineConfig } from 'eslint/config';
 import parser from '@typescript-eslint/parser';
 import unicorn from 'eslint-plugin-unicorn';
+import typescript from '@typescript-eslint/eslint-plugin';
 export default defineConfig([
     unicorn.configs.recommended,
 	{

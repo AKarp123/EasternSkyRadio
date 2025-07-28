@@ -1,4 +1,4 @@
-import { Schema as schema, model, Model } from "mongoose";
+import { Schema as schema, model } from "mongoose";
 import { ShowEntry } from "../types/ShowData";
 
 

@@ -107,8 +107,8 @@ router.post(
 					url: storageRef.publicUrl(),
 				});
 			})
-			.catch((err) => {
-				console.log(err);
+			.catch((error) => {
+				console.log(error);
 				res.json({ success: false, message: "Error uploading file" });
 			});
 	}
@@ -143,8 +143,8 @@ router.post("/uploadURL", requireLogin, async (req: Request, res: Response) => {
 				url: storageRef.publicUrl(),
 			});
 		})
-		.catch((err) => {
-			console.log(err);
+		.catch((error) => {
+			console.log(error);
 			res.json({ success: false, message: "Error uploading file" });
 		});
 });
