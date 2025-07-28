@@ -6,7 +6,7 @@ import { UserDocument } from "../types/User";
 
 
 const UserSchema = new Schema<UserDocument>({
-    username: { type: String, required: true, unique: true},
+	username: { type: String, required: true, unique: true },
 });
 
 UserSchema.plugin(passportLocalMongoose);

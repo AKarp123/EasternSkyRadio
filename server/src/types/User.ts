@@ -5,4 +5,4 @@ interface UserDocument extends PassportLocalDocument {
     username: string;
 }
 
-export { UserDocument}
+export { UserDocument }

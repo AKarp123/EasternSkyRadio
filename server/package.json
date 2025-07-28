@@ -6,7 +6,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node app.js",
-    "dev": "bun --watch src/app.ts"
+    "dev": "bun --watch src/app.ts",
+    "lint": "bunx eslint src/**/*.ts",
+    "lint:fix": "bunx eslint src/**/*.ts --fix"
   },
   "keywords": [],
   "author": "",
@@ -16,6 +18,7 @@
     "axios": "^1.11.0",
     "connect-mongo": "^5.1.0",
     "dotenv": "^17.2.1",
+    "eslint-plugin-unicorn": "^60.0.0",
     "express": "^5.1.0",
     "express-session": "^1.18.2",
     "firebase-admin": "^13.4.0",
@@ -28,12 +31,16 @@
   },
   "type": "module",
   "devDependencies": {
-    "@types/connect-mongo": "^3.1.6",
+    "@stylistic/eslint-plugin": "^5.2.2",
     "@types/express": "^5.0.3",
     "@types/express-session": "^1.18.2",
+    "@types/multer": "~2.0.0",
     "@types/node": "^24.1.0",
     "@types/passport": "^1.0.17",
     "@types/passport-local": "^1.0.38",
+    "@typescript-eslint/eslint-plugin": "^8.38.0",
+    "@typescript-eslint/parser": "^8.38.0",
+    "eslint": "^9.32.0",
     "typescript": "^5.8.3"
   }
 }

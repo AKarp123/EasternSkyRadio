@@ -1,9 +1,9 @@
 import "./App.css";
 import { Route, Switch } from "react-router-dom";
 import {
-    createTheme,
-    ThemeProvider,
-    responsiveFontSizes,
+	createTheme,
+	ThemeProvider,
+	responsiveFontSizes,
 } from "@mui/material/styles";
 import { CssBaseline, Alert, Snackbar } from "@mui/material";
 import { useState } from "react";
@@ -26,103 +26,103 @@ import SetPlanner from "./components/Admin/SetPlanner";
 import { ErrorVariant, DisplayError} from "./types/global";
 
 let darkTheme = createTheme({
-    palette: {
-        mode: "dark",
-        background: {
-            default: "#000000",
-        },
-    },
+	palette: {
+		mode: "dark",
+		background: {
+			default: "#000000",
+		},
+	},
 });
 
 darkTheme = responsiveFontSizes(darkTheme);
 
 function App() {
-    const [error, setError] = useState<DisplayError | null>(null);
+	const [error, setError] = useState<DisplayError | null>(null); 
 
-    const displayError = (errorMessage: string, variant: ErrorVariant = "error") => {
-        setError({ errorMessage, variant });
-    };
+	const displayError = (errorMessage: string, variant: ErrorVariant = "error") => {
+		setError({ errorMessage, variant });
+	};
 
     
 
-    return (
-        <ThemeProvider theme={darkTheme}>
-            <CssBaseline />
-            {process.env.NODE_ENV === "production" && <StarParticles />}
-            {/* <StarParticles /> */}
-            <ErrorContext.Provider value={displayError}>
-                <UserProvider>
-                    <div className="App">
-                        {error && (
-                            <Snackbar
-                                open={error !== undefined && error !== null}
-                                autoHideDuration={2000}
-                                onClose={() => setError(null)}
-                            >
-                                <Alert
-                                    severity={error.variant}
-                                    onClose={() => setError(null)}
-                                >
-                                    {error.errorMessage}
-                                </Alert>
-                            </Snackbar>
-                        )}
-                        <Switch>
-                            <Route exact path="/">
-                                <Home />
-                            </Route>
-                            <Route exact path="/shows">
-                                <ShowPage />
-                            </Route>
-                            <Route exact path="/shows/:showId">
-                                <SetList />
-                            </Route>
-                            <Route exact path="/graphic/:showId">
-                                <Graphic />
-                            </Route>
-                            <Route exact path="/blog">
-                                <BlogPage />
-                            </Route>
-                            <Route exact path="/stats">
-                                <Stats />
-                            </Route>
-                            <Route exact path="/login">
-                                <Login />
-                            </Route>
+	return (
+		<ThemeProvider theme={darkTheme}>
+			<CssBaseline />
+			{process.env.NODE_ENV === "production" && <StarParticles />}
+			{/* <StarParticles /> */}
+			<ErrorContext.Provider value={displayError}>
+				<UserProvider>
+					<div className="App">
+						{error && (
+							<Snackbar
+								open={error !== undefined && error !== null}
+								autoHideDuration={2000}
+								onClose={() => setError(null)}
+							>
+								<Alert
+									severity={error.variant}
+									onClose={() => setError(null)}
+								>
+									{error.errorMessage}
+								</Alert>
+							</Snackbar>
+						)}
+						<Switch>
+							<Route exact path="/">
+								<Home />
+							</Route>
+							<Route exact path="/shows">
+								<ShowPage />
+							</Route>
+							<Route exact path="/shows/:showId">
+								<SetList />
+							</Route>
+							<Route exact path="/graphic/:showId">
+								<Graphic />
+							</Route>
+							<Route exact path="/blog">
+								<BlogPage />
+							</Route>
+							<Route exact path="/stats">
+								<Stats />
+							</Route>
+							<Route exact path="/login">
+								<Login />
+							</Route>
 
-                            <AuthRoute
-                                exact
-                                path="/admin"
-                                component={AdminPage}
-                            />
-                            <AuthRoute
-                                exact
-                                path="/admin/newShow"
-                                component={NewShow}
-                            />
-                            <AuthRoute
-                                exact
-                                path="/admin/editsong"
-                                component={EditSongs}
-                            />
-                            <AuthRoute
-                                exact
-                                path="/admin/editshow"
-                                component={EditShows}
-                            />
-                            <AuthRoute
-                                exact
-                                path="/admin/SetPlanner" 
-                                component={SetPlanner}
-                            />
-                        </Switch>
+							<AuthRoute
+								exact
+								path="/admin"
+								component={AdminPage}
+							/>
+							<AuthRoute
+								exact
+								path="/admin/newShow"
+								component={NewShow}
+							/>
+							<AuthRoute
+								exact
+								path="/admin/editsong"
+								component={EditSongs}
+							/>
+							<AuthRoute
+								exact
+								path="/admin/editshow"
+								component={EditShows}
+							/>
+							<AuthRoute
+								exact
+								path="/admin/SetPlanner" 
+								component={SetPlanner}
+							/>
+						</Switch>
 
                         
-                    </div>
-                </UserProvider>
-            </ErrorContext.Provider>
-        </ThemeProvider>
-    );
+					</div>
+				</UserProvider>
+			</ErrorContext.Provider>
+		</ThemeProvider>
+	);
 }
 
 export default App;

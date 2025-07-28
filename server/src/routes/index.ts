@@ -21,132 +21,132 @@ const storage = getStorage();
 const upload = multer({ storage: multer.memoryStorage() });
 
 router.get("/getSiteInfo", async (req, res) => {
-    const data = await SiteData.findOne({}, { _id: 0, __v: 0 });
-    res.json(data);
+	const data = await SiteData.findOne({}, { _id: 0, __v: 0 });
+	res.json(data);
 });
 
 router.get("/getStats", async (req, res) => {
 
-    if(statsCache.has("stats")){
-        res.json(statsCache.get("stats"));
-        return;
-    }
+	if(statsCache.has("stats")){
+		res.json(statsCache.get("stats"));
+		return;
+	}
 
-    const stats = await generateStats();
-    console.log(stats)
-    statsCache.set("stats", stats);
+	const stats = await generateStats();
+	console.log(stats)
+	statsCache.set("stats", stats);
 
-    res.json(stats);
+	res.json(stats);
 });
 
 router.post("/login", passport.authenticate("local"), async (req, res) => {
-    if (req.user) {
-        res.json({
-            success: true,
-            message: "Login successful",
-            user: req.user,
-        });
-    } else {
-        res.json({ success: false, message: "Incorrect Password" });
-    }
+	if (req.user) {
+		res.json({
+			success: true,
+			message: "Login successful",
+			user: req.user,
+		});
+	} else {
+		res.json({ success: false, message: "Incorrect Password" });
+	}
 });
 
 
 router.get("/getUser", (req, res) => {
-    if (req.user) {
-        res.json({ user: req.user });
-    } else {
-        res.json({ user: null });
-    }
+	if (req.user) {
+		res.json({ user: req.user });
+	} else {
+		res.json({ user: null });
+	}
 });
 
 router.post("/logout", (req, res) => {
-    req.logout((err) => console.log(err));
+	req.logout((err) => console.log(err));
 });
 
 router.get("/getBucket", (req, res) => {
-    res.json({ message: "test" });
+	res.json({ message: "test" });
 });
 
 router.post(
-    "/upload",
-    requireLogin,
-    upload.single("filename"),
-    async (req : Request, res : Response) => {
-        const { artist, album } = req.body;
-        if(!req.file || !artist || !album){
-            res.json({ success: false, message: "Missing required fields" });
-            return;
-        }
+	"/upload",
+	requireLogin,
+	upload.single("filename"),
+	async (req : Request, res : Response) => {
+		const { artist, album } = req.body;
+		if(!req.file || !artist || !album){
+			res.json({ success: false, message: "Missing required fields" });
+			return;
+		}
 
 
-        const storageRef = storage
-            .bucket()
-            .file(
-                `albumCovers/${req.file.originalname} + ${artist} + ${album}`
-            );
+		const storageRef = storage
+			.bucket()
+			.file(
+				`albumCovers/${req.file.originalname} + ${artist} + ${album}`
+			);
 
-        if (
-            req.file.mimetype !== "image/jpeg" &&
+		if (
+			req.file.mimetype !== "image/jpeg" &&
             req.file.mimetype !== "image/png" && 
             req.file.mimetype !== "image/webp"
-        ) {
-            res.json({ success: false, message: "Invalid file type" });
-            return;
-        }
-        const metadata = {
-            contentType: req.file.mimetype,
-        };
+		) {
+			res.json({ success: false, message: "Invalid file type" });
+			return;
+		}
+		const metadata = {
+			contentType: req.file.mimetype,
+		};
 
-        storageRef
-            .save(req.file.buffer, { metadata })
-            .then(() => {
-                res.json({
-                    success: true,
-                    message: "File uploaded",
-                    url: storageRef.publicUrl(),
-                });
-            })
-            .catch((err) => {
-                console.log(err);
-                res.json({ success: false, message: "Error uploading file" });
-            });
-    }
+		storageRef
+			.save(req.file.buffer, { metadata })
+			.then(() => {
+				res.json({
+					success: true,
+					message: "File uploaded",
+					url: storageRef.publicUrl(),
+				});
+			})
+			.catch((error) => {
+				console.log(error);
+				res.json({ success: false, message: "Error uploading file" });
+			});
+	}
 );
 
 router.post("/uploadURL", requireLogin, async (req: Request, res: Response) => {
-    const { artist, album, url } = req.body;
+	const { artist, album, url } = req.body;
 
-    if (!artist || !album || !url) {
-        res.json({ success: false, message: "Missing required fields" });
-        return;
-    }
+	if (!artist || !album || !url) {
+		res.json({ success: false, message: "Missing required fields" });
+		return;
+	}
 
-    const response = await axios.get(url, { responseType: "arraybuffer" });
+	const response = await axios.get(url, { responseType: "arraybuffer" });
 
-    const contentType = response.headers["content-type"];
+	const contentType = response.headers["content-type"];
 
-    const storageRef = storage
-        .bucket()
-        .file(`albumCovers/${artist} + ${album}.jpg`);
+	const storageRef = storage
+		.bucket()
+		.file(`albumCovers/${artist} + ${album}.jpg`);
     
-    const metadata = {
-        contentType: contentType,
-    };
+	const metadata = {
+		contentType: contentType,
+	};
 
-    storageRef
-        .save(response.data, { metadata })
-        .then(() => {
-            res.json({
-                success: true,
-                message: "File uploaded",
-                url: storageRef.publicUrl(),
-            });
-        })
-        .catch((err) => {
-            console.log(err);
-            res.json({ success: false, message: "Error uploading file" });
-        });
+	storageRef
+		.save(response.data, { metadata })
+		.then(() => {
+			res.json({
+				success: true,
+				message: "File uploaded",
+				url: storageRef.publicUrl(),
+			});
+		})
+		.catch((error) => {
+			console.log(error);
+			res.json({ success: false, message: "Error uploading file" });
+		});
 });
 
 router.use("/", showRouter);
