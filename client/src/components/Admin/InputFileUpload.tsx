@@ -22,11 +22,11 @@ type InputFileUploadProperties = {
 };
 export default function InputFileUpload({ uploadImage }: InputFileUploadProperties) {
 
-	const fileTypes = ["JPG", "PNG", "GIF"];
-    
-  
+	const fileTypes = ["jpg", "png", "gif"];
+
+
 	return (
-		<FileUploader multiple={false} handleChange={uploadImage} name="filename">
+		<FileUploader multiple={false} handleChange={uploadImage} name="filename" types={fileTypes}>
 			<div>
 				<Button
 					size="small"

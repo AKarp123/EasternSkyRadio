@@ -110,8 +110,8 @@ const EditShows = () => {
 										fillShow();
 									}}
 								/>
-								<Button onClick={(e) => submit()}>Submit</Button>
-								<Button color="error" onClick={(e) => deleteShow()}>
+								<Button onClick={() => submit()}>Submit</Button>
+								<Button color="error" onClick={() => deleteShow()}>
                                     Delete Show
 								</Button>
 							</Stack>
@@ -193,7 +193,7 @@ type SongListProperties = {
 
 const SongListItem = ({ song, removeSong, index }: SongListProperties) => (
 	<Tooltip title={index + 1} placement="top">
-		<ListItem key={song.songId} onClick={(e) => removeSong(index)}>
+		<ListItem key={song.songId} onClick={() => removeSong(index)}>
 			<ListItemText primary={song.title} secondary={song.artist} />
 		</ListItem>
 	</Tooltip>

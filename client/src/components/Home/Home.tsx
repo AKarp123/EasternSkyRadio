@@ -1,13 +1,13 @@
 import React, { useContext } from "react";
 import {
-	Box,
+
 	Stack,
 	Container,
 	Paper,
 	Typography,
 	Divider,
 	Fade,
-	Link,
+
 } from "@mui/material";
 import { useState, useEffect } from "react";
 import axios from "axios";
@@ -29,7 +29,7 @@ const Home = React.memo(() => {
 					setError("Failed to get site data");
 				}
 			})
-			.catch((error) => {
+			.catch(() => {
 				setError("Failed to get site data");
 			});
 	}, []);

@@ -14,7 +14,7 @@ import { Link } from "react-router-dom";
 import ErrorContext from "../../providers/ErrorContext";
 import axios from "axios";
 import PageHeader from "../PageHeader";
-import type { ShowEntry, ShowEntryMin } from "../../types/Shows";
+import type { ShowEntryMin } from "../../types/Shows";
 
 
 
@@ -31,7 +31,7 @@ const ShowPage = () => {
 				setShowList(res.data);
 				setLoading(false);
 			})
-			.catch((error) => {
+			.catch(() => {
 				setError("Failed to get show data");
 			});
 	}, []);

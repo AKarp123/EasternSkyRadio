@@ -1,8 +1,7 @@
 import { useState, useEffect, useMemo, memo } from "react";
 import Particles, { initParticlesEngine } from "@tsparticles/react";
-import { loadSlim } from "@tsparticles/slim";
 import { loadStarsPreset } from "@tsparticles/preset-stars";
-import { FullScreen, type Container } from "@tsparticles/engine";
+import { type Container } from "@tsparticles/engine";
 
 
 type properties = {

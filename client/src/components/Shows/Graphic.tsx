@@ -7,15 +7,10 @@ import {
 	Container,
 	Grid,
 	Typography,
-	Divider,
-	Card,
-	CardMedia,
-	CardContent,
+
 	Box,
-	Tooltip,
-	Chip,
+
 	Stack,
-	Button,
 } from "@mui/material";
 import { ShowEntry } from "../../types/Shows";
 import { SongEntry } from "../../types/Song";
@@ -23,8 +18,6 @@ import { SongEntry } from "../../types/Song";
 const Graphic = () => {
 	const { showId } = useParams<{ showId: string }>();
 	const [showData, setShowData] = useState<ShowEntry | null>(null);
-	const [offset, setOffset] = useState(1);
-	const [songsList, setSongsList] = useState<SongEntry[]>([]);
 	const [loading, setLoading] = useState(true);
 	const setError = useContext(ErrorContext);
 
@@ -36,7 +29,7 @@ const Graphic = () => {
 				setLoading(false);
 			})
 			.catch((error) => {
-				console.log(error);
+				console.error(error);
 				setError("Error loading show data");
 			});
 	}, []);
@@ -221,126 +214,5 @@ const SetListItem = ({ song } : {song: SongEntry}) => {
 	);
 };
 
-const SetListCard = ({ song }: { song: SongEntry }) => {
-	return (
-		<Card
-			sx={{
-				display: "flex",
-				justifyContent: "space-between",
-				flexWrap: "wrap",
-				flexDirection: "column",
-				backgroundColor: "rgba(22, 22, 22, 0.1)",
-				WebkitBackdropFilter: "blur(3px)",
-				backdropFilter: "blur(3px)",
-				height: "100%",
-			}}
-		>
-			<Box
-				sx={{
-					display: "flex",
-					flexWrap: "nowrap",
-				}}
-			>
-				<CardMedia
-					component={"img"}
-					image={song.albumImageLoc}
-					sx={{
-						width: "125px",
-						height: "125px",
-						objectFit: "cover",
-						padding: "8px",
-						borderRadius: "10%",
-					}}
-				/>
-
-				<CardContent
-					sx={{
-						display: "flex",
-						flexDirection: "column",
-						alignItems: "start",
-						textAlign: "left",
-						overflow: "hidden",
-						justifyContent: "space-between",
-						overflowX: "auto",
-						// paddingBottom: "0px !important",
-						paddingTop: "12px !important",
-						paddingBottom: "12px !important",
-					}}
-				>
-					<Tooltip
-						title={
-							"Original Title: " +
-                            (song.origTitle === undefined ||
-                            song.origTitle === ""
-                            	? "N/A"
-                            	: song.origTitle)
-						}
-						placement="top"
-						arrow
-					>
-						<Typography
-							variant="h6"
-							sx={{
-								fontFamily: "DogicaPixel, Roboto",
-								fontSize:
-                                    song.title.length > 24
-                                    	? (song.title.length > 48
-                                    		? "0.7rem !important"
-                                    		: "0.8rem !important ")
-                                    	: "1rem !important",
-							}}
-						>
-							{song.title}
-						</Typography>
-					</Tooltip>
-
-					<Typography variant="body1">{song.artist}</Typography>
-					<Typography variant="body2" sx={{ fontStyle: "italic" }}>
-						{song.album}
-					</Typography>
-				</CardContent>
-			</Box>
-			<Divider variant="middle">Genres</Divider>
-
-			<CardContent
-				sx={{
-					display: "flex",
-					flexDirection: "row",
-					overflow: "hidden",
-					justifyContent: "center",
-
-					overflowY: "hidden",
-					paddingTop: "8px !important",
-					paddingBottom: "12px !important",
-					width: "100%",
-				}}
-			>
-				<Stack
-					direction="row"
-					spacing={1}
-					sx={{
-						overflowX: "auto",
-						scrollbarWidth: "none",
-						"&::-webkit-scrollbar": {
-							display: "none",
-						},
-						//center vertically
-					}}
-				>
-					{song.genres.map((genre) => {
-						return (
-							<Chip
-								key={genre}
-								label={genre}
-								size="small"
-								sx={{ margin: "2px" }}
-							/>
-						);
-					})}
-				</Stack>
-			</CardContent>
-		</Card>
-	);
-};
 
 export default Graphic;

@@ -25,27 +25,13 @@ import YouTubeIcon from "@mui/icons-material/YouTube";
 import MusicIcon from "@mui/icons-material/MusicNote";
 import DoNotDisturbIcon from "@mui/icons-material/DoNotDisturb";
 import SpotifyIcon from "../../icons/spotify.svg?react"
-import { useState, useEffect, useContext, useRef, Key } from "react";
+import { useState, useEffect, useContext,  Key } from "react";
 import axios from "axios";
 import ErrorContext from "../../providers/ErrorContext";
 import PageHeader from "../PageHeader";
 import { SongEntry } from "../../types/Song";
 import { ShowEntry } from "../../types/Shows";
 
-const fontSwitch = (length: number) => {
-	if (length < 24) {
-		return "1.5rem !important";
-	}
-	if (length < 30) {
-		return "1.25rem !important";
-	}
-	if (length < 36) {
-		return "1rem !important";
-	}
-	if (length < 42) {
-		return "0.9rem !important";
-	}
-};
 
 const SetList = () => {
 	const { showId } = useParams<{ showId: string }>();
@@ -64,7 +50,7 @@ const SetList = () => {
 				setShowData(res.data.showData);
 				setLoading(false);
 			})
-			.catch((error) => {
+			.catch(() => {
 				setError("Failed to get show data");
 			});
 	}, []);
@@ -102,10 +88,6 @@ const SetList = () => {
 };
 
 const SetListCard = ({ song } : { song: SongEntry}) => {
-	const genreBoxReference = useRef(null);
-
-
-	const size = fontSwitch(song.title.length);
 
 	const iconSwitch: { [key: string]: React.ReactElement } = {
 		Spotify: (

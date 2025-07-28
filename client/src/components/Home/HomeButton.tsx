@@ -1,7 +1,5 @@
 import { Link } from "react-router-dom";
 import {
-	styled,
-	Button,
 	Container,
 	Typography,
 	SvgIcon,
@@ -9,11 +7,11 @@ import {
 	Box,
 } from "@mui/material";
 
-const CustomButton = styled(Button)({
-	width: "75%",
-	color: "white",
-	fontSize: "1.5rem",
-});
+// const CustomButton = styled(Button)({
+// 	width: "75%",
+// 	color: "white",
+// 	fontSize: "1.5rem",
+// });
 
 type HomeButtonProperties = 
     | { route: string; text: string; link?: never }

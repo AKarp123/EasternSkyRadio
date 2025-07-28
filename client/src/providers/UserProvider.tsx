@@ -22,7 +22,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
 					setUser(res.data.user);
 				}
 			})
-			.catch((error) => {
+			.catch(() => {
 				setError("Failed to get user");
 
 			});

@@ -7,10 +7,10 @@ import {
 	TextField,
 	Button,
 } from "@mui/material";
-import { useState, useContext, useEffect } from "react";
+import { useState, useContext } from "react";
 import axios from "axios";
 import ErrorContext from "../../providers/ErrorContext";
-import { Redirect, useHistory, useLocation } from "react-router-dom";
+import { useHistory, useLocation } from "react-router-dom";
 import { useAuth } from "../../providers/UserProvider";
 
 const Login = () => {
@@ -33,7 +33,7 @@ const Login = () => {
 				}
 			})
 			.catch((error) => {
-				setError("Failed to login");
+				setError("Failed to login: " + error.message);
 			});
 	};
 
