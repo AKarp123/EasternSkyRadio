@@ -7,6 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node app.js",
     "dev": "bun --watch src/app.ts",
+    "build": "bun build src/app.ts --outdir dist --target node",
     "lint": "bunx eslint src/**/*.ts",
     "lint:fix": "bunx eslint src/**/*.ts --fix"
   },
