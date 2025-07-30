@@ -1,31 +1,16 @@
 
 services:
-  esr:
-    build:
-      context: .
-      dockerfile: Dockerfile
+  easternskyradio:
+    image: kawambiit/easternskyradio:latest
     ports:
       - "8000:3000"
-    env_file:
-      - ./server/.env
     volumes:
-      - esr-caddy:/etc/caddy/Caddyfile
-      - esr-frontend:/usr/src/app/client/dist
+      - /home/ubuntu/codingprojects/esr/dist:/usr/src/app/client/dist
+    env_file:
+      - stack.env
   caddy:
-    image: caddy:latest
+    image: kawambiit/esr-caddy:latest
     ports:
       - "8080:80"
-    volumes:
-      - esr-caddy:/etc/caddy/Caddyfile
-      - esr-frontend:/usr/share/caddy
-      - caddy_data:/data
-      - caddy_config:/config
     depends_on:
-      - esr
-
-
-volumes:
-  esr-caddy:
-  esr-frontend:
-  caddy_data:
-  caddy_config:
+      - easternskyradio
