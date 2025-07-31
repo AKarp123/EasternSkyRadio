@@ -12,6 +12,8 @@ import axios from "axios";
 import NodeCache from "node-cache";
 import SyncRouter from "./SyncRoutes.js";
 import UserRouter from "./UserRoutes.js";
+import { UserDocument } from "../types/User.js";
+import User from "../models/UserModel.js";
 
 const statsCache = new NodeCache({ stdTTL: 300 });
 
@@ -39,16 +41,39 @@ router.get("/getStats", async (req, res) => {
 	res.json(stats);
 });
 
-router.post("/login", passport.authenticate("local"), async (req, res) => {
-	if (req.user) {
-		res.json({
-			success: true,
-			message: "Login successful",
-			user: req.user,
+router.post("/login", (req, res, next) => {
+	const start = Date.now();
+
+	
+
+	passport.authenticate("local", async (err: Error | null, user: UserDocument | false, info: any) => {
+		const authEnd = Date.now();
+		console.log(`[auth] took ${authEnd - start} ms`);
+
+		if (err) {
+			console.log("[auth] error:", err);
+			return next(err);
+		}
+
+		if (!user) {
+			console.log("[auth] failed login");
+			return res.status(401).json({ success: false, message: "Incorrect Password" });
+		}
+
+		const loginStart = Date.now();
+		req.login(user, (err) => {
+			const loginEnd = Date.now();
+			console.log(`[req.login] took ${loginEnd - loginStart} ms`);
+			console.log(`[total] login route took ${loginEnd - start} ms`);
+
+			if (err) return next(err);
+			return res.json({
+				success: true,
+				message: "Login successful",
+				user,
+			});
 		});
-	} else {
-		res.status(401).json({ success: false, message: "Incorrect Password" });
-	}
+	})(req, res, next);
 });
 
 

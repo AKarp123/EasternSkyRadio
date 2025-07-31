@@ -9,7 +9,9 @@ const UserSchema = new Schema<UserDocument>({
 	username: { type: String, required: true, unique: true },
 });
 
-UserSchema.plugin(passportLocalMongoose);
+UserSchema.plugin(passportLocalMongoose, {
+	iterations: 15000,
+});
 const User = mongoose.model<UserDocument>("User", UserSchema);
 
 export default User;
