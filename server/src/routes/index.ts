@@ -42,13 +42,11 @@ router.get("/getStats", async (req, res) => {
 });
 
 router.post("/login", (req, res, next) => {
-	const start = Date.now();
 
 	
 
 	passport.authenticate("local", async (err: Error | null, user: UserDocument | false, info: any) => {
-		const authEnd = Date.now();
-		console.log(`[auth] took ${authEnd - start} ms`);
+		
 
 		if (err) {
 			console.log("[auth] error:", err);
@@ -60,12 +58,8 @@ router.post("/login", (req, res, next) => {
 			return res.status(401).json({ success: false, message: "Incorrect Password" });
 		}
 
-		const loginStart = Date.now();
+		
 		req.login(user, (err) => {
-			const loginEnd = Date.now();
-			console.log(`[req.login] took ${loginEnd - loginStart} ms`);
-			console.log(`[total] login route took ${loginEnd - start} ms`);
-
 			if (err) return next(err);
 			return res.json({
 				success: true,
