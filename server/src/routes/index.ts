@@ -47,7 +47,7 @@ router.post("/login", passport.authenticate("local"), async (req, res) => {
 			user: req.user,
 		});
 	} else {
-		res.json({ success: false, message: "Incorrect Password" });
+		res.status(401).json({ success: false, message: "Incorrect Password" });
 	}
 });
 
@@ -75,7 +75,7 @@ router.post(
 	async (req : Request, res : Response) => {
 		const { artist, album } = req.body;
 		if(!req.file || !artist || !album){
-			res.json({ success: false, message: "Missing required fields" });
+			res.status(400).json({ success: false, message: "Missing required fields" });
 			return;
 		}
 
@@ -91,7 +91,7 @@ router.post(
             req.file.mimetype !== "image/png" && 
             req.file.mimetype !== "image/webp"
 		) {
-			res.json({ success: false, message: "Invalid file type" });
+			res.status(400).json({ success: false, message: "Invalid file type" });
 			return;
 		}
 		const metadata = {
@@ -109,7 +109,7 @@ router.post(
 			})
 			.catch((error) => {
 				console.log(error);
-				res.json({ success: false, message: "Error uploading file" });
+				res.status(500).json({ success: false, message: "Error uploading file" });
 			});
 	}
 );
@@ -118,7 +118,7 @@ router.post("/uploadURL", requireLogin, async (req: Request, res: Response) => {
 	const { artist, album, url } = req.body;
 
 	if (!artist || !album || !url) {
-		res.json({ success: false, message: "Missing required fields" });
+		res.status(400).json({ success: false, message: "Missing required fields" });
 		return;
 	}
 
@@ -145,7 +145,7 @@ router.post("/uploadURL", requireLogin, async (req: Request, res: Response) => {
 		})
 		.catch((error) => {
 			console.log(error);
-			res.json({ success: false, message: "Error uploading file" });
+			res.status(500).json({ success: false, message: "Error uploading file" });
 		});
 });
 

@@ -5,81 +5,55 @@ import Increment from "../models/IncrementModel.js";
 import { removeMissingShows, updateLastPlayed } from "../dbMethods.js";
 import SongEntry from "../models/SongEntry.js";
 import {  ShowEntrySubmission } from "../types/ShowData.js";
+import { parse } from "path";
 
 
 
 const showRouter = Router();
 
-showRouter.get("/getShowData", async (req: Request, res: Response) => {
-	if (
-		req.query.showId === undefined ||
-        req.query.showId === "" ||
-        isNaN(Number.parseInt(req.query.showId as string))
-	) {
-		res.json({ success: false, message: "No Show ID provided." });
-	} else {
+showRouter.get("/show/:id", async (req: Request, res: Response) => {
+	if (req.params.id === undefined || req.params.id === "" || isNaN(Number.parseInt(req.params.id))) {
+		res.status(400).json({ success: false, message: "No Show ID provided." });
+		return;
+	}
+	else {
 		const showData = await ShowEntry.findOne(
-			{ showId: req.query.showId as string },
+			{ showId: parseInt(req.params.id) },
 			{ _id: 0, __v: 0 }
 		).lean().populate<{ songsList: SongEntry[] }>({ path: "songsList", select: "-__v " });
 		if (showData === null) {
-			res.json({ success: false, message: "Show not found." });
+			res.status(404).json({ success: false, message: "Show not found." });
 			return;
 		}   
 
-
-
-        
-
-
-        
-
-		// const nextShow = await ShowEntry.findOne(
-		//     { showId: { $gt: req.query.showId } },
-		//     { _id: 0, __v: 0 }
-		// )
-		//     .sort({ showId: "asc" })
-		//     .select("showId");
-		// const prevShow = await ShowEntry.findOne(
-		//     { showId: { $lt: req.query.showId } },
-		//     { _id: 0, __v: 0 }
-		// )
-		//     .sort({ showId: "desc" })
-		//     .select("showId showDate");
 
 		res.json({ showData });
 		return;
 	}
 });
 
-showRouter.get("/getShows", async (req: Request, res: Response) => {
+showRouter.get("/shows", async (req: Request, res: Response) => {
 	if (req.query.offset) {
 		const offset = Number.parseInt(req.query.offset as string);
 		const shows = await ShowEntry.find({}, { _id: 0, __v: 0 })
 			.sort({ showId: "desc" })
 			.skip(offset)
 			.limit(5)
+			.select("-songsList -_id")
+			.lean();
 
-
-		// Remove songsList and id from each show object
-		let s2 = shows.map((show) => {
-			const { songsList, _id, ...rest } = show.toObject();
-			return rest;
-		});
-		res.json(s2);
+		res.json(shows);
 	} else {
 		const shows = await ShowEntry.find({}, { _id: 0, __v: 0 })
-			.sort({ showId: "desc" });
+			.sort({ showId: "desc" })
+			.select("-songsList -_id")
+			.lean();
 
-		let s2 = shows.map((show) => {
-			const { songsList, _id, ...rest } = show.toObject();
-			return rest;
-		});
-		res.json(s2);
+		res.json(shows);
 	}
 });
 
-showRouter.post("/addShow", requireLogin, async (req : Request, res: Response) => {
+showRouter.post("/show", requireLogin, async (req : Request, res: Response) => {
 	const { songsList, ...showData } : ShowEntrySubmission = req.body;
 	try {
 
@@ -105,17 +79,21 @@ showRouter.post("/addShow", requireLogin, async (req : Request, res: Response) =
 			{ model: "ShowEntry" },
 			{ $inc: { counter: -1 } }
 		);
-		res.json({ success: false, message: "Error adding show." });
+		res.status(500).json({ success: false, message: "Error adding show." });
 	}
 });
 
-showRouter.post("/editShow", requireLogin, async (req: Request, res: Response) => {
+showRouter.patch("/show/:id", requireLogin, async (req: Request, res: Response) => {
 	const { ...showData } : Omit<ShowEntry, "songListCount"> = req.body;
+	if(parseInt(req.params.id) === undefined || isNaN(parseInt(req.params.id))) {
+		res.status(400).json({ success: false, message: "No Show ID provided." });
+		return;
+	}
 	try{
 
-		const show = await ShowEntry.findOne({ showId: showData.showId });
+		const show = await ShowEntry.findOne({ showId: parseInt(req.params.id) });
 		if (show === null) {
-			res.json({ success: false, message: "Show not found." });
+			res.status(404).json({ success: false, message: "Show not found." });
 			return;
 		}
 		show.songsList = showData.songsList;
@@ -129,26 +107,26 @@ showRouter.post("/editShow", requireLogin, async (req: Request, res: Response) =
 				res.json({ success: true, message: "Show Updated!" });
 			})
 			.catch((error) => {
-				res.json({ success: false, message: "Error adding song to show." });
+				res.status(500).json({ success: false, message: "Error adding song to show." });
 			});
 	} catch(error){
 		console.log(error);
-		res.json({ success: false, message: "Error updating show." });
+		res.status(500).json({ success: false, message: "Error updating show." });
 	}
     
     
 });
 
-showRouter.post("/deleteShow", requireLogin, async (req: Request, res: Response) => {
-	const { showId } : { showId: number } = req.body;
-	if (showId === undefined || isNaN(showId)) {
-		res.json({ success: false, message: "No Show ID provided." });
+showRouter.delete("/show/:id", requireLogin, async (req: Request, res: Response) => {
+	const showId = parseInt(req.params.id);
+	if (isNaN(showId)) {
+		res.status(400).json({ success: false, message: "No Show ID provided." });
 	} else {
 		try {
 			let result = await ShowEntry.deleteOne({ showId });
 
 			if (result.deletedCount === 0) {
-				res.json({ success: false, message: "Show not found." });
+				res.status(404).json({ success: false, message: "Show not found." });
 				return;
 			}
 
@@ -157,7 +135,7 @@ showRouter.post("/deleteShow", requireLogin, async (req: Request, res: Response)
 			res.json({ success: true, message: "Show deleted." });
 		} catch (error) {
 			console.log(error);
-			res.json({ success: false, message: "Error deleting show." });
+			res.status(500).json({ success: false, message: "Error deleting show." });
 		}
 	}
 });

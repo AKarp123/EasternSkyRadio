@@ -26,7 +26,7 @@ const ShowPage = () => {
 
 	useEffect(() => {
 		axios
-			.get<ShowEntryMin[]>("/api/getShows")
+			.get<ShowEntryMin[]>("/api/shows")
 			.then((res) => {
 				setShowList(res.data);
 				setLoading(false);

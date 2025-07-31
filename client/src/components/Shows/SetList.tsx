@@ -41,11 +41,7 @@ const SetList = () => {
 
 	useEffect(() => {
 		axios
-			.get("/api/getShowData", {
-				params: {
-					showId: showId,
-				},
-			})
+			.get<{ showData: ShowEntry }>(`/api/show/${showId}`)
 			.then((res) => {
 				setShowData(res.data.showData);
 				setLoading(false);

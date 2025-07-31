@@ -22,6 +22,8 @@ import ErrorContext from "../../providers/ErrorContext";
 import { SongSearch } from "./NewShow";
 import { SongEntry } from "../../types/Song";
 import { reducer } from "../../reducers/EditShowsReducer";
+import { ShowEntry } from "../../types/Shows";
+import { StandardResponseNoData } from "../../types/global";
 
 const EditShows = () => {
 	const [showData, dispatch] = useReducer(reducer, {
@@ -36,24 +38,19 @@ const EditShows = () => {
 	const fillShow = useDebouncedCallback(() => {
 		if (showId === "") return;
 		axios
-			.get("/api/getShowData", {
-				params: {
-					showId: showId,
-				},
-			})
+			.get<{ showData: ShowEntry }>(`/api/show/${showId}`)
 			.then((res) => {
-				if (res.data.success === false || res.data.showData === null) {
-					dispatch({ type: "clear" });
-					setError("Show not found");
-
-					return;
-				}
 				dispatch({ type: "fill", payload: { ...res.data.showData } });
+			})
+			.catch((error) => {
+				console.error(error);
+				dispatch({ type: "clear" });
+				setError("Error loading show data");
 			});
 	}, 500);
 
 	const submit = () => {
-		axios.post("/api/editShow", { showData }).then((res) => {
+		axios.patch<{ success: boolean; message: string }>(`/api/show/${showId}`, { showData }).then((res) => {
 			if (res.data.success === false) {
 				setError(res.data.message);
 				return;
@@ -63,9 +60,11 @@ const EditShows = () => {
 	};
 
 	const deleteShow = () => {
-		axios.post("/api/deleteShow", { showId }).then((res) => {
+		axios.delete<StandardResponseNoData>(`/api/show/${showId}`).then((res) => {
 			if (res.data.success === false) {
-				setError(res.data.message);
+				if (res.data.message) {
+					setError(res.data.message);
+				}
 				return;
 			}
 			setError("Show deleted successfully", "success");

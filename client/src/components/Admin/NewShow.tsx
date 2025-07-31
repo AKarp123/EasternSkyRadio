@@ -42,7 +42,7 @@ const NewShow = () => {
 
 	const addShow = () => {
 		axios
-			.post("/api/addShow", { showData: state })
+			.post("/api/show", { showData: state })
 			.then((res) => {
 				if (res.data.success === false) {
 					setError(res.data.message);
