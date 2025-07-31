@@ -25,7 +25,7 @@ const Home = React.memo(() => {
 			.then((res) => {
 				setSiteData(res.data);
 				setLoading(false);
-				if (res.data == undefined) {
+				if (res.data === undefined) {
 					setError("Failed to get site data");
 				}
 			})
@@ -74,7 +74,7 @@ const Home = React.memo(() => {
 					align="center"
 					sx={{ fontFamily: "Tiny5, Roboto" }}
 				>
-					{siteData == undefined ? "No Data Available" : (siteData.onBreak
+					{siteData === null ? "No Data Available" : (siteData.onBreak
 						? "On break for the semester"
 						: `Next show: ${nextShowDate()?.toDateString()} at ${nextShowDate()?.toLocaleTimeString()}`)}
 				</Typography>

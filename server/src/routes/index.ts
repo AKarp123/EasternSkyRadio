@@ -61,7 +61,12 @@ router.get("/getUser", (req, res) => {
 });
 
 router.post("/logout", (req, res) => {
-	req.logout((err) => console.log(err));
+	req.logout((err) => {
+		if (err) {
+			return res.status(500).json({ success: false, message: "Logout failed" });
+		}
+		res.json({ success: true, message: "Logout successful" });
+	});
 });
 
 router.get("/getBucket", (req, res) => {

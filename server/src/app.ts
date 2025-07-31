@@ -19,11 +19,9 @@ const db = mongoose.connection;
 
 const app = express();
 
-const __filename = url.fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
-app.use(express.static(path.join(__dirname, "../client/public")));
-app.use(express.static(path.join(__dirname, "../client/dist")));
+
+
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

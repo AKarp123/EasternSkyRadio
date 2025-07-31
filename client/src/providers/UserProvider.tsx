@@ -15,7 +15,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
 		axios
 			.get("/api/getUser")
 			.then((res) => {
-				if (res.data.user == undefined) {
+				if (res.data.user === undefined) {
 					setUser(null);
 				}
 				else {

@@ -8,7 +8,7 @@ import {
 	Button,
 } from "@mui/material";
 import { useState, useContext } from "react";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import ErrorContext from "../../providers/ErrorContext";
 import { useHistory, useLocation } from "react-router-dom";
 import { useAuth } from "../../providers/UserProvider";
@@ -32,7 +32,11 @@ const Login = () => {
 					setError(res.data.message);
 				}
 			})
-			.catch((error) => {
+			.catch((error: AxiosError) => {
+				if(error.response?.status === 401) {
+					setError("Invalid username or password");
+					return;
+				}
 				setError("Failed to login: " + error.message);
 			});
 	};
