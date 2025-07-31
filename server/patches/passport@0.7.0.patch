@@ -1,0 +1,13 @@
+diff --git a/lib/errors/authenticationerror.js b/lib/errors/authenticationerror.js
+index 2b1da147e014e16b5f362bafe2aa9854b56fe56f..5d6ab091803b5fb031012d8a5fceca8713868e3a 100644
+--- a/lib/errors/authenticationerror.js
++++ b/lib/errors/authenticationerror.js
+@@ -6,7 +6,7 @@
+  */
+ function AuthenticationError(message, status) {
+   Error.call(this);
+-  Error.captureStackTrace(this, arguments.callee);
++  Error.captureStackTrace(this, AuthenticationError);
+   this.name = 'AuthenticationError';
+   this.message = message;
+   this.status = status || 401;

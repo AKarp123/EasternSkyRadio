@@ -44,5 +44,8 @@
     "@typescript-eslint/parser": "^8.38.0",
     "eslint": "^9.32.0",
     "typescript": "^5.8.3"
+  },
+  "patchedDependencies": {
+    "passport@0.7.0": "patches/passport@0.7.0.patch"
   }
 }
