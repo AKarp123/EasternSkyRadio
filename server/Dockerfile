@@ -11,4 +11,4 @@ EXPOSE 3000
 # You will need to set the MONGO_URI environment variable
 # when you run the container in production.
 # e.g., docker run -p 3000:3000 -e MONGO_URI="your_prod_mongo_uri" my-prod-app
-CMD ["bun", "run", "server/dist/app.js"]
+CMD ["bun", "run", "dist/app.js"]
