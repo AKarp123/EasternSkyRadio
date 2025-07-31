@@ -1,5 +1,5 @@
 # ---- Backend Build ----
-FROM oven/bun:1.1.0-slim AS backend-build
+FROM oven/bun:1.2.19-slim AS backend-build
 
 ENV FORCE_COLOR=1
 

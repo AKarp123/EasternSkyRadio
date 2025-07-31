@@ -10,7 +10,7 @@ const UserSchema = new Schema<UserDocument>({
 });
 
 UserSchema.plugin(passportLocalMongoose, {
-	iterations: 15000,
+	iterations: 125000,
 });
 const User = mongoose.model<UserDocument>("User", UserSchema);
 

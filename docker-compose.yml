@@ -6,8 +6,6 @@ services:
       dockerfile: ./server/Dockerfile
     ports:
       - "8000:3000"
-    env_file:
-      - stack.env
   frontend:
     image: kawambiit/esr-frontend:latest
     build:
