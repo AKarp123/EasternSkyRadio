@@ -10,7 +10,6 @@
         "client": "cd client && pnpm run start",
         "client:dev": "cd client && npm run dev",
         "dev": "concurrently \"pnpm run server\" \"pnpm run client\"",
-        "install": "cd client && pnpm install; cd ../server && bun install",
-        "build": "cd client && pnpm run build"
+        "install": "cd client && pnpm install; cd ../server && bun install"
     }
 }

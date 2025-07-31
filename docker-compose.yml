@@ -1,16 +1,18 @@
 
 services:
-  easternskyradio:
-    image: kawambiit/easternskyradio:latest
+  backend:
+    image: kawambiit/esr-backend:latest
+    build:
+      dockerfile: ./server/Dockerfile
     ports:
       - "8000:3000"
-    volumes:
-      - /home/ubuntu/codingprojects/esr/dist:/usr/src/app/client/dist
     env_file:
       - stack.env
-  caddy:
-    image: kawambiit/esr-caddy:latest
+  frontend:
+    image: kawambiit/esr-frontend:latest
+    build:
+      dockerfile: ./client/Dockerfile
     ports:
       - "8080:80"
     depends_on:
-      - easternskyradio
+      - backend
