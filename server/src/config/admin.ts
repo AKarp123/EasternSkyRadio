@@ -22,7 +22,7 @@ const initializeAdmin = () => {
 		credential: credential.cert(serviceAccountKey as admin.ServiceAccount),
 		storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
 	});
-	console.log("Connected to Firebase");
+	console.log("Connected to Firebase"); //eslint-disable-line no-console
 };
 
 export default initializeAdmin

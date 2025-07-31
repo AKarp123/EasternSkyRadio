@@ -1,5 +1,8 @@
 # ---- Backend Build ----
 FROM oven/bun:1.1.0-slim AS backend-build
+
+ENV FORCE_COLOR=1
+
 WORKDIR /usr/src/app/server
 COPY ./server/package.json ./server/bun.lock ./
 RUN bun install

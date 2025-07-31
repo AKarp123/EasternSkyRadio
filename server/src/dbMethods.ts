@@ -18,9 +18,9 @@ export const addSong = async (songData : Omit<ISongEntry, "songId">) => {
 		const song = await newSong.save();
 
 		return song;
-	} catch (err) {
-		console.log(
-			err
+	} catch (error) {
+		console.error(
+			error
 		);
 		await Increment.findOneAndUpdate(
 			{ model: "SongEntry" },
@@ -75,11 +75,11 @@ const createAdminAccount = async () => {
 	if (!adminPassword) {
 		throw new Error("ADMIN_PASSWORD environment variable is not set");
 	}
-	User.register(user, adminPassword, (err, user) => {
+	User.register(user, adminPassword, (err) => {
 		if (err) {
-			console.log(err);
+			console.error(err);
 		} else {
-			console.log("User created");
+			console.info("User created"); 
 		}
 	});
 };
@@ -90,16 +90,16 @@ export const removeMissingShows = async () => {
 		const shows = await ShowEntry.find().sort({ showId: "asc" });
 
 		// Update showIds to be sequential starting from 1
-		for (let i = 0; i < shows.length; i++) {
-			shows[i].showId = i + 1;
-			await shows[i].save();
+		for (const [i, show] of shows.entries()) {
+			show.showId = i + 1;
+			await show.save();
 		}
 		await Increment.findOneAndUpdate(
 			{ model: "ShowEntry" },
 			{ $set: { counter: shows.length } }
 		);
 
-		console.log("Show IDs updated successfully.");
+		console.info("Show IDs updated successfully.");
 	} catch (error) {
 		console.error("Error updating show IDs:", error);
 	}
@@ -111,16 +111,16 @@ export const removeMissingSongs = async () => {
 		const songs = await SongEntry.find().sort({ songId: "asc" });
 
 		// Update songIds to be sequential starting from 1
-		for (let i = 0; i < songs.length; i++) {
-			songs[i].songId = i + 1;
-			await songs[i].save();
+		for (const [i, song] of songs.entries()) {
+			song.songId = i + 1;
+			await song.save();
 		}
 		await Increment.findOneAndUpdate(
 			{ model: "SongEntry" },
 			{ $set: { counter: songs.length } }
 		);
 
-		console.log("Song IDs updated successfully.");
+		console.info("Song IDs updated successfully.");
 	} catch (error) {
 		console.error("Error updating song IDs:", error);
 	}
@@ -166,12 +166,12 @@ const resetData = async () => {
 
 export const updateShowTimes = async () => {
 	let shows = await ShowEntry.find();
-	shows.forEach((show) => {
+	for (const show of shows) {
 		let tempDate = new Date(show.showDate);
 		tempDate.setHours(tempDate.getHours() + 5); // Convert to EST
 		show.showDate = tempDate;
 		show.save();
-	});
+	}
 };
 
 // const addLastPlayed = async () => {

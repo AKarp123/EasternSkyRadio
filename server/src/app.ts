@@ -4,27 +4,26 @@ import session from "express-session";
 import MongoStore from "connect-mongo";
 import passport from "passport";
 import { Strategy as LocalStrategy } from "passport-local";
-import { join } from "path";
-import { fileURLToPath } from "url";
-import { dirname } from "path";
+import path from "node:path";
+import url from "node:url";
 import User from "./models/UserModel.js";
 import apiRouter from "./routes/index.js";
 import "dotenv/config";
 import { UserDocument } from "./types/User.js";
+import { logRoute } from "./routelogging.js";
 
 const port = process.env.PORT || 3000;
-
 
 mongoose.connect(process.env.MONGODB_URI || "");
 const db = mongoose.connection;
 
 const app = express();
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+const __filename = url.fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-app.use(express.static(join(__dirname, "../client/public")));
-app.use(express.static(join(__dirname, "../client/dist")));
+app.use(express.static(path.join(__dirname, "../client/public")));
+app.use(express.static(path.join(__dirname, "../client/dist")));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -55,14 +54,15 @@ passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
+app.use(logRoute)
 app.use("/api", apiRouter);
 
 
 app.listen(port, () => {
-	console.log(`Server running on port ${port}`);
+	console.log(`Server running on port ${port}`); //eslint-disable-line no-console
 });
 
 db.on("error", console.error.bind(console, "connection error:"));
 db.once("open", async function () {
-	console.log("Connected to MongoDB");
+	console.log("Connected to MongoDB"); //eslint-disable-line no-console
 });

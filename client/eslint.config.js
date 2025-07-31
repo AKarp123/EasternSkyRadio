@@ -33,8 +33,7 @@ export default defineConfig([
                 args: 'after-used',
                 ignoreRestSiblings: true
             }],
-            
-            
+            'eqeqeq': ['error', 'always'],
         },
     },
     {
