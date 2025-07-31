@@ -3,14 +3,12 @@ import mongoose from "mongoose";
 import session from "express-session";
 import MongoStore from "connect-mongo";
 import passport from "passport";
-import { Strategy as LocalStrategy } from "passport-local";
-import path from "node:path";
-import url from "node:url";
 import User from "./models/UserModel.js";
 import apiRouter from "./routes/index.js";
 import "dotenv/config";
 import { UserDocument } from "./types/User.js";
 import { logRoute } from "./routelogging.js";
+
 
 const port = process.env.PORT || 3000;
 
@@ -18,8 +16,6 @@ mongoose.connect(process.env.MONGODB_URI || "");
 const db = mongoose.connection;
 
 const app = express();
-
-
 
 
 
@@ -48,13 +44,12 @@ declare global {
 }
 
 app.use(passport.session());
-passport.use(new LocalStrategy(User.authenticate()));
+passport.use(User.createStrategy());
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
 app.use(logRoute)
 app.use("/api", apiRouter);
-
 
 
 app.listen(port, () => {

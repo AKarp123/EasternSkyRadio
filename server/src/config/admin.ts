@@ -1,7 +1,7 @@
-import admin, { credential } from "firebase-admin";
+import admin from "firebase-admin";
 import "dotenv/config";
 
-
+const { credential } = admin;
 
 const serviceAccountKey = {
 	type: "service_account",

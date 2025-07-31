@@ -41,34 +41,18 @@ router.get("/getStats", async (req, res) => {
 	res.json(stats);
 });
 
-router.post("/login", (req, res, next) => {
-
-	
-
-	passport.authenticate("local", async (err: Error | null, user: UserDocument | false, info: any) => {
-		
-
-		if (err) {
-			console.log("[auth] error:", err);
-			return next(err);
-		}
-
-		if (!user) {
-			console.log("[auth] failed login");
-			return res.status(401).json({ success: false, message: "Incorrect Password" });
-		}
-
-		
-		req.login(user, (err) => {
-			if (err) return next(err);
-			return res.json({
-				success: true,
-				message: "Login successful",
-				user,
-			});
+router.post("/login", passport.authenticate("local"), (req, res) => {
+	if (req.user) {
+		res.json({
+			success: true,
+			message: "Login successful",
+			user: req.user,
 		});
-	})(req, res, next);
+	} else {
+		res.json({ success: false, message: "Incorrect Password" });
+	}
 });
+
 
 
 router.get("/getUser", (req, res) => {
