@@ -8,6 +8,8 @@ import apiRouter from "./routes/index.js";
 import "dotenv/config";
 import { UserDocument } from "./types/User.js";
 import { logRoute } from "./routelogging.js";
+import SongEntry from "./models/SongEntry.js";
+import { removeMissingSongs } from "./dbMethods.js";
 
 
 const port = process.env.PORT || 3000;
@@ -60,5 +62,7 @@ db.on("error", console.error.bind(console, "connection error:"));
 db.once("open", async function () {
 	console.log("Connected to MongoDB"); //eslint-disable-line no-console
 	});
+	
+
 
 

@@ -1,6 +1,6 @@
 import { Router, Request, Response } from "express";
 import SongEntry from "../models/SongEntry.js";
-import { addSong, removeMissingShows, removeMissingSongs } from "../dbMethods.js";
+import { addSong, generateSearchQuery, removeMissingShows, removeMissingSongs } from "../dbMethods.js";
 import requireLogin from "./requireLogin.js";
 import { SongEntry as ISongEntry } from "../types/SongEntry.js";
 
@@ -37,16 +37,19 @@ songRouter.get("/search", requireLogin, async (req: Request, res: Response) => {
 				searchResults: searchResults,
 			});
 		} else {
-			const escapedQuery = escapeRegex(req.query.query as string);
+			const raw = (req.query.query as string)
+			.trim()
+			.toLowerCase();
+
+			const words = raw.split("/\s+/").map((word) => escapeRegex(word));
+			const conditions = words.map((word) => ({
+				searchQuery: { $regex: new RegExp(word, "i") },
+			}));
 			const searchResults = await SongEntry.find({
-				$or: [
-					{ title: { $regex: new RegExp(escapedQuery, "i") } },
-					{ artist: { $regex: new RegExp(escapedQuery, "i") } },
-					{ album: { $regex: new RegExp(escapedQuery, "i") } },
-				],
-			}).select(
-				"-__v" + (req.user ? " +elcroId +duration +lastPlayed" : "")
-			);
+				$and: conditions,
+			})
+				.select("-__v" + (req.user ? " +elcroId +duration +lastPlayed" : ""))
+				.limit(20);
 			res.json({ success: true, searchResults: searchResults });
 		}
 	} catch (error) {
@@ -125,8 +128,8 @@ songRouter.post("/editSong", requireLogin, async (req: Request, res: Response) =
 		res.json({ success: false, message: "No song data provided." });
 		return;
 	}
-
-	SongEntry.findOneAndUpdate({ songId: songData.songId }, songData, {
+	const searchQuery = generateSearchQuery(songData);
+	SongEntry.findOneAndUpdate({ songId: songData.songId }, {songData, searchQuery}, {
 		new: true,
 		runValidators: true,
 	})

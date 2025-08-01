@@ -9,7 +9,7 @@ import { SongEntry } from "../types/SongEntry";
  **/
 
 const songEntrySchema = new schema<SongEntry>({
-	songId: { type: Number, required: [true, "Missing songId field"] },
+	songId: { type: Number, required: [true, "Missing songId field"], unique: true, index: true },
 	elcroId: {
 		type: String,
 		required: false,
@@ -60,6 +60,13 @@ const songEntrySchema = new schema<SongEntry>({
 	},
 	duration: { type: Number, default: 0, select: false }, // approx duration in decimal time
 	lastPlayed: { type: Date, required: false, select: false },
+	searchQuery: {
+		type: String,
+		default: "", // set before save
+		trim: true,
+		lowercase: true,
+		index: true,
+	},
 });
 
 songEntrySchema.pre("validate", function (next) {
@@ -106,6 +113,25 @@ songEntrySchema.pre("save", async function (next) {
 	}
 	next();
 });
+
+songEntrySchema.pre("save", function (next) { 
+	if(!this.isModified(["artist", "title", "album", "origTitle", "origAlbum"])) {
+		return next();
+	}
+	this.searchQuery = [
+		this.artist,
+		this.title,
+		this.album,
+		this.origTitle || "",
+		this.origAlbum || "",
+	].join(" ")
+	.replace(/[^\p{L}\p{N}\s]/gu, "")  
+	.replace(/\s+/g, " ") // collapse multiple spaces
+	.trim();
+
+	next();
+})
+
 
 const SongEntry = model<SongEntry>("SongEntry", songEntrySchema);
 
