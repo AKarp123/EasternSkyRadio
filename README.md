@@ -13,23 +13,27 @@ Yes! Feel free to copy/clone whatever but I would appreciate if you linked back 
 ```docker-compose
 
 services:
-  easternskyradio:
-    image: kawambiit/easternskyradio:latest
+  backend:
+    image: kawambiit/esr-backend:dev-latest
     ports:
       - "8000:3000"
     env_file:
       - stack.env
-  caddy:
-    image: kawambiit/esr-caddy:latest
+  frontend:
+    image: kawambiit/esr-frontend:dev-latest
     ports:
       - "8080:80"
     depends_on:
-      - easternskyradio
+      - backend
 ```
 You can also add a local mongodb instance but update the env to make sure it finds the correct one
 
 ##Developing
 
 run `docker compose -f docker-compose.dev.yml up`
+
+##Creating Migrations
+
+`docker exec -it easternskyradio-server-1 bun migrate create <migration_name>`
 
 
