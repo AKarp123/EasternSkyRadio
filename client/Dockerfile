@@ -6,6 +6,6 @@ RUN npm install
 COPY ./client .
 RUN npm run build
 
-FROM caddy:2.7.4-alpine AS caddy
+FROM caddy:2.10.0-alpine AS caddy
 COPY --from=frontend /usr/src/app/client/dist /usr/share/caddy
 COPY ./Caddyfile /etc/caddy/Caddyfile
