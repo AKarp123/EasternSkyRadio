@@ -5,7 +5,7 @@ import Increment from "../models/IncrementModel.js";
 import { removeMissingShows, updateLastPlayed } from "../dbMethods.js";
 import SongEntry from "../models/SongEntry.js";
 import {  ShowEntrySubmission } from "../types/ShowData.js";
-import { parse } from "path";
+import { parse } from "node:path";
 
 
 
@@ -18,7 +18,7 @@ showRouter.get("/show/:id", async (req: Request, res: Response) => {
 	}
 	else {
 		const showData = await ShowEntry.findOne(
-			{ showId: parseInt(req.params.id) },
+			{ showId: Number.parseInt(req.params.id) },
 			{ _id: 0, __v: 0 }
 		).lean().populate<{ songsList: SongEntry[] }>({ path: "songsList", select: "-__v " });
 		if (showData === null) {
@@ -85,13 +85,13 @@ showRouter.post("/show", requireLogin, async (req : Request, res: Response) => {
 
 showRouter.patch("/show/:id", requireLogin, async (req: Request, res: Response) => {
 	const { ...showData } : Omit<ShowEntry, "songListCount"> = req.body;
-	if(parseInt(req.params.id) === undefined || isNaN(parseInt(req.params.id))) {
+	if(Number.parseInt(req.params.id) === undefined || isNaN(Number.parseInt(req.params.id))) {
 		res.status(400).json({ success: false, message: "No Show ID provided." });
 		return;
 	}
 	try{
 
-		const show = await ShowEntry.findOne({ showId: parseInt(req.params.id) });
+		const show = await ShowEntry.findOne({ showId: Number.parseInt(req.params.id) });
 		if (show === null) {
 			res.status(404).json({ success: false, message: "Show not found." });
 			return;
@@ -118,7 +118,7 @@ showRouter.patch("/show/:id", requireLogin, async (req: Request, res: Response) 
 });
 
 showRouter.delete("/show/:id", requireLogin, async (req: Request, res: Response) => {
-	const showId = parseInt(req.params.id);
+	const showId = Number.parseInt(req.params.id);
 	if (isNaN(showId)) {
 		res.status(400).json({ success: false, message: "No Show ID provided." });
 	} else {

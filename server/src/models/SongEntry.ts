@@ -125,9 +125,9 @@ songEntrySchema.pre("save", function (next) {
 		this.origTitle || "",
 		this.origAlbum || "",
 	].join(" ")
-	.replace(/[^\p{L}\p{N}\s]/gu, "")  
-	.replace(/\s+/g, " ") // collapse multiple spaces
-	.trim();
+		.replaceAll(/[^\p{L}\p{N}\s]/gu, "")  
+		.replaceAll(/\s+/g, " ") // collapse multiple spaces
+		.trim();
 
 	next();
 })

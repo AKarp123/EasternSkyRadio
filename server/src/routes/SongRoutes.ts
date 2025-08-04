@@ -38,8 +38,8 @@ songRouter.get("/search", requireLogin, async (req: Request, res: Response) => {
 			});
 		} else {
 			const raw = (req.query.query as string)
-			.trim()
-			.toLowerCase();
+				.trim()
+				.toLowerCase();
 
 			const words = raw.split("/\s+/").map((word) => escapeRegex(word));
 			const conditions = words.map((word) => ({
@@ -129,7 +129,7 @@ songRouter.post("/editSong", requireLogin, async (req: Request, res: Response) =
 		return;
 	}
 	const searchQuery = generateSearchQuery(songData);
-	SongEntry.findOneAndUpdate({ songId: songData.songId }, {songData, searchQuery}, {
+	SongEntry.findOneAndUpdate({ songId: songData.songId }, { songData, searchQuery }, {
 		new: true,
 		runValidators: true,
 	})

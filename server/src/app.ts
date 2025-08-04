@@ -61,7 +61,7 @@ app.listen(port, () => {
 db.on("error", console.error.bind(console, "connection error:"));
 db.once("open", async function () {
 	console.log("Connected to MongoDB"); //eslint-disable-line no-console
-	});
+});
 	
 
 
