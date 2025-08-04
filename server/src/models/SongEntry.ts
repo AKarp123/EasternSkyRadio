@@ -66,6 +66,7 @@ const songEntrySchema = new schema<SongEntry>({
 		trim: true,
 		lowercase: true,
 		index: true,
+		select: false, 
 	},
 });
 
