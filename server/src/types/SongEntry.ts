@@ -13,7 +13,7 @@ export interface SongEntry {
     songReleaseLoc? : songReleaseLocation[],
     duration: number,
     lastPlayed? : Date,
-
+    searchQuery: string, 
 }
 
 

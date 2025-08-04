@@ -25,6 +25,7 @@ export default defineConfig([
                 ignoreRestSiblings: true
             }],
             'eqeqeq': ['error', 'always'],
+            'object-curly-spacing': ['error', 'always'],
         },
 		languageOptions: {
 			parser,

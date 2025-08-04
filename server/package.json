@@ -9,7 +9,7 @@
     "dev": "bun --watch src/app.ts",
     "build": "bun build src/app.ts --outdir dist --target node",
     "lint": "bunx eslint src/**/*.ts src/*.ts",
-    "lint:fix": "bunx eslint src/**/*.ts src/*.ts --fix"
+    "lint:fix": "bunx eslint src/**/*.ts src/*.ts migrations/*.ts --fix"
   },
   "keywords": [],
   "author": "",
@@ -29,7 +29,8 @@
     "node-cache": "^5.1.2",
     "passport": "^0.7.0",
     "passport-local": "^1.0.0",
-    "passport-local-mongoose": "^8.0.0"
+    "passport-local-mongoose": "^8.0.0",
+    "ts-migrate-mongoose": "^4.0.9"
   },
   "type": "module",
   "devDependencies": {

@@ -174,6 +174,16 @@ export const updateShowTimes = async () => {
 	}
 };
 
+export const generateSearchQuery = (song: ISongEntry) => {
+	return [
+		song.artist,
+		song.title,
+		song.album,
+		song.origTitle || "",
+		song.origAlbum || "",
+	].join(" ").toLowerCase().trim();
+};
+
 // const addLastPlayed = async () => {
 //     const allShows = await ShowEntry.find().sort({ showId: "desc"}).populate("songsList");
  
