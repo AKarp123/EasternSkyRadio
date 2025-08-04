@@ -8,7 +8,7 @@ import { SongEntry } from "../types/SongEntry";
  *
  **/
 
-const songEntrySchema = new schema<SongEntry>({
+export const songEntrySchema = new schema<SongEntry>({
 	songId: { type: Number, required: [true, "Missing songId field"], unique: true, index: true },
 	elcroId: {
 		type: String,

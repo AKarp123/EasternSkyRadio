@@ -10,12 +10,18 @@ import { UserDocument } from "./types/User.js";
 import { logRoute } from "./routelogging.js";
 import SongEntry from "./models/SongEntry.js";
 import { removeMissingSongs } from "./dbMethods.js";
+import { applyMigrations } from "./migrations.js";
 
 
 const port = process.env.PORT || 3000;
 
 mongoose.connect(process.env.MONGODB_URI || "");
 const db = mongoose.connection;
+
+applyMigrations().then(() => {
+}).catch(err => {
+	console.error("Error applying migrations:", err);
+});
 
 const app = express();
 

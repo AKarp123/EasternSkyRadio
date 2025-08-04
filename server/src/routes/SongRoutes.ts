@@ -41,7 +41,7 @@ songRouter.get("/search", requireLogin, async (req: Request, res: Response) => {
 				.trim()
 				.toLowerCase();
 
-			const words = raw.split("/\s+/").map((word) => escapeRegex(word));
+			const words = raw.split(/\s+/).map((word) => escapeRegex(word));
 			const conditions = words.map((word) => ({
 				searchQuery: { $regex: new RegExp(word, "i") },
 			}));
