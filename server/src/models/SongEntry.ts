@@ -1,4 +1,4 @@
-import { Schema as schema, model } from "mongoose";
+import { Schema as schema, model, models } from "mongoose";
 import { SongEntry } from "../types/SongEntry";
 
 
@@ -134,6 +134,6 @@ songEntrySchema.pre("save", function (next) {
 })
 
 
-const SongEntry = model<SongEntry>("SongEntry", songEntrySchema);
+const SongEntry = models.SongEntry ?? model<SongEntry>("SongEntry", songEntrySchema);
 
 export default SongEntry;
