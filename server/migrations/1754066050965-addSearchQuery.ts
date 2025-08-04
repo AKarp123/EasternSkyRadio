@@ -5,7 +5,7 @@ import { songEntrySchema } from "../src/models/SongEntry";
 
 export async function up(connection: Connection): Promise<void> {
     // Write migration here
-    const cursor = connection.model<SongEntry>("SongEntry", songEntrySchema).find({});
+    const cursor = connection.model<SongEntry>("SongEntry", songEntrySchema).find({}).select("+duration");
     for await (const song of cursor) {
         song.searchQuery = [
             song.artist,
@@ -18,7 +18,7 @@ export async function up(connection: Connection): Promise<void> {
             .replaceAll(/[^\p{L}\p{N}\s]/gu, "")
             .replaceAll(/\s+/g, " ") // collapse multiple spaces
             .trim();
-        await song.save();
+        await song.set("searchQuery", song.searchQuery).save();
     }
 
     connection.model("SongEntry").ensureIndexes();

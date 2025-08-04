@@ -331,6 +331,7 @@ type SetPlannerCardProperties = {
     index: number;
 };
 const SetPlannerCard = ({ entry, state, dispatch, durationAtPoint, index }: SetPlannerCardProperties) => {
+	console.log(entry);
 	if (entry.type === "Song" && entry.item.duration === 0) {
 		return <SetPlannerForm dispatch={dispatch} entry={entry} index={index} />;
 	}
@@ -548,7 +549,7 @@ type SetPlannerFormProperties = {
 }
 const SetPlannerForm = ({ dispatch, entry, index }: SetPlannerFormProperties) => {
 	const setError = useContext(ErrorContext);
-	const [duration, setDuration] = useState(0);
+	const [duration, setDuration] = useState("");
 	const editSong = () => {
 		axios
 			.post(`/api/editSong`, { songData: { ...entry.item, duration } })
@@ -561,7 +562,7 @@ const SetPlannerForm = ({ dispatch, entry, index }: SetPlannerFormProperties) =>
 			});
 		dispatch({
 			type: SetPlannerActionType.EditSong,
-			payload: { song: { ...entry.item, duration }, index },
+			payload: { song: { ...entry.item, duration: Number.isNaN(Number(duration)) ? 0 : Number(duration) }, index },
 		});
 	};
 	return (
@@ -569,7 +570,7 @@ const SetPlannerForm = ({ dispatch, entry, index }: SetPlannerFormProperties) =>
 			<TextField
 				label="Duration"
 				value={duration}
-				onChange={(e) => setDuration(Number.parseFloat(e.target.value))}
+				onChange={(e) => setDuration(e.target.value)}
 				fullWidth
 			/>
 			<Button
