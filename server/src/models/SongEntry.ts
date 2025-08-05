@@ -4,7 +4,7 @@ import { SongEntry } from "../types/SongEntry";
 
 
 /**
- * Note that songId is only for elcro songs, a songID is the albumID in elcro + the track number. It is internal use only, will not be sent back to user client.
+ * Note that elcroID is only for elcro songs, a elcroID is the albumID in elcro + the track number. It is internal use only, will not be sent back to user client.
  *
  **/
 
@@ -68,7 +68,13 @@ export const songEntrySchema = new schema<SongEntry>({
 		index: true,
 		select: false, 
 	},
-});
+}, { versionKey: false, timestamps: true });
+
+
+/**
+ * Reselects all fields except __v
+ */
+export const songEntry_selectAllFields = "+elcroId +duration +lastPlayed +searchQuery -__v";
 
 songEntrySchema.pre("validate", function (next) {
 	if (this.elcroId) {

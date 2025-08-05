@@ -5,7 +5,6 @@ import Increment from "../models/IncrementModel.js";
 import { removeMissingShows, updateLastPlayed } from "../dbMethods.js";
 import SongEntry from "../models/SongEntry.js";
 import {  ShowEntrySubmission } from "../types/ShowData.js";
-import { parse } from "node:path";
 
 
 

@@ -16,10 +16,7 @@ const port = process.env.PORT || 3000;
 
 
 
-applyMigrations().then(() => {
-}).catch(err => {
-	console.error("Error applying migrations:", err);
-});
+
 
 const app = express();
 

@@ -55,13 +55,6 @@ export const findSong = async (songName : string) => {
 	return SongEntry.findOne({ title: { $regex: songName, $options: "i" } });
 };
 
-export const initializeCounters = async () => {
-	let increment = new Increment({ model: "SongEntry" });
-	await increment.save();
-	increment = new Increment({ model: "ShowEntry" });
-	await increment.save();
-	// console.log("Counters Initialized!");
-};
 
 // export const addSongToShow = async (showId, songId) => {
 //     const show = await ShowEntry.findOne({ showId: showId });
@@ -69,20 +62,7 @@ export const initializeCounters = async () => {
 //     return await show.save();
 // };
 
-const createAdminAccount = async () => {
-	const user = new User({ username: "admin" });
-	const adminPassword = process.env.ADMIN_PASSWORD;
-	if (!adminPassword) {
-		throw new Error("ADMIN_PASSWORD environment variable is not set");
-	}
-	User.register(user, adminPassword, (err) => {
-		if (err) {
-			console.error(err);
-		} else {
-			console.info("User created"); 
-		}
-	});
-};
+
 
 export const removeMissingShows = async () => {
 	try {
@@ -156,13 +136,7 @@ export const generateStats = async () => {
 	return data;
 };
 
-const resetData = async () => {
-	mongoose.connection.dropDatabase();
-	await new SiteData({ showDay: 2, showHour: 0, onBreak: false }).save();
-	await createAdminAccount();
-	await initializeCounters();
-	console.log("Data reset!");
-};
+
 
 export const updateShowTimes = async () => {
 	let shows = await ShowEntry.find();

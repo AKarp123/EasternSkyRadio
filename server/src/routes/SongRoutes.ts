@@ -1,5 +1,5 @@
 import { Router, Request, Response } from "express";
-import SongEntry from "../models/SongEntry.js";
+import SongEntry, { songEntry_selectAllFields } from "../models/SongEntry.js";
 import { addSong, generateSearchQuery, removeMissingShows, removeMissingSongs } from "../dbMethods.js";
 import requireLogin from "./requireLogin.js";
 import { SongEntry as ISongEntry } from "../types/SongEntry.js";
@@ -10,7 +10,7 @@ const escapeRegex = (string : string) => {
 	return string.replaceAll(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`);
 };
 
-songRouter.get("/getSongInfo", async (req : Request, res : Response) => {
+songRouter.get("/getSongInfo", requireLogin, async (req : Request, res : Response) => {
 	if (req.query.songId === undefined) {
 		res.json({ success: false, message: "No Song ID provided." });
 	} else {
@@ -30,7 +30,7 @@ songRouter.get("/search", requireLogin, async (req: Request, res: Response) => {
 			const searchResults = await SongEntry.find({
 				elcroId: req.query.elcroId,
 			}).select(
-				"-__v" + (req.user ? " +elcroId +duration +lastPlayed" : "")
+				(req.user ? songEntry_selectAllFields : "")
 			);
 			res.json({
 				success: true,
@@ -48,7 +48,7 @@ songRouter.get("/search", requireLogin, async (req: Request, res: Response) => {
 			const searchResults = await SongEntry.find({
 				$and: conditions,
 			})
-				.select("-__v" + (req.user ? " +elcroId +duration +lastPlayed" : ""))
+				.select((req.user ? songEntry_selectAllFields : ""))
 				.limit(20);
 			res.json({ success: true, searchResults: searchResults });
 		}
@@ -78,7 +78,7 @@ songRouter.post("/addSong", requireLogin, async (req : Request, res : Response) 
 			{ artist: { $regex: new RegExp(`^${escapedArtist}$`, "i") } },
 			{ album: { $regex: new RegExp(`^${escapedAlbum}$`, "i") } },
 		],
-	}).select("-__v +elcroId +duration");
+	}).select(songEntry_selectAllFields);
 
     
 	if (checkDup) {
