@@ -15,13 +15,11 @@ const initializeDatabase = async () => {
 const initializeApp = async() => {
     const user = await User.findOne({ username: "admin" });
     if (!user) {
-        User.register(
+        await User.register(
             new User({ username: "admin" }),
             process.env.ADMIN_PASSWORD || "default",
-        ).then(() => {
-            console.info("Admin user created successfully.");
-            initializeDatabase();
-        })
+        );
+        await initializeDatabase();
     } else {
         return;
     }
