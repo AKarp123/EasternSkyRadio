@@ -11,6 +11,7 @@ import { logRoute } from "./routelogging.js";
 import SongEntry from "./models/SongEntry.js";
 import { removeMissingSongs } from "./dbMethods.js";
 import { applyMigrations } from "./migrations.js";
+import initializeApp from "./init.js";
 
 
 const port = process.env.PORT || 3000;
@@ -67,6 +68,7 @@ app.listen(port, () => {
 db.on("error", console.error.bind(console, "connection error:"));
 db.once("open", async function () {
 	console.log("Connected to MongoDB"); //eslint-disable-line no-console
+	await initializeApp();
 });
 	
 
