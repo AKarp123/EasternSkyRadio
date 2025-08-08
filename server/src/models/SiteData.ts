@@ -1,5 +1,5 @@
 import { Schema, model, Model } from "mongoose";
-import { SiteData, SiteDataVirtuals } from "../types/SiteData";
+import { SiteData, SiteDataVirtuals } from "../types/SiteData.js";
 
 
 

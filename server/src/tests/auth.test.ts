@@ -1,9 +1,9 @@
 import { describe } from 'mocha'
 import { expect } from 'chai'
 import request from 'supertest'
-import { app } from '../app'
-import { connectToDatabase, clearDatabase } from '../db'
-import initializeApp from '../init'
+import { app } from '../app.js'
+import { initTest } from '../init.js'
+import { clearDatabase } from '../db.js'
 
 
 describe('Test Login', function() {
@@ -11,9 +11,7 @@ describe('Test Login', function() {
 	const agent = request.agent(app)
 	before(async function() {
 		try{
-			await connectToDatabase()
-			await clearDatabase()
-			await initializeApp()
+			await initTest()
 		}
 		catch (error) {
 			console.error("Error during setup:", error)
@@ -23,7 +21,7 @@ describe('Test Login', function() {
 	this.afterAll(async function() {
 		await clearDatabase() 
 	})
-	it('login with valid credentials', async () => {
+	it('login with valid credentials', async function() {
 		const res = await agent.post('/api/login').send({
 			username: 'admin',
 			password: process.env.ADMIN_PASSWORD || 'default',

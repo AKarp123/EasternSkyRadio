@@ -1,5 +1,5 @@
 import { Schema as schema, model } from "mongoose";
-import { Increment } from "../types/Increment";
+import { Increment } from "../types/Increment.js";
 
 
 const IncrementSchema = new schema<Increment>({

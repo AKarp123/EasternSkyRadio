@@ -91,7 +91,7 @@ router.post(
 		const storageRef = storage
 			.bucket()
 			.file(
-				`albumCovers/${req.file.originalname} + ${artist} + ${album}`
+				`/${req.file.originalname} + ${artist} + ${album}`
 			);
 
 		if (

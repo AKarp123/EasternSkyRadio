@@ -1,5 +1,5 @@
 import { Schema, model } from "mongoose";
-import { Sync } from "../types/Sync";
+import { Sync } from "../types/Sync.js";
 
 const syncModelSchema = new Schema<Sync>({
 	type: { type: String, required: true, unique: true },

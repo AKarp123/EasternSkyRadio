@@ -1,6 +1,7 @@
-import User from "./models/UserModel";
-import Increment from "./models/IncrementModel";
-import SiteData from "./models/SiteData";
+import User from "./models/UserModel.js";
+import Increment from "./models/IncrementModel.js";
+import SiteData from "./models/SiteData.js";
+import { clearDatabase, connectToDatabase } from "./db.js";
 
 
 
@@ -24,5 +25,17 @@ const initializeApp = async() => {
 		await initializeDatabase();
 	}
 }
+
+/**
+ * Clean Database and initialize the app for the test environment.
+ */
+export const initTest = async () => {
+	await connectToDatabase();
+	await clearDatabase();
+	await initializeApp();
+}
+
+
+
 
 export default initializeApp;

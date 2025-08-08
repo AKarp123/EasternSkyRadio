@@ -17,5 +17,5 @@ services:
   mongo:
     image: mongo:latest
     ports:
-      - "27017:27017"
+      - "27020:27017"
     attach: false

@@ -1,7 +1,7 @@
 // Import your schemas here
 import type { Connection } from "mongoose";
-import { SongEntry } from "../src/types/SongEntry";
-import { songEntrySchema } from "../src/models/SongEntry";
+import { SongEntry } from "../src/types/SongEntry.js";
+import { songEntrySchema } from "../src/models/SongEntry.js";
 
 export async function up(connection: Connection): Promise<void> {
 	// Write migration here

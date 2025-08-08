@@ -5,7 +5,7 @@ import MongoStore from "connect-mongo";
 import passport from "passport";
 import User from "./models/UserModel.js";
 import apiRouter from "./routes/index.js";
-import "dotenv/config";
+
 import { UserDocument } from "./types/User.js";
 import { logRoute } from "./routelogging.js";
 import { applyMigrations } from "./migrations.js";

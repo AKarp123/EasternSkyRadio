@@ -1,5 +1,5 @@
 import { Schema as schema, model } from "mongoose";
-import { ShowEntry } from "../types/ShowData";
+import { ShowEntry } from "../types/ShowData.js";
 
 
 

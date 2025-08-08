@@ -1,7 +1,7 @@
-import { app } from "./app";
-import { connectToDatabase } from "./db";
-import initializeApp from "./init";
-import { applyMigrations } from "./migrations";
+import { app } from "./app.js";
+import { connectToDatabase } from "./db.js";
+import initializeApp from "./init.js";
+import { applyMigrations } from "./migrations.js";
 
 const startServer = async () => {
 	try {

@@ -1,25 +1,25 @@
-import { app } from "../app";
-import { describe } from "mocha";
+import { app } from "../app.js";
+import { after, describe } from "mocha";
 import { expect, assert } from "chai";
 import request from "supertest";
-import { connectToDatabase, clearDatabase } from "../db";
-import initializeApp from "../init";
-import { SiteData } from "../types/SiteData";
+import { initTest } from "../init.js";
+import { clearDatabase } from "../db.js";
+import { SiteData } from "../types/SiteData.js";
 
 
 describe("Get Default Site Data", function() {
 	const agent = request.agent(app);
 	before(async function() {
 		try {
-			await connectToDatabase();
-			await clearDatabase();
-			// Initialize the app to ensure the database is set up
-			await initializeApp();
+			await initTest();
 		}
 		catch (error) {
 			console.error("Error during setup:", error);
 		}
 	})
+	after(async function() {
+		await clearDatabase();
+	});
 	it("should return default site data", async () => {
 		const res: request.Response & {body: SiteData} = await agent.get("/api/getSiteInfo");
 		const body = res.body as SiteData;

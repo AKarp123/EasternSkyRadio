@@ -17,6 +17,7 @@ export interface SongEntry {
     }[];
     duration: number;
     lastPlayed?: string; // ISO date string
+    searchQuery?: string;
 }
 
 export type SongEntryForm = Omit<SongEntry, "_id" | "lastPlayed">

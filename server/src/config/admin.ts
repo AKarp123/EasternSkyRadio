@@ -1,5 +1,5 @@
 import admin from "firebase-admin";
-import "dotenv/config";
+
 
 const { credential } = admin;
 

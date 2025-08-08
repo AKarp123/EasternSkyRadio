@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
-import initializeApp from "./init";
-import { applyMigrations } from "./migrations";
+import initializeApp from "./init.js";
+import { applyMigrations } from "./migrations.js";
 
 const db = mongoose.connection;
 
