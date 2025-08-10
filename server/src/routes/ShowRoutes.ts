@@ -3,7 +3,7 @@ import ShowEntry from "../models/ShowEntry.js";
 import requireLogin from "./requireLogin.js";
 import Increment from "../models/IncrementModel.js";
 import { removeMissingShows, updateLastPlayed } from "../dbMethods.js";
-import ISongEntry from "../models/SongEntry.js";
+import { ISongEntry } from "../types/SongEntry.js";
 import {  ShowEntrySubmission } from "../types/ShowData.js";
 
 
