@@ -9,6 +9,10 @@ RUN bun install
 COPY ./server .
 RUN bun run build
 
+
+
+
+
 EXPOSE 3000
 
 # You will need to set the MONGO_URI environment variable
