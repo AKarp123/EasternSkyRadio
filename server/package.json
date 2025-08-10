@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "bunx mocha",
+    "test": "bun test --coverage",
     "start": "node app.js",
     "dev": "bun --watch src/start.ts",
     "build": "bun build src/start.ts --outdir dist --target bun --external passport --external passport-local --external passport-local-mongoose --minify --sourcemap=linked",
@@ -51,6 +51,8 @@
     "eslint": "^9.32.0",
     "mocha": "^11.7.1",
     "supertest": "^7.1.4",
-    "typescript": "^5.8.3"
-  }
+    "typescript": "^5.8.3",
+    "@types/bun": "latest"
+  },
+  "private": true
 }

@@ -25,7 +25,7 @@ const disconnectFromDatabase = async () => {
 const clearDatabase = async () => {
 	await mongoose.connection.dropDatabase();
 	console.log("Database cleared.");
-}
+};
 
 
 db.on("error", console.error.bind(console, "connection error:"));

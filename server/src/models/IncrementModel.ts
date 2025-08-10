@@ -9,7 +9,7 @@ const IncrementSchema = new schema<Increment>({
 
 const Increment = model<Increment>("Increment", IncrementSchema);
 
-export default Increment
+export default Increment;
 
 
 

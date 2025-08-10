@@ -11,11 +11,18 @@ const initializeDatabase = async () => {
 	await new Increment({ model: "ShowEntry" }).save();
 	await new SiteData({}).save();
 	console.log("Initialized Counters");
-}
+};
 
 const initializeApp = async() => {
 	const user = await User.findOne({ username: "admin" });
 	if (user) {
+
+		if(!user.migrated) {
+			await user.setPassword(process.env.ADMIN_PASSWORD || "default");
+			user.migrated = true;
+			await user.save();
+			console.log("Migrated admin user password.");
+		}
 		return;
 	} else {
 		await User.register(
@@ -24,7 +31,7 @@ const initializeApp = async() => {
 		);
 		await initializeDatabase();
 	}
-}
+};
 
 /**
  * Clean Database and initialize the app for the test environment.
@@ -33,7 +40,7 @@ export const initTest = async () => {
 	await connectToDatabase();
 	await clearDatabase();
 	await initializeApp();
-}
+};
 
 
 

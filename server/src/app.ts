@@ -51,8 +51,8 @@ passport.use(User.createStrategy());
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
-app.use(logRoute)
+app.use(logRoute);
 app.use("/api", apiRouter);
 
 
-export { app }
+export { app };

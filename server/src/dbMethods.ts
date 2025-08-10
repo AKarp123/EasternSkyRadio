@@ -104,7 +104,7 @@ export const removeMissingSongs = async () => {
 	} catch (error) {
 		console.error("Error updating song IDs:", error);
 	}
-}
+};
 
 export const generateStats = async () => {
 	const data = {
@@ -180,8 +180,8 @@ export const updateLastPlayed = async (songsList: ShowEntrySubmission["songsList
 
 	songsList.forEach(async (song) => {
 		await SongEntry.findOneAndUpdate({ _id: song }, { lastPlayed: date }, { new: true });
-	})
-}
+	});
+};
 
 // addLastPlayed();
 

@@ -28,6 +28,7 @@ export default defineConfig([
             }],
             'eqeqeq': ['error', 'always'],
             'object-curly-spacing': ['error', 'always'],
+            'semi': ['error', 'always']
         },
 		languageOptions: {
 			parser,

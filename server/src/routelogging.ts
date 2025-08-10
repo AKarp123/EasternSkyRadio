@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import chalk from 'chalk'
+import chalk from 'chalk';
 const logRoute = (req: Request, res: Response, next: NextFunction) => {
 
 	const start = Date.now();
@@ -14,6 +14,6 @@ const logRoute = (req: Request, res: Response, next: NextFunction) => {
 		}
 	});
 	next();
-}
+};
 
-export { logRoute }
+export { logRoute };

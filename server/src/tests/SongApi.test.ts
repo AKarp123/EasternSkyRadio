@@ -1,5 +1,4 @@
-import { describe, it, before, after } from 'mocha';
-import { expect } from 'chai';
+import { beforeAll, afterAll, describe, test, expect } from 'bun:test';
 import request from 'supertest';
 import { initTest } from '../init.js';
 import { withUser } from './helpers/withUser.js';
@@ -8,11 +7,13 @@ import { generateSearchQuery } from '../dbMethods.js';
 
 
 describe('Test Create Song API', function() {
-	before(async function() {
+	beforeAll(async function() {
+        
 		await initTest();
-	})
+	});
     
-	it('create a new song', async function() {
+  
+	test('create a new song', async function() {
 		const agent = await withUser();
 		const newSong: Omit<SongEntry, "songId"> = {
 			title: "Test Song",
@@ -24,16 +25,29 @@ describe('Test Create Song API', function() {
 			searchQuery: "",
 
 
-		}
+		};
 		const res = await agent.post('/api/addSong').send({ songData: newSong });
 		const song = res.body.song as SongEntry;
-		expect(res.status).to.equal(200);
-		expect(res.body).to.have. property('success', true);
-		expect(song.songId).to.equal(1);
-		expect(song.searchQuery).to.equal(generateSearchQuery(newSong as SongEntry))
-	})
-    
+		expect(res.status).toBe(200);
+		expect(res.body).toHaveProperty('success', true);
+		expect(song.songId).toBe(1);
+		expect(song.searchQuery).toBe(generateSearchQuery(newSong as SongEntry));
+	});
 
+	test('create song with missing params', async() => {
+		const agent = await withUser();
+		const newSong: Partial<SongEntry> = {
+			title: "Test Song",
 
+			album: "Test Album",
+			duration: 180,
+			genres: ["Rock"],
+			albumImageLoc: "",
+			searchQuery: "",
+		};
 
-})
+		const res = await agent.post('/api/addSong').send({ songData: newSong });
+		expect(res.body).toHaveProperty('success', false);
+		expect(res.status).toBe(400);
+	});
+});

@@ -137,7 +137,7 @@ songEntrySchema.pre("save", function (next) {
 		.trim();
 
 	next();
-})
+});
 
 
 const SongEntry = models.SongEntry ?? model<SongEntry>("SongEntry", songEntrySchema);

@@ -25,6 +25,6 @@ const initializeAdmin = () => {
 	console.log("Connected to Firebase"); //eslint-disable-line no-console
 };
 
-export default initializeAdmin
+export default initializeAdmin;
 
 

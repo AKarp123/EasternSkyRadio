@@ -6,7 +6,7 @@ const migrator = await Migrator.connect({
 	migrationsPath: "./migrations",
 	templatePath: "./migrations/template.ts",
 
-})
+});
 
 
 export const applyMigrations = async() => {
@@ -17,7 +17,7 @@ export const applyMigrations = async() => {
 			await migrator.run("up", migration.name);
 		}
 	}
-}
+};
 
 export const rollbackMigrations = async() => {
 	const migrations = await migrator.list();
@@ -27,4 +27,4 @@ export const rollbackMigrations = async() => {
 			await migrator.run("down", migration.name);
 		}
 	}
-}
+};

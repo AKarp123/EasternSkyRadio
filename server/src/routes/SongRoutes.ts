@@ -99,7 +99,7 @@ songRouter.post("/addSong", requireLogin, async (req : Request, res : Response) 
 			});
 		})
 		.catch((error) => {
-			res.json({ success: false, message: error.message });
+			res.status(400).json({ success: false, message: error.message });
 		});
 });
 
