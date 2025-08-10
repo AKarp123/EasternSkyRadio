@@ -1,4 +1,4 @@
-import ISongEntry from "../models/SongEntry.js";
+import { ISongEntry } from "./SongEntry.js";
 
 export interface Sync {
     type: string;
