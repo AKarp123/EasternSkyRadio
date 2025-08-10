@@ -1,19 +1,19 @@
-import { beforeAll, afterAll, describe, test, expect } from 'bun:test';
-import request from 'supertest';
-import { initTest } from '../init.js';
-import { withUser } from './helpers/withUser.js';
-import { ISongEntry } from '../types/SongEntry.js';
-import { generateSearchQuery } from '../dbMethods.js';
+import { describe, test, expect, beforeAll, afterAll } from "bun:test";
 
+import { initTest } from "../init.js";
+import { withUser } from "./helpers/withUser.js";
+import { ISongEntry } from "../types/SongEntry.js";
+import { generateSearchQuery } from "../dbMethods.js";
+import { clearDatabase } from "../db.js";
 
-describe('Test Create Song API', function() {
-	beforeAll(async function() {
-        
+describe("Test Create Song API", function () {
+	beforeAll(async () => {
 		await initTest();
 	});
-    
-  
-	test('create a new song', async function() {
+	afterAll(async () => {
+		await clearDatabase();
+	});
+	test("create a new song", async function () {
 		const agent = await withUser();
 		const newSong: Omit<ISongEntry, "songId" | "searchQuery"> = {
 			title: "Test Song",
@@ -22,18 +22,20 @@ describe('Test Create Song API', function() {
 			duration: 180,
 			genres: ["Rock"],
 			albumImageLoc: "",
-
-
 		};
-		const res = await agent.post('/api/addSong').send({ songData: newSong });
+		const res = await agent
+			.post("/api/addSong")
+			.send({ songData: newSong });
 		const song = res.body.song as ISongEntry;
 		expect(res.status).toBe(200);
-		expect(res.body).toHaveProperty('success', true);
+		expect(res.body).toHaveProperty("success", true);
 		expect(song.songId).toBe(1);
-		expect(song.searchQuery).toBe(generateSearchQuery(newSong as ISongEntry));
+		expect(song.searchQuery).toBe(
+			generateSearchQuery(newSong as ISongEntry)
+		);
 	});
 
-	test('create song with missing params', async() => {
+	test("create song with missing params", async () => {
 		const agent = await withUser();
 		const newSong: Partial<ISongEntry> = {
 			duration: 180,
@@ -41,12 +43,14 @@ describe('Test Create Song API', function() {
 			albumImageLoc: "",
 		};
 
-		const res = await agent.post('/api/addSong').send({ songData: newSong });
-		expect(res.body).toHaveProperty('success', false);
+		const res = await agent
+			.post("/api/addSong")
+			.send({ songData: newSong });
+		expect(res.body).toHaveProperty("success", false);
 		expect(res.status).toBe(400);
 	});
 
-    test('genres missing', async() => {
+	test("genres missing", async () => {
 		const agent = await withUser();
 		const newSong: Omit<ISongEntry, "songId" | "genres" | "searchQuery"> = {
 			artist: "Test Artist",
@@ -54,51 +58,64 @@ describe('Test Create Song API', function() {
 			album: "Test Album",
 			duration: 180,
 			albumImageLoc: "",
-	
 		};
 
-		const res = await agent.post('/api/addSong').send({ songData: newSong });
-		expect(res.body).toHaveProperty('success', false);
+		const res = await agent
+			.post("/api/addSong")
+			.send({ songData: newSong });
+		expect(res.body).toHaveProperty("success", false);
 		expect(res.status).toBe(400);
 	});
 
-    test('bad elcro number', async() => {
-        const agent = await withUser();
-        const newSong: Omit<ISongEntry, "songId" | "searchQuery"> = {
-            elcroId: "323",
-            artist: "Test Artist",
-            title: "Test Title",
-            album: "Test Album",
-            duration: 180,
-            albumImageLoc: "",
-            genres: ["Rock"],
-        };
+	test("bad elcro number", async () => {
+		const agent = await withUser();
+		const newSong: Omit<ISongEntry, "songId" | "searchQuery"> = {
+			elcroId: "323",
+			artist: "Test Artist",
+			title: "Test Title",
+			album: "Test Album",
+			duration: 180,
+			albumImageLoc: "",
+			genres: ["Rock"],
+		};
 
-        const res = await agent.post('/api/addSong').send({ songData: newSong });
-        expect(res.body).toHaveProperty('success', false);
-        expect(res.status).toBe(400);
-    })
+		const res = await agent
+			.post("/api/addSong")
+			.send({ songData: newSong });
+		expect(res.body).toHaveProperty("success", false);
+		expect(res.status).toBe(400);
+	});
 
-    test("trim", async() => {
-        const agent = await withUser();
-        const newSong: Omit<ISongEntry, "songId" | "searchQuery"> = {
-            elcroId: "323",
-            artist: "Test Artist    ",
-            title: "Test Title      ",
-            album: "Test Album       ",
-            duration: 180,
-            albumImageLoc: "",
-            genres: ["Rock"],
-        };
+	test("trim", async () => {
+		const agent = await withUser();
+		const newSong: Omit<ISongEntry, "songId" | "searchQuery"> = {
+			artist: "Test Artist    ",
+			title: "Test Title      ",
+			album: "Test Album       ",
+			duration: 180,
+			albumImageLoc: "",
+			genres: ["Rock"],
+		};
 
-        let res = await agent.post('/api/addSong').send({ songData: newSong });
+		let res = await agent.post("/api/addSong").send({ songData: newSong });
 
-        const song = res.body.song as ISongEntry;
-        expect(res.body).toHaveProperty('success', true);
-        expect(res.status).toBe(200);
+		const song = res.body.song as ISongEntry;
+		expect(res.body).toHaveProperty("success", true);
+		expect(res.status).toBe(200);
+		res = await agent
+			.get("/api/getSongInfo")
+			.query({ songId: song.songId });
 
-        res = await agent.get(/)
+		expect(res.status).toBe(200);
+		expect(res.body.song.artist).toBe("Test Artist");
+		expect(res.body.song.songId).toBe(2);
+	});
 
-        
-    })
+	test("no data", async () => {
+		const agent = await withUser();
+		const res = await agent.post("/api/addSong").send({ songData: {} });
+		expect(res.body).toHaveProperty("success", false);
+		expect(res.body).toHaveProperty("message", "No song data provided.");
+		expect(res.status).toBe(400);
+	});
 });

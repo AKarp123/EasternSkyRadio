@@ -15,10 +15,10 @@ songRouter.get("/getSongInfo", requireLogin, async (req : Request, res : Respons
 		res.json({ success: false, message: "No Song ID provided." });
 	} else {
 		const songData = await SongEntry.findOne(
-			{ songID: req.query.songId },
+			{ songId: req.query.songId },
 			{ __v: 0 }
 		);
-		res.json(songData);
+		res.json({ success: true, song: songData });
 	}
 });
 
