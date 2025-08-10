@@ -1,10 +1,10 @@
-import SongEntry from "./models/SongEntry.js";
+import ISongEntry from "./models/SongEntry.js";
 import ShowEntry from "./models/ShowEntry.js";
 import Increment from "./models/IncrementModel.js";
 import SiteData from "./models/SiteData.js";
 import mongoose from "mongoose";
 import User from "./models/UserModel.js";
-import { SongEntry as ISongEntry } from "./types/SongEntry.js";
+import { ISongEntry as ISongEntry } from "./types/SongEntry.js";
 import { ShowEntrySubmission } from "./types/ShowData.js";
 
 export const addSong = async (songData : Omit<ISongEntry, "songId">) => {
@@ -13,7 +13,7 @@ export const addSong = async (songData : Omit<ISongEntry, "songId">) => {
 		{ $inc: { counter: 1 } },
 		{ new: true }
 	);
-	const newSong = new SongEntry({ ...songData, songId: nextSongId!.counter });
+	const newSong = new ISongEntry({ ...songData, songId: nextSongId!.counter });
 	try {
 		const song = await newSong.save();
 
@@ -58,7 +58,7 @@ export const addSong = async (songData : Omit<ISongEntry, "songId">) => {
 // };
 
 export const findSong = async (songName : string) => {
-	return SongEntry.findOne({ title: { $regex: songName, $options: "i" } });
+	return ISongEntry.findOne({ title: { $regex: songName, $options: "i" } });
 };
 
 
@@ -94,7 +94,7 @@ export const removeMissingShows = async () => {
 export const removeMissingSongs = async () => {
 	try {
 		// Get all songs sorted by songId
-		const songs = await SongEntry.find().sort({ songId: "asc" });
+		const songs = await ISongEntry.find().sort({ songId: "asc" });
 
 		// Update songIds to be sequential starting from 1
 		for (const [i, song] of songs.entries()) {
@@ -130,12 +130,12 @@ export const generateStats = async () => {
 		data.totalSongs = result[0].totalSongs;
 	});
 
-	const songCount = await SongEntry.estimatedDocumentCount();
+	const songCount = await ISongEntry.estimatedDocumentCount();
 	data.uniqueSongs = songCount;
-	const artistCount = await SongEntry.distinct("artist");
+	const artistCount = await ISongEntry.distinct("artist");
 
 	data.uniqueArtists = artistCount.length;
-	const albumCount = await SongEntry.distinct("album");
+	const albumCount = await ISongEntry.distinct("album");
 
 	data.uniqueAlbums = albumCount.length;
 
@@ -185,7 +185,7 @@ export const generateSearchQuery = (song: ISongEntry) => {
 export const updateLastPlayed = async (songsList: ShowEntrySubmission["songsList"], date: Date) =>  {
 
 	songsList.forEach(async (song) => {
-		await SongEntry.findOneAndUpdate({ _id: song }, { lastPlayed: date }, { new: true });
+		await ISongEntry.findOneAndUpdate({ _id: song }, { lastPlayed: date }, { new: true });
 	});
 };
 

@@ -1,8 +1,8 @@
 import { Router, Request, Response } from "express";
-import SongEntry, { songEntry_selectAllFields } from "../models/SongEntry.js";
+import ISongEntry, { songEntry_selectAllFields } from "../models/SongEntry.js";
 import { addSong, generateSearchQuery, removeMissingShows, removeMissingSongs } from "../dbMethods.js";
 import requireLogin from "./requireLogin.js";
-import { SongEntry as ISongEntry } from "../types/SongEntry.js";
+import { ISongEntry as ISongEntry } from "../types/SongEntry.js";
 
 const songRouter = Router();
 
@@ -14,7 +14,7 @@ songRouter.get("/getSongInfo", requireLogin, async (req : Request, res : Respons
 	if (req.query.songId === undefined) {
 		res.json({ success: false, message: "No Song ID provided." });
 	} else {
-		const songData = await SongEntry.findOne(
+		const songData = await ISongEntry.findOne(
 			{ songID: req.query.songId },
 			{ __v: 0 }
 		);
@@ -27,7 +27,7 @@ songRouter.get("/search", requireLogin, async (req: Request, res: Response) => {
 		if (req.query.query === "") {
 			res.json({ success: false, message: "No search query provided." });
 		} else if (req.query.elcroId) {
-			const searchResults = await SongEntry.find({
+			const searchResults = await ISongEntry.find({
 				elcroId: req.query.elcroId,
 			}).select(
 				(req.user ? songEntry_selectAllFields : "")
@@ -45,7 +45,7 @@ songRouter.get("/search", requireLogin, async (req: Request, res: Response) => {
 			const conditions = words.map((word) => ({
 				searchQuery: { $regex: new RegExp(word, "i") },
 			}));
-			const searchResults = await SongEntry.find({
+			const searchResults = await ISongEntry.find({
 				$and: conditions,
 			})
 				.select((req.user ? songEntry_selectAllFields : ""))
@@ -60,6 +60,7 @@ songRouter.get("/search", requireLogin, async (req: Request, res: Response) => {
 songRouter.post("/addSong", requireLogin, async (req : Request, res : Response) => {
 	const { songData } : { songData : Omit<ISongEntry, "songId"> } = req.body;
 
+
 	if (!songData || !songData.title || !songData.artist || !songData.album) {
 		res.status(400).json({ success: false, message: "No song data provided." });
 		return;
@@ -72,7 +73,7 @@ songRouter.post("/addSong", requireLogin, async (req : Request, res : Response) 
 
 	console.log(escapedTitle, escapedArtist, escapedAlbum);
 
-	const checkDup = await SongEntry.findOne({
+	const checkDup = await ISongEntry.findOne({
 		$and: [
 			{ title: { $regex: new RegExp(`^${escapedTitle}$`, "i") } },
 			{ artist: { $regex: new RegExp(`^${escapedArtist}$`, "i") } },
@@ -89,7 +90,6 @@ songRouter.post("/addSong", requireLogin, async (req : Request, res : Response) 
 		});
 		return;
 	}
-
 	addSong(songData)
 		.then((newSong) => {
 			res.json({
@@ -111,7 +111,7 @@ songRouter.delete("/song", requireLogin, async (req: Request, res: Response) => 
 		return;
 	}
 
-	SongEntry.deleteOne({ songId: songId })
+	ISongEntry.deleteOne({ songId: songId })
 		.then(async () => {
 			await removeMissingSongs();
 			res.json({ success: true, message: "Song deleted successfully." });
@@ -129,7 +129,7 @@ songRouter.post("/editSong", requireLogin, async (req: Request, res: Response) =
 		return;
 	}
 	const searchQuery = generateSearchQuery(songData);
-	SongEntry.findOneAndUpdate({ songId: songData.songId }, { songData, searchQuery }, {
+	ISongEntry.findOneAndUpdate({ songId: songData.songId }, { songData, searchQuery }, {
 		new: true,
 		runValidators: true,
 	})

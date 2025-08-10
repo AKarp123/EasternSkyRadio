@@ -1,5 +1,5 @@
 import { Types } from "mongoose";
-import SongEntry from "../models/SongEntry.js";
+import ISongEntry from "../models/SongEntry.js";
 
 export interface ShowEntry {
     showId: number;
@@ -15,6 +15,6 @@ export interface ShowEntry {
 
 export interface ShowEntrySubmission extends Omit<ShowEntry, "songsList"> {
     _id : Types.ObjectId; // Passed by UI, not stored in DB
-    song : SongEntry;
-    songsList: (SongEntry & { _id: Types.ObjectId })[]; // Array of song objects, not IDs
+    song : ISongEntry;
+    songsList: (ISongEntry & { _id: Types.ObjectId })[]; // Array of song objects, not IDs
 }

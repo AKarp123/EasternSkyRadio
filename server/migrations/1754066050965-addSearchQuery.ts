@@ -1,11 +1,11 @@
 // Import your schemas here
 import type { Connection } from "mongoose";
-import { SongEntry } from "../src/types/SongEntry.js";
+import { ISongEntry } from "../src/types/SongEntry.js";
 import { songEntrySchema } from "../src/models/SongEntry.js";
 
 export async function up(connection: Connection): Promise<void> {
 	// Write migration here
-	const cursor = connection.model<SongEntry>("SongEntry", songEntrySchema).find({}).select("+duration");
+	const cursor = connection.model<ISongEntry>("SongEntry", songEntrySchema).find({}).select("+duration");
 	for await (const song of cursor) {
 		song.searchQuery = [
 			song.artist,
@@ -28,7 +28,7 @@ export async function down(connection: Connection): Promise<void> {
 	// Write migration here
 
 	connection
-		.model<SongEntry>("SongEntry", songEntrySchema)
+		.model<ISongEntry>("SongEntry", songEntrySchema)
 		.updateMany({}, { $unset: { searchQuery: "" } })
 		.exec();
 }

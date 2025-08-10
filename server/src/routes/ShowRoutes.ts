@@ -3,7 +3,7 @@ import ShowEntry from "../models/ShowEntry.js";
 import requireLogin from "./requireLogin.js";
 import Increment from "../models/IncrementModel.js";
 import { removeMissingShows, updateLastPlayed } from "../dbMethods.js";
-import SongEntry from "../models/SongEntry.js";
+import ISongEntry from "../models/SongEntry.js";
 import {  ShowEntrySubmission } from "../types/ShowData.js";
 
 
@@ -19,7 +19,7 @@ showRouter.get("/show/:id", async (req: Request, res: Response) => {
 		const showData = await ShowEntry.findOne(
 			{ showId: Number.parseInt(req.params.id) },
 			{ _id: 0, __v: 0 }
-		).lean().populate<{ songsList: SongEntry[] }>({ path: "songsList", select: "-__v " });
+		).lean().populate<{ songsList: ISongEntry[] }>({ path: "songsList", select: "-__v " });
 		if (showData === null) {
 			res.status(404).json({ success: false, message: "Show not found." });
 			return;

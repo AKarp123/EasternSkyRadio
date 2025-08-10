@@ -1,5 +1,5 @@
 
-export interface SongEntry {
+export interface ISongEntry {
     songId: number,
     elcroId? : string,
     artist: string,
