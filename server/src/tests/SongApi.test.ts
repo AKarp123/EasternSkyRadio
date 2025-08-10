@@ -97,7 +97,7 @@ describe('Test Create Song API', function() {
         expect(res.body).toHaveProperty('success', true);
         expect(res.status).toBe(200);
 
-        res = await agent.get("")
+        res = await agent.get(/)
 
         
     })
