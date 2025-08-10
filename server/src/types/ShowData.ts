@@ -1,5 +1,5 @@
 import { Types } from "mongoose";
-import ISongEntry from "../models/SongEntry.js";
+import { ISongEntry } from "./SongEntry.js";
 
 export interface ShowEntry {
     showId: number;
