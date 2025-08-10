@@ -111,7 +111,7 @@ const EditShows = () => {
 								/>
 								<Button onClick={() => submit()}>Submit</Button>
 								<Button color="error" onClick={() => deleteShow()}>
-                                    Delete Show
+									Delete Show
 								</Button>
 							</Stack>
                 
@@ -185,9 +185,9 @@ const EditShows = () => {
 };
 
 type SongListProperties = {
-    song: SongEntry;
-    removeSong: (index: number) => void;
-    index: number;
+	song: SongEntry;
+	removeSong: (index: number) => void;
+	index: number;
 }
 
 const SongListItem = ({ song, removeSong, index }: SongListProperties) => (
@@ -199,7 +199,7 @@ const SongListItem = ({ song, removeSong, index }: SongListProperties) => (
 );
 
 const EditSongOrder = ({ editOrder } : {
-    editOrder: (currentIndex: number, newIndex: number) => void;
+	editOrder: (currentIndex: number, newIndex: number) => void;
 }) => {
 	const [currentIndex, setCurrentIndex] = useState(-1);
 	const [newIndex, setNewIndex] = useState(-1);
@@ -233,7 +233,7 @@ const EditSongOrder = ({ editOrder } : {
 					<Button
 						onClick={() => editOrder(currentIndex - 1, newIndex - 1)}
 					>
-                        Edit Order
+						Edit Order
 					</Button>
 				</ListItem>
 			</List>

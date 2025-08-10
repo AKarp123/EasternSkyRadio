@@ -41,18 +41,18 @@ const InitialState: SongEntryForm = {
 	duration: 0,
 };
 type AddProperties = SongFormProperties & {
-    songData?: never;
-    type: "add";
-    submit?: never;
+	songData?: never;
+	type: "add";
+	submit?: never;
 };
 type EditProperties = SongFormProperties & {
-    songData: SongEntry;
-    type: "edit";
-    submit: (e: React.FormEvent<HTMLFormElement>, songData: SongEntryForm) => void;
+	songData: SongEntry;
+	type: "edit";
+	submit: (e: React.FormEvent<HTMLFormElement>, songData: SongEntryForm) => void;
 };
 
 type SongFormProperties = {
-    parentDispatch: React.Dispatch<any>;
+	parentDispatch: React.Dispatch<any>;
 };
 
 
@@ -469,7 +469,7 @@ const SongForm = ({
 						fontSize: "12px",
 					}}
 				>
-                    Add
+					Add
 				</Button>
 			</Stack>
 			<Stack
@@ -596,7 +596,7 @@ const SongForm = ({
 					}}
 					sx={{ fontSize: "12px" }}
 				>
-                    Add Location
+					Add Location
 				</Button>
 			</Stack>
 			<Stack

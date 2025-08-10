@@ -5,7 +5,7 @@ import { type Container } from "@tsparticles/engine";
 
 
 type properties = {
-    children?: React.ReactNode;
+	children?: React.ReactNode;
 }
 
 const particlesLoaded = async (container?: Container) => {

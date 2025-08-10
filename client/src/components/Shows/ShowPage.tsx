@@ -55,8 +55,8 @@ const ShowPage = () => {
 };
 
 type ShowPageProperties = {
-    showList: ShowEntryMin[];
-    setShowList: (shows: ShowEntryMin[]) => void;
+	showList: ShowEntryMin[];
+	setShowList: (shows: ShowEntryMin[]) => void;
 };
 
 const ShowPageMain = ({ showList } : ShowPageProperties) => {
@@ -66,7 +66,7 @@ const ShowPageMain = ({ showList } : ShowPageProperties) => {
 				variant="h2"
 				sx={{ fontFamily: "Tiny5, Roboto", mx: "auto" }}
 			>
-                No shows available
+				No shows available
 			</Typography>
 		);
 	}
@@ -129,7 +129,7 @@ const ShowListItem = ({ show } : { show: ShowEntryMin}) => {
 				}}
 			>
 				<Typography variant="h3" sx={{ fontFamily: "Tiny5, Roboto" }}>
-                    #{show.showId} - {showDate.getMonth() + 1}/
+					#{show.showId} - {showDate.getMonth() + 1}/
 					{showDate.getDate()}/{showDate.getFullYear()}
 				</Typography>
 				<SvgIcon

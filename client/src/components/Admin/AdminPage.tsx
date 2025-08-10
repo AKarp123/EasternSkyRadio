@@ -108,7 +108,7 @@ const AdminPage = () => {
 						}}
 					>
 						<Button onClick={() => setChangePasswordDialog(false)}>
-                            Cancel
+							Cancel
 						</Button>
 						<Button type="submit">Change Password</Button>
 					</DialogActions>

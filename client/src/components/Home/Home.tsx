@@ -96,7 +96,7 @@ const Home = React.memo(() => {
 					align="center"
 					sx={{ mt: 2, fontFamily: "Tiny5, Roboto" }}
 				>
-                    Eastern Sky
+					Eastern Sky
 				</Typography>
 				<Divider sx={{ mt: 2 }} />
 				<Container>
@@ -126,14 +126,14 @@ const Home = React.memo(() => {
 						fontFamily: "PixelOperator, Roboto",
 					}}
 				>
-                    Created by Ashton Karp |{" "}
+					Created by Ashton Karp |{" "}
 					<a
 						href="https://github.com/AKarp123/EasternSkyRadio"
 						style={{ color: "#888888" }}
 						target="_blank"
 						rel="noopener noreferrer"
 					>
-                        Source Code
+						Source Code
 					</a>
 				</footer>
 			</Paper>
@@ -142,7 +142,7 @@ const Home = React.memo(() => {
 				align="left"
 				sx={{ fontFamily: "Tiny5, Roboto", color: "white" }}
 			>
-                Exploring music from across the Pacific! Only on 90.3 The Core!
+				Exploring music from across the Pacific! Only on 90.3 The Core!
 			</Typography>
 		</Container>
 	);

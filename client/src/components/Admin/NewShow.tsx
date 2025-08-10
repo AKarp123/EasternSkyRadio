@@ -141,7 +141,7 @@ const NewShow = () => {
 								variant="h6"
 								sx={{ alignItems: "center" }}
 							>
-                                Songs List
+								Songs List
 							</Typography>
 							<Stack spacing={1}>
 								{state.songsList.map((song) => (

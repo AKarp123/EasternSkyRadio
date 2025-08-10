@@ -10,7 +10,7 @@ export default defineConfig(() => {
 			svgr(),
 			eslint({
 				include: ['src/**/*.{ts,tsx}', 'vite.config.*'],
-				exclude: ['node_modules', 'dist', 'public'],
+				exclude: ['node_modules/*', 'dist/*', 'public/*'],
 			}),
 		],
 		build: {

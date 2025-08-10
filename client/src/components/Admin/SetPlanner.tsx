@@ -197,7 +197,7 @@ const SetPlanner = () => {
 								});
 							}}
 						>
-                            Clear List
+							Clear List
 						</Button>
 						{/* {state.songsList.length > 0 && (
                             <Box
@@ -217,7 +217,7 @@ const SetPlanner = () => {
 					</Grid>
 					<Grid item xs={12} lg={4} sx={{}}>
 						<Typography variant="h6" sx={{ alignItems: "center" }}>
-                            Add
+							Add
 						</Typography>
 						<Tabs
 							value={state.tabState}
@@ -265,7 +265,7 @@ const SetPlanner = () => {
 													})
 												}
 											>
-                                                Cancel
+												Cancel
 											</Button>
 										</DialogActions>
 									</Dialog>
@@ -294,7 +294,7 @@ const SetPlannerButtons = ({ dispatch } : { dispatch: React.Dispatch<SetPlannerA
 					});
 				}}
 			>
-                Insert Mic Break
+				Insert Mic Break
 			</Button>
 			<Button
 				onClick={() => {
@@ -307,7 +307,7 @@ const SetPlannerButtons = ({ dispatch } : { dispatch: React.Dispatch<SetPlannerA
 					});
 				}}
 			>
-                Insert Annoucement
+				Insert Annoucement
 			</Button>
 			<Button
 				onClick={() =>
@@ -316,7 +316,7 @@ const SetPlannerButtons = ({ dispatch } : { dispatch: React.Dispatch<SetPlannerA
 					})
 				}
 			>
-                Add New Song
+				Add New Song
 			</Button>
 		</Stack>
 	);
@@ -324,11 +324,11 @@ const SetPlannerButtons = ({ dispatch } : { dispatch: React.Dispatch<SetPlannerA
 
 
 type SetPlannerCardProperties = {
-    entry: SetPlannerItem;
-    state: SetPlannerState;
-    dispatch: React.Dispatch<SetPlannerAction>;
-    durationAtPoint: number;
-    index: number;
+	entry: SetPlannerItem;
+	state: SetPlannerState;
+	dispatch: React.Dispatch<SetPlannerAction>;
+	durationAtPoint: number;
+	index: number;
 };
 const SetPlannerCard = ({ entry, state, dispatch, durationAtPoint, index }: SetPlannerCardProperties) => {
 	console.log(entry);
@@ -365,7 +365,7 @@ const SetPlannerCard = ({ entry, state, dispatch, durationAtPoint, index }: SetP
 							})
 						}
 					>
-                        Remove
+						Remove
 					</Button>
 					<Box sx={{ display: "flex", flexDirection: "column" }}>
 						<Button
@@ -377,7 +377,7 @@ const SetPlannerCard = ({ entry, state, dispatch, durationAtPoint, index }: SetP
 							}}
 							disabled={index === 0}
 						>
-                            Up
+							Up
 						</Button>
 						<Button
 							onClick={() => {
@@ -388,7 +388,7 @@ const SetPlannerCard = ({ entry, state, dispatch, durationAtPoint, index }: SetP
 							}}
 							disabled={index === state.songsList.length - 1}
 						>
-                            Down
+							Down
 						</Button>
 					</Box>
 				</Container>
@@ -509,7 +509,7 @@ const SetPlannerCard = ({ entry, state, dispatch, durationAtPoint, index }: SetP
 							})
 						}
 					>
-                        Remove
+						Remove
 					</Button>
 				</Box>
 				<Box sx={{ display: "flex", flexDirection: "column" }}>
@@ -522,7 +522,7 @@ const SetPlannerCard = ({ entry, state, dispatch, durationAtPoint, index }: SetP
 						}}
 						disabled={index === 0}
 					>
-                        Up
+						Up
 					</Button>
 					<Button
 						onClick={() => {
@@ -533,7 +533,7 @@ const SetPlannerCard = ({ entry, state, dispatch, durationAtPoint, index }: SetP
 						}}
 						disabled={index === state.songsList.length - 1}
 					>
-                        Down
+						Down
 					</Button>
 				</Box>
 			</Container>
@@ -543,9 +543,9 @@ const SetPlannerCard = ({ entry, state, dispatch, durationAtPoint, index }: SetP
 
 
 type SetPlannerFormProperties = {
-    dispatch: React.Dispatch<SetPlannerAction>;
-    entry: SetPlannerItem;
-    index: number;
+	dispatch: React.Dispatch<SetPlannerAction>;
+	entry: SetPlannerItem;
+	index: number;
 }
 const SetPlannerForm = ({ dispatch, entry, index }: SetPlannerFormProperties) => {
 	const setError = useContext(ErrorContext);
@@ -580,7 +580,7 @@ const SetPlannerForm = ({ dispatch, entry, index }: SetPlannerFormProperties) =>
 					editSong();
 				}}
 			>
-                Set Duration
+				Set Duration
 			</Button>
 			<Button
 				onClick={() =>
@@ -590,7 +590,7 @@ const SetPlannerForm = ({ dispatch, entry, index }: SetPlannerFormProperties) =>
 					})
 				}
 			>
-                Cancel
+				Cancel
 			</Button>
 		</form>
 	);
@@ -598,8 +598,8 @@ const SetPlannerForm = ({ dispatch, entry, index }: SetPlannerFormProperties) =>
 
 
 type DurationFormProperties = {
-    state: SetPlannerState;
-    dispatch: React.Dispatch<SetPlannerAction>;
+	state: SetPlannerState;
+	dispatch: React.Dispatch<SetPlannerAction>;
 }
 function DurationForm({ state, dispatch }: DurationFormProperties) {
 	return (
@@ -639,7 +639,7 @@ function DurationForm({ state, dispatch }: DurationFormProperties) {
 							})
 						}
 					>
-                        Cancel
+						Cancel
 					</Button>
 					<Button
 						onClick={(e) => {
@@ -653,7 +653,7 @@ function DurationForm({ state, dispatch }: DurationFormProperties) {
 						}}
 						type="submit"
 					>
-                        Add
+						Add
 					</Button>
 				</DialogActions>
 			</form>

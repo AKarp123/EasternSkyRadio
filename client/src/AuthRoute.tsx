@@ -5,9 +5,9 @@ import { useAuth } from "./providers/UserProvider";
 
 
 type properties = {
-    component: React.ComponentType<any>;
-    location?: Location;
-    [key: string]: any; // Allow other props to be passed
+	component: React.ComponentType<any>;
+	location?: Location;
+	[key: string]: any; // Allow other props to be passed
 }
 
 const AuthRoute = ({ component: Component, location, ...rest }: properties) => {

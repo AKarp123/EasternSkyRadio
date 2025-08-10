@@ -18,8 +18,8 @@ import { StandardResponse } from "../../types/global";
 import { createContext } from "react";
 
 type SongSearchProperties = {
-    dispatch: React.Dispatch<any>;
-    parent?: string;
+	dispatch: React.Dispatch<any>;
+	parent?: string;
 };
 
 const DispatchContext = createContext<React.Dispatch<any>>(() => {});
@@ -116,8 +116,8 @@ const SongSearch = ({ dispatch, parent }: SongSearchProperties) => {
 };
 
 type SongSearchCardProperties = {
-    song: SongEntry;
-    parent: string;
+	song: SongEntry;
+	parent: string;
 };
 const SongSearchCard = ({ song, parent }: SongSearchCardProperties) => {
 	const lastPlayed = song.lastPlayed
@@ -182,7 +182,7 @@ const SongSearchCard = ({ song, parent }: SongSearchCardProperties) => {
 					}}
 				>
 					<Typography variant="body2">
-                        Last Played:{" "}
+						Last Played:{" "}
 						{lastPlayed.toLocaleDateString() === "Invalid Date"
 							? "Never"
 							: lastPlayed.toLocaleDateString()}
@@ -194,26 +194,42 @@ const SongSearchCard = ({ song, parent }: SongSearchCardProperties) => {
 };
 
 type ButtonProperties = {
-    parent: string;
-    song: SongEntry;
+	parent: string;
+	song: SongEntry;
 };
 const Buttons = ({ parent, song }: ButtonProperties) => {
 	const dispatch = useContext(DispatchContext);
 	switch (parent) {
-	case "New Show": {
-		return (
-			<>
-				<Button
-					onClick={(e) => {
-						e.preventDefault();
-						dispatch({
-							type: "addSong",
-							payload: { ...song },
-						});
-					}}
-				>
-                    Add
-				</Button>
+		case "New Show": {
+			return (
+				<>
+					<Button
+						onClick={(e) => {
+							e.preventDefault();
+							dispatch({
+								type: "addSong",
+								payload: { ...song },
+							});
+						}}
+					>
+						Add
+					</Button>
+					<Button
+						onClick={(e) => {
+							e.preventDefault();
+							dispatch({
+								type: "fill",
+								payload: song,
+							});
+						}}
+					>
+						Fill
+					</Button>
+				</>
+			);
+		}
+		case "Edit Song": {
+			return (
 				<Button
 					onClick={(e) => {
 						e.preventDefault();
@@ -223,41 +239,25 @@ const Buttons = ({ parent, song }: ButtonProperties) => {
 						});
 					}}
 				>
-                    Fill
+					Fill
 				</Button>
-			</>
-		);
-	}
-	case "Edit Song": {
-		return (
-			<Button
-				onClick={(e) => {
-					e.preventDefault();
-					dispatch({
-						type: "fill",
-						payload: song,
-					});
-				}}
-			>
-                Fill
-			</Button>
-		);
-	}
-	case "Set Planner": {
-		return (
-			<Button
-				onClick={(e) => {
-					e.preventDefault();
-					dispatch({
-						type: "addSong",
-						payload: { ...song },
-					});
-				}}
-			>
-                Add
-			</Button>
-		);
-	}
+			);
+		}
+		case "Set Planner": {
+			return (
+				<Button
+					onClick={(e) => {
+						e.preventDefault();
+						dispatch({
+							type: "addSong",
+							payload: { ...song },
+						});
+					}}
+				>
+					Add
+				</Button>
+			);
+		}
 	// No default
 	}
 };
