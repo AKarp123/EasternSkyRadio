@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 import { useContext, useReducer, useState, useEffect } from "react";
 import { useDebouncedCallback } from "use-debounce";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import ErrorContext from "../../providers/ErrorContext";
 import InputFileUpload from "./InputFileUpload";
 
@@ -124,7 +124,9 @@ const SongForm = ({
 					}
 				}
 			})
-			.catch((error) => {
+			.catch((error: AxiosError<{ message: string }>) => {
+				
+				setError(error.response?.data?.message || "Error Adding Song");
 				console.log(error);
 			});
 	};

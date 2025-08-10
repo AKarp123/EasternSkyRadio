@@ -60,8 +60,8 @@ songRouter.get("/search", requireLogin, async (req: Request, res: Response) => {
 songRouter.post("/addSong", requireLogin, async (req : Request, res : Response) => {
 	const { songData } : { songData : Omit<ISongEntry, "songId"> } = req.body;
 
-	if (!songData) {
-		res.json({ success: false, message: "No song data provided." });
+	if (!songData || !songData.title || !songData.artist || !songData.album) {
+		res.status(400).json({ success: false, message: "No song data provided." });
 		return;
 	}
 

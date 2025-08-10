@@ -27,7 +27,13 @@ export const addSong = async (songData : Omit<ISongEntry, "songId">) => {
 			{ $inc: { counter: -1 } }
 		);
 
-		throw new Error(`Error adding song: ${newSong.artist} - ${newSong.title}`);
+		if (error instanceof mongoose.Error.ValidationError) {
+			console.error("Validation error:", error);
+			throw new Error("Validation error: " + error.message, { cause: error });
+		} else {
+			console.error("Error adding song:", error);
+			throw new Error("Error adding song: ", { cause: error });
+		}
 	}
 	// console.log("New song added: %s - %s", newSong.artist, newSong.title);
 };
