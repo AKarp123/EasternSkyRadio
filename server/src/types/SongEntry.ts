@@ -14,8 +14,12 @@ export interface ISongEntry {
     duration: number,
     lastPlayed? : Date,
     searchQuery: string, 
+    createdAt: Date
 }
 
+export interface ISongEntrySubmission extends Omit<ISongEntry, "songId" | "searchQuery" | "createdAt"> {
+
+}
 
 type songReleaseLocation = {
     service: songReleaseService,

@@ -135,6 +135,6 @@ songEntrySchema.pre("save", function (next) {
 });
 
 
-const SongEntry = models.SongEntry ?? model<ISongEntry>("SongEntry", songEntrySchema);
+const SongEntry = model<ISongEntry>("SongEntry", songEntrySchema);
 
 export default SongEntry;

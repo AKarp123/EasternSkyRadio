@@ -3,6 +3,7 @@ import SongEntry, { songEntry_selectAllFields } from "../models/SongEntry.js";
 import { addSong, generateSearchQuery, removeMissingShows, removeMissingSongs } from "../dbMethods.js";
 import requireLogin from "./requireLogin.js";
 import { ISongEntry } from "../types/SongEntry.js";
+import { HydratedDocument } from "mongoose";
 
 const songRouter = Router();
 
@@ -123,17 +124,20 @@ songRouter.delete("/song", requireLogin, async (req: Request, res: Response) => 
 
 songRouter.post("/editSong", requireLogin, async (req: Request, res: Response) => {
 	const { songData } : { songData : ISongEntry } = req.body;
-
-	if (!songData) {
-		res.json({ success: false, message: "No song data provided." });
+	if (!songData || !songData.songId) {
+		res.status(400).json({ success: false, message: "No song data provided." });
 		return;
 	}
 	const searchQuery = generateSearchQuery(songData);
-	SongEntry.findOneAndUpdate({ songId: songData.songId }, { songData, searchQuery }, {
+	SongEntry.findOneAndUpdate({ songId: songData.songId }, { ...songData, searchQuery }, {
 		new: true,
 		runValidators: true,
-	})
+	}).select(songEntry_selectAllFields)
 		.then((updatedSong) => {
+			if(!updatedSong) {
+				res.status(404).json({ success: false, message: "Song not found." });
+				return;
+			}
 			res.json({
 				success: true,
 				message: "Song updated successfully.",
@@ -141,8 +145,10 @@ songRouter.post("/editSong", requireLogin, async (req: Request, res: Response) =
 			});
 		})
 		.catch((error) => {
-			res.json({ success: false, message: error.message });
+			res.status(400).json({ success: false, message: error.message });
 		});
+;
+	
 });
 
 export default songRouter;

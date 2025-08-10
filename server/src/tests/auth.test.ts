@@ -3,6 +3,7 @@ import request from 'supertest';
 import { app } from '../app.js';
 import { initTest } from '../init.js';
 import { clearDatabase } from '../db.js';
+import withUser from "./helpers/withUser.js";
 
 
 describe('Test Login', function() {
@@ -37,4 +38,16 @@ describe('Test Login', function() {
 
 
 
+});
+
+
+describe('Test protected routes', () => {
+	beforeAll(async() => {
+		await initTest();
+	});
+	test('Should not allow a person to access protected routes without logging in', async () => {
+		const agent = request.agent(app);
+		const res = await agent.get('/api/getSongInfo');
+		expect(res.status).toBe(401);
+	});
 });

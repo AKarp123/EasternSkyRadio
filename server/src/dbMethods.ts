@@ -4,10 +4,10 @@ import Increment from "./models/IncrementModel.js";
 import SiteData from "./models/SiteData.js";
 import mongoose from "mongoose";
 import User from "./models/UserModel.js";
-import {  ISongEntry } from "./types/SongEntry.js";
+import { ISongEntry } from "./types/SongEntry.js";
 import { ShowEntrySubmission } from "./types/ShowData.js";
 
-export const addSong = async (songData : Omit<ISongEntry, "songId">) => {
+export const addSong = async (songData: Omit<ISongEntry, "songId">) => {
 	const nextSongId = await Increment.findOneAndUpdate(
 		{ model: "SongEntry" },
 		{ $inc: { counter: 1 } },
@@ -19,17 +19,28 @@ export const addSong = async (songData : Omit<ISongEntry, "songId">) => {
 
 		return song;
 	} catch (error) {
-		console.error(
-			error
-		);
 		await Increment.findOneAndUpdate(
 			{ model: "SongEntry" },
 			{ $inc: { counter: -1 } }
 		);
 
 		if (error instanceof mongoose.Error.ValidationError) {
-			console.error("Validation error:", error);
-			throw new Error("Validation error: " + error.message, { cause: error });
+			const accumulatedErrors: string[] = [];
+
+
+			for (const [field, errorObj] of Object.entries(error.errors)) {
+				accumulatedErrors.push(`Field: ${field}, Message: ${errorObj.message}`);
+			}
+			console.error(accumulatedErrors.join(", "));
+
+
+			throw new Error("Validation error: " + accumulatedErrors.join(", "), {
+				cause: error,
+			});
+		} else if (error instanceof mongoose.Error.ValidatorError) {
+			throw new TypeError("Validator error: " + error.message, {
+				cause: error,
+			});
 		} else {
 			console.error("Error adding song:", error);
 			throw new Error("Error adding song: ", { cause: error });
@@ -57,18 +68,15 @@ export const addSong = async (songData : Omit<ISongEntry, "songId">) => {
 //     // console.log("New show added! id: " + newShow.showId);
 // };
 
-export const findSong = async (songName : string) => {
+export const findSong = async (songName: string) => {
 	return SongEntry.findOne({ title: { $regex: songName, $options: "i" } });
 };
-
 
 // export const addSongToShow = async (showId, songId) => {
 //     const show = await ShowEntry.findOne({ showId: showId });
 //     show.songsList.push(songId);
 //     return await show.save();
 // };
-
-
 
 export const removeMissingShows = async () => {
 	try {
@@ -121,7 +129,6 @@ export const generateStats = async () => {
 		uniqueAlbums: 0,
 	};
 
-    
 	data.totalShows = await ShowEntry.estimatedDocumentCount();
 	ShowEntry.aggregate([
 		{ $unwind: "$songsList" },
@@ -142,8 +149,6 @@ export const generateStats = async () => {
 	return data;
 };
 
-
-
 export const updateShowTimes = async () => {
 	let shows = await ShowEntry.find();
 	for (const show of shows) {
@@ -154,19 +159,22 @@ export const updateShowTimes = async () => {
 	}
 };
 
-export const generateSearchQuery = (song: ISongEntry) => {
-	return [
-		song.artist,
-		song.title,
-		song.album,
-		song.origTitle || "",
-		song.origAlbum || "",
-	].join(" ").toLowerCase().trim();
+export const generateSearchQuery = ({
+	artist,
+	title,
+	album,
+	origTitle,
+	origAlbum,
+}: ISongEntry) => {
+	return [artist, title, album, origTitle || "", origAlbum || ""]
+		.join(" ")
+		.toLowerCase()
+		.trim();
 };
 
 // const addLastPlayed = async () => {
 //     const allShows = await ShowEntry.find().sort({ showId: "desc"}).populate("songsList");
- 
+
 //     allShows.forEach((show) => {
 //         show.songsList.forEach(async (song) => {
 //             if(song.lastPlayed === undefined) {
@@ -182,15 +190,20 @@ export const generateSearchQuery = (song: ISongEntry) => {
 
 // addLastPlayed();
 
-export const updateLastPlayed = async (songsList: ShowEntrySubmission["songsList"], date: Date) =>  {
-
+export const updateLastPlayed = async (
+	songsList: ShowEntrySubmission["songsList"],
+	date: Date
+) => {
 	songsList.forEach(async (song) => {
-		await SongEntry.findOneAndUpdate({ _id: song }, { lastPlayed: date }, { new: true });
+		await SongEntry.findOneAndUpdate(
+			{ _id: song },
+			{ lastPlayed: date },
+			{ new: true }
+		);
 	});
 };
 
 // addLastPlayed();
-
 
 // export const initializeTestData = async () => {
 //     // mongoose.connection.dropCollection("users")
@@ -214,9 +227,6 @@ export const updateLastPlayed = async (songsList: ShowEntrySubmission["songsList
 //     //     })
 //     //     song.save();
 //     // });
-
-    
-
 
 //     // for(let i = 0; i< 5; i++) {
 

@@ -22,6 +22,7 @@ export async function up(connection: Connection): Promise<void> {
 	}
 
 	connection.model("SongEntry").ensureIndexes();
+	connection.deleteModel("SongEntry");
 }
 
 export async function down(connection: Connection): Promise<void> {
