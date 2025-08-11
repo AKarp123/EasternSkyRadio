@@ -167,6 +167,28 @@ describe("Test Create Song API", function () {
 			songReleaseLoc: [],
 		});
 	});
+
+	test("Link song data to same album", async() => {
+		const newSong: ISongEntrySubmission = {
+			title: "Hello",
+			artist: "World",
+			album: "TestAlbum21",
+			duration: 180,
+			genres: ["Rock"],
+			albumImageLoc: "lalala",
+		};
+		let res = await createSong(newSong, agent);
+		expect(res.status).toBe(200);
+		let { searchQuery, ...rest } = res.body.song;
+		const song2 = structuredClone(newSong);
+		song2.title = "New Title";
+
+		res = await createSong(song2, agent);
+		expect(res.status).toBe(200);
+		expect(res.body).toHaveProperty("success", true);
+		expect(res.body.song.albumImageLoc).toBe("lalala");
+	});
+
 });
 
 

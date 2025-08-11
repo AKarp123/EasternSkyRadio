@@ -127,7 +127,7 @@ songEntrySchema.pre("save", function (next) {
 		this.origTitle || "",
 		this.origAlbum || "",
 	].join(" ")
-		.replaceAll(/[^\p{L}\p{N}\s]/gu, "")  
+		.replaceAll(/[^\p{L}\p{N}\s]/gu, "") // remove special characters
 		.replaceAll(/\s+/g, " ") // collapse multiple spaces
 		.trim();
 

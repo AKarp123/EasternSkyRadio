@@ -168,6 +168,8 @@ export const generateSearchQuery = ({
 }: ISongEntry) => {
 	return [artist, title, album, origTitle || "", origAlbum || ""]
 		.join(" ")
+		.replaceAll(/[^\p{L}\p{N}\s]/gu, "")  
+		.replaceAll(/\s+/g, " ")
 		.toLowerCase()
 		.trim();
 };

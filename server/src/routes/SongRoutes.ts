@@ -31,8 +31,8 @@ songRouter.get("/getSongInfo", requireLogin, async (req : Request, res : Respons
 
 songRouter.get("/search", requireLogin, async (req: Request, res: Response) => {
 	try {
-		if (req.query.query === "") {
-			res.json({ success: false, message: "No search query provided." });
+		if (req.query.query === "" || (req.query.query === undefined && req.query.elcroId === undefined)) {
+			res.status(400).json({ success: false, message: "No search query provided." });
 		} else if (req.query.elcroId) {
 			const searchResults = await SongEntry.find({
 				elcroId: req.query.elcroId,
@@ -46,9 +46,10 @@ songRouter.get("/search", requireLogin, async (req: Request, res: Response) => {
 		} else {
 			const raw = (req.query.query as string)
 				.trim()
+				.replaceAll(/[^\p{L}\p{N}\s]/gu, "")
 				.toLowerCase();
-
-			const words = raw.split(/\s+/).map((word) => escapeRegex(word));
+			
+			const words = raw.split(/\s+/)
 			const conditions = words.map((word) => ({
 				searchQuery: { $regex: new RegExp(word, "i") },
 			}));
