@@ -35,6 +35,28 @@ describe("Test Create Song API", function () {
 		);
 	});
 
+	test("duplicate song", async () => {
+		const newSong: Omit<ISongEntry, "songId" | "searchQuery" | "createdAt"> = {
+			title: "random",
+			artist: "random",
+			album: "random",
+			duration: 180,
+			genres: ["Rock"],
+			albumImageLoc: "",
+		};
+		let res = await agent
+			.post("/api/addSong")
+			.send({ songData: newSong });
+		expect(res.body).toHaveProperty("success", true);
+		expect(res.status).toBe(200);
+
+		res = await agent
+			.post("/api/addSong")
+			.send({ songData: newSong });
+		expect(res.body).toHaveProperty("success", false);
+		expect(res.body.message).toBe("Song already exists.");
+	});
+
 	test("create song with missing params", async () => {
 		const newSong: Partial<ISongEntry> = {
 			duration: 180,
@@ -104,7 +126,7 @@ describe("Test Create Song API", function () {
 
 		expect(res.status).toBe(200);
 		expect(res.body.song.artist).toBe("Test Artist");
-		expect(res.body.song.songId).toBe(2);
+		expect(res.body.song.songId).toBe(song.songId);
 	});
 
 	test("no data", async () => {
@@ -150,6 +172,9 @@ describe("Test Editing song API", () => {
 	beforeAll(async () => {
 		agent = await withUser();
 	});
+	afterAll(async() => {
+		await clearDatabase();
+	})
 
 	test("edit a song", async () => {
 		const newSong: ISongEntrySubmission = {
