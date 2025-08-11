@@ -15,7 +15,7 @@ describe("Test Delete Api", () => {
 	});
 	afterAll(async() => {
 		await clearDatabase();
-	})
+	});
 
 	test("delete a song", async () => {
 		const newSong: ISongEntrySubmission = {
@@ -63,6 +63,6 @@ describe("Test Delete Api", () => {
 		const song = res.body.song as ISongEntry;
 		expect(song.title).toBe("Hello 8");
 	});
-})
+});
 
 

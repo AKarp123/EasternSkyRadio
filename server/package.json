@@ -9,7 +9,7 @@
     "dev": "bun --watch src/start.ts",
     "build": "bun build src/start.ts --outdir dist --target bun --external passport --external passport-local --external passport-local-mongoose --minify --sourcemap=linked",
     "lint": "bunx eslint src/**/*.ts src/*.ts",
-    "lint:fix": "bunx eslint src/**/*.ts src/*.ts migrations/*.ts --fix"
+    "lint:fix": "bunx eslint src/** --fix"
   },
   "keywords": [],
   "author": "",

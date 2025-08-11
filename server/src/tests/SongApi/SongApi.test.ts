@@ -1,4 +1,4 @@
-import { describe, test, expect, beforeAll, afterAll } from "bun:test";
+import { describe, test, expect, beforeEach, beforeAll, afterAll, afterEach } from "bun:test";
 
 import { initTest } from "../../init.js";
 import { withUser } from ".././helpers/withUser.js";
@@ -6,6 +6,8 @@ import { ISongEntry, ISongEntrySubmission } from "../../types/SongEntry.js";
 import { generateSearchQuery } from "../../dbMethods.js";
 import { clearDatabase } from "../../db.js";
 import { createSong } from ".././helpers/create.js";
+
+
 
 describe("Test Create Song API", function () {
 	let agent: Awaited<ReturnType<typeof withUser>>;
@@ -193,7 +195,7 @@ describe("Get Song Info", async() => {
 	});
 	
 	test("Undefined", async() => {
-		const res = await agent.get("/api/getSongInfo")
+		const res = await agent.get("/api/getSongInfo");
 		expect(res.status).toBe(400);
 		expect(res.body).toHaveProperty("success", false);
 	});
@@ -207,7 +209,7 @@ describe("Test Editing song API", () => {
 	});
 	afterAll(async() => {
 		await clearDatabase();
-	})
+	});
 
 	test("edit a song", async () => {
 		const newSong: ISongEntrySubmission = {
@@ -231,7 +233,7 @@ describe("Test Editing song API", () => {
 		expect(res.body).toHaveProperty("success", true);
         
 		expect(res.body.song.title).toBe("Edited Title");
-        expect(res.body.song.searchQuery).toContain("Edited Title".toLowerCase());
+		expect(res.body.song.searchQuery).toContain("Edited Title".toLowerCase());
 	});
 
 	test("edit validator", async() => {
@@ -245,9 +247,9 @@ describe("Test Editing song API", () => {
 	});
 
 	test("Edit song of non-existent song", async () => {
-		const res = await agent.post("/api/editSong").send({ songData: {songId: 99} });
+		const res = await agent.post("/api/editSong").send({ songData: { songId: 99 } });
 		expect(res.status).toBe(404);
 	});
-})
+});
 
 
