@@ -1,11 +1,11 @@
 import { describe, test, expect, beforeAll, afterAll } from "bun:test";
 
-import { initTest } from "../init.js";
-import { withUser } from "./helpers/withUser.js";
-import { ISongEntry, ISongEntrySubmission } from "../types/SongEntry.js";
-import { generateSearchQuery } from "../dbMethods.js";
-import { clearDatabase } from "../db.js";
-import { createSong } from "./helpers/create.js";
+import { initTest } from "../../init.js";
+import { withUser } from ".././helpers/withUser.js";
+import { ISongEntry, ISongEntrySubmission } from "../../types/SongEntry.js";
+import { generateSearchQuery } from "../../dbMethods.js";
+import { clearDatabase } from "../../db.js";
+import { createSong } from ".././helpers/create.js";
 
 describe("Test Create Song API", function () {
 	let agent: Awaited<ReturnType<typeof withUser>>;
@@ -165,6 +165,39 @@ describe("Test Create Song API", function () {
 			songReleaseLoc: [],
 		});
 	});
+});
+
+
+describe("Get Song Info", async() => {
+	let agent: Awaited<ReturnType<typeof withUser>>;
+	beforeAll(async () => {
+		agent = await withUser();
+	});
+
+	test("get song info", async () => {
+		const res = await agent.get("/api/getSongInfo").query({ songId: 1 });
+		expect(res.status).toBe(200);
+		expect(res.body).toHaveProperty("success", true);
+	});
+
+	test("get song info for non-existent song", async () => {
+		const res = await agent.get("/api/getSongInfo").query({ songId: 99 });
+		expect(res.status).toBe(404);
+		expect(res.body).toHaveProperty("success", false);
+	});
+
+	test("NaN songId", async () => {
+		const res = await agent.get("/api/getSongInfo").query({ songId: "NaN" });
+		expect(res.status).toBe(400);
+		expect(res.body).toHaveProperty("success", false);
+	});
+	
+	test("Undefined", async() => {
+		const res = await agent.get("/api/getSongInfo")
+		expect(res.status).toBe(400);
+		expect(res.body).toHaveProperty("success", false);
+	});
+
 });
 
 describe("Test Editing song API", () => {

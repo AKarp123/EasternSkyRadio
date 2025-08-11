@@ -11,6 +11,9 @@ const connectToDatabase = async () => {
 	} catch (error) {
 		console.error("Error connecting to MongoDB:", error);
 	}
+	if(process.env.NODE_ENV === "test") {
+		return;
+	}
 	console.log("Connected to MongoDB");
 };
 
@@ -24,6 +27,9 @@ const disconnectFromDatabase = async () => {
 
 const clearDatabase = async () => {
 	await mongoose.connection.dropDatabase();
+	if(process.env.NODE_ENV === "test") {
+		return;
+	}
 	console.log("Database cleared.");
 };
 

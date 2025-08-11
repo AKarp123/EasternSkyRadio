@@ -10,6 +10,9 @@ const initializeDatabase = async () => {
 	await new Increment({ model: "SongEntry" }).save();
 	await new Increment({ model: "ShowEntry" }).save();
 	await new SiteData({}).save();
+	if(process.env.NODE_ENV == "test") {
+		return;
+	}
 	console.log("Initialized Counters");
 };
 

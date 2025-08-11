@@ -12,13 +12,19 @@ const escapeRegex = (string : string) => {
 };
 
 songRouter.get("/getSongInfo", requireLogin, async (req : Request, res : Response) => {
-	if (req.query.songId === undefined) {
-		res.json({ success: false, message: "No Song ID provided." });
+	if (req.query.songId === undefined || Number.isNaN(Number(req.query.songId))) {
+		res.status(400).json({ success: false, message: "No Song ID provided." });
 	} else {
 		const songData = await SongEntry.findOne(
 			{ songId: req.query.songId },
 			{ __v: 0 }
-		);
+		).lean();
+
+		if (!songData) {
+			res.status(404).json({ success: false, message: "Song not found." });
+			return;
+		}
+
 		res.json({ success: true, song: songData });
 	}
 });
@@ -104,16 +110,20 @@ songRouter.post("/addSong", requireLogin, async (req : Request, res : Response) 
 		});
 });
 
-songRouter.delete("/song", requireLogin, async (req: Request, res: Response) => {
-	const { songId } = req.query;
+songRouter.delete("/song/:songId", requireLogin, async (req: Request, res: Response) => {
+	const { songId } = req.params;
 
 	if (!songId) {
-		res.json({ success: false, message: "No song ID provided." });
+		res.status(403).json({ success: false, message: "No song ID provided." });
 		return;
 	}
 
 	SongEntry.deleteOne({ songId: songId })
-		.then(async () => {
+		.then(async (result) => {
+			if(result.deletedCount === 0) {
+				res.status(404).json({ success: false, message: "Song not found." });
+				return;
+			}
 			await removeMissingSongs();
 			res.json({ success: true, message: "Song deleted successfully." });
 		})
