@@ -10,10 +10,10 @@ const initializeDatabase = async () => {
 	await new Increment({ model: "SongEntry" }).save();
 	await new Increment({ model: "ShowEntry" }).save();
 	await new SiteData({}).save();
-	if(process.env.NODE_ENV == "test") {
+	if(process.env.NODE_ENV === "test") {
 		return;
 	}
-	console.log("Initialized Counters");
+	console.info("Initialized Counters"); 
 };
 
 const initializeApp = async() => {
@@ -24,7 +24,7 @@ const initializeApp = async() => {
 			await user.setPassword(process.env.ADMIN_PASSWORD || "default");
 			user.migrated = true;
 			await user.save();
-			console.log("Migrated admin user password.");
+			console.info("Migrated admin user password.");
 		}
 		return;
 	} else {

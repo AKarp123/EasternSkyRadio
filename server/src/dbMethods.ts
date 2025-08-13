@@ -1,9 +1,7 @@
 import SongEntry from "./models/SongEntry.js";
 import ShowEntry from "./models/ShowEntry.js";
 import Increment from "./models/IncrementModel.js";
-import SiteData from "./models/SiteData.js";
 import mongoose from "mongoose";
-import User from "./models/UserModel.js";
 import { ISongEntry } from "./types/SongEntry.js";
 import { ShowEntrySubmission } from "./types/ShowData.js";
 
@@ -92,7 +90,6 @@ export const removeMissingShows = async () => {
 			{ $set: { counter: shows.length } }
 		);
 
-		console.info("Show IDs updated successfully.");
 	} catch (error) {
 		console.error("Error updating show IDs:", error);
 	}
@@ -195,13 +192,13 @@ export const updateLastPlayed = async (
 	songsList: ShowEntrySubmission["songsList"],
 	date: Date
 ) => {
-	songsList.forEach(async (song) => {
+	for (const song of songsList) {
 		await SongEntry.findOneAndUpdate(
 			{ _id: song },
 			{ lastPlayed: date },
 			{ new: true }
 		);
-	});
+	}
 };
 
 // addLastPlayed();

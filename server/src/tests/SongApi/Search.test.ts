@@ -1,7 +1,7 @@
 import { describe, test, expect, beforeEach, afterEach } from "bun:test";
 import { initTest } from "../../init.js";
 import { clearDatabase } from "../../db.js";
-import { ISongEntrySubmission, ISongEntry } from "../../types/SongEntry.js";
+import { ISongEntrySubmission } from "../../types/SongEntry.js";
 import withUser from "../helpers/withUser.js";
 import { createSong } from "../helpers/create.js";
 

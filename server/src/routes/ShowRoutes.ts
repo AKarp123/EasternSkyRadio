@@ -1,4 +1,4 @@
-import { Router, Request, Response } from "express";
+import { Router, Request, Response, } from "express";
 import ShowEntry from "../models/ShowEntry.js";
 import requireLogin from "./requireLogin.js";
 import Increment from "../models/IncrementModel.js";
@@ -12,7 +12,7 @@ import mongoose from "mongoose";
 const showRouter = Router();
 
 showRouter.get("/show/:id", async (req: Request, res: Response) => {
-	if (req.params.id === undefined || req.params.id === "" || isNaN(Number.parseInt(req.params.id))) {
+	if (req.params.id === undefined || req.params.id === "" || Number.isNaN(Number.parseInt(req.params.id))) {
 		res.status(400).json({ success: false, message: "No Show ID provided." });
 		return;
 	}
@@ -89,7 +89,7 @@ showRouter.post("/show", requireLogin, async (req : Request, res: Response) => {
 
 showRouter.patch("/show/:id", requireLogin, async (req: Request, res: Response) => {
 	const { showData } : { showData: Omit<ShowEntry, "songListCount"> } = req.body;
-	if(Number.parseInt(req.params.id) === undefined || isNaN(Number.parseInt(req.params.id))) {
+	if(Number.parseInt(req.params.id) === undefined || Number.isNaN(Number.parseInt(req.params.id))) {
 		res.status(400).json({ success: false, message: "No Show ID provided." });
 		return;
 	}
@@ -110,11 +110,11 @@ showRouter.patch("/show/:id", requireLogin, async (req: Request, res: Response) 
 			.then(() => {
 				res.json({ success: true, message: "Show Updated!" });
 			})
-			.catch((error) => {
+			.catch(() => {
 				res.status(500).json({ success: false, message: "Error adding song to show." });
 			});
 	} catch(error){
-		console.log(error);
+		console.error(error);
 		res.status(500).json({ success: false, message: "Error updating show." });
 	}
     
@@ -123,7 +123,7 @@ showRouter.patch("/show/:id", requireLogin, async (req: Request, res: Response) 
 
 showRouter.delete("/show/:id", requireLogin, async (req: Request, res: Response) => {
 	const showId = Number.parseInt(req.params.id);
-	if (isNaN(showId)) {
+	if (Number.isNaN(showId)) {
 		res.status(400).json({ success: false, message: "No Show ID provided." });
 	} else {
 		try {
@@ -138,7 +138,7 @@ showRouter.delete("/show/:id", requireLogin, async (req: Request, res: Response)
 
 			res.json({ success: true, message: "Show deleted." });
 		} catch (error) {
-			console.log(error);
+			console.error(error);
 			res.status(500).json({ success: false, message: "Error deleting show." });
 		}
 	}

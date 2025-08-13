@@ -1,4 +1,4 @@
-import { Schema as schema, model, models } from "mongoose";
+import { Schema as schema, model } from "mongoose";
 import { ISongEntry } from "../types/SongEntry.js";
 import { generateSearchQuery } from "../dbMethods.js";
 

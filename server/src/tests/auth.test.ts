@@ -3,7 +3,7 @@ import request from 'supertest';
 import { app } from '../app.js';
 import { initTest } from '../init.js';
 import { clearDatabase } from '../db.js';
-import withUser from "./helpers/withUser.js";
+
 
 
 describe('Test Login', function() {

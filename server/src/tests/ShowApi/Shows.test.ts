@@ -4,7 +4,7 @@ import { initTest } from "../../init.js";
 import { withUser } from ".././helpers/withUser.js";
 import { ISongEntry, ISongEntrySubmission } from "../../types/SongEntry.js";
 import { clearDatabase } from "../../db.js";
-import { createSong } from ".././helpers/create.js";
+import { bulkCreateShows, createSong } from ".././helpers/create.js";
 import { ShowEntry, ShowEntrySubmission } from "../../types/ShowData.js";
 import { Types } from "mongoose";
 
@@ -29,13 +29,14 @@ describe("Create Show Tests", () => {
 			albumImageLoc: "",
 			genres: ["Vocaloid"],
 		};
-		const songRes = (await createSong(song, agent)).body.song as ISongEntry & { _id: Types.ObjectId };
+		let songRes = (await createSong(song, agent));
+		const songResObj = songRes.body.song as ISongEntry & { _id: Types.ObjectId };
 		expect(songRes).toBeDefined();
 
 		const show : ShowEntrySubmission = {
 			showDate: "2025-07-20",
 			showDescription: "Test Show",
-			songsList: [songRes]
+			songsList: [songResObj]
 		};
 		let res = await agent.post("/api/show").send({ showData: show });
 
@@ -62,12 +63,13 @@ describe("Create Show Tests", () => {
 			genres: ["Vocaloid"],
 		};
 
-		const songRes = (await createSong(song, agent)).body.song as ISongEntry & { _id: Types.ObjectId };
+		const songRes = await createSong(song, agent);
+		const songResObj = songRes.body.song as ISongEntry & { _id: Types.ObjectId };
 		expect(songRes).toBeDefined();
 		const show : ShowEntrySubmission = {
 			showDate: "2025-07-20",
 			showDescription: "Test Show",
-			songsList: [songRes]
+			songsList: [songResObj]
 		};
 
 		let res = await agent.post("/api/show").send({ showData: show });
@@ -109,4 +111,23 @@ describe("Create Show Tests", () => {
 		expect(res.body.success).toBe(false);
 	});
 
+});
+
+describe("Get All Shows", async() => {
+	let agent: Awaited<ReturnType<typeof withUser>>;
+	beforeEach(async () => {
+		await initTest();
+		agent = await withUser();
+	});
+
+	afterEach(async () => {
+		await clearDatabase();
+	});
+
+	test("Get All Shows", async() => {
+		await bulkCreateShows(10, agent);
+		const res = await agent.get("/api/shows");
+		expect(res.status).toBe(200);
+		expect(res.body.shows).toBeArrayOfSize(10);
+	});
 });

@@ -1,5 +1,4 @@
 import express from "express";
-import mongoose from "mongoose";
 import session from "express-session";
 import MongoStore from "connect-mongo";
 import passport from "passport";
@@ -8,11 +7,10 @@ import apiRouter from "./routes/index.js";
 
 import { UserDocument } from "./types/User.js";
 import { logRoute } from "./routelogging.js";
-import { applyMigrations } from "./migrations.js";
 
 
 
-const port = process.env.PORT || 3000;
+
 
 
 

@@ -1,9 +1,9 @@
 import { Router, Request, Response } from "express";
 import SongEntry, { songEntry_selectAllFields } from "../models/SongEntry.js";
-import { addSong, generateSearchQuery, removeMissingShows, removeMissingSongs } from "../dbMethods.js";
+import { addSong, generateSearchQuery, removeMissingSongs } from "../dbMethods.js";
 import requireLogin from "./requireLogin.js";
 import { ISongEntry } from "../types/SongEntry.js";
-import { HydratedDocument } from "mongoose";
+
 
 const songRouter = Router();
 

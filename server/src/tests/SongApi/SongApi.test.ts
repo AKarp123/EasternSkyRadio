@@ -183,7 +183,6 @@ describe("Test Create Song API", function () {
 		};
 		let res = await createSong(newSong, agent);
 		expect(res.status).toBe(200);
-		let { searchQuery, ...rest } = res.body.song;
 		const song2 = structuredClone(newSong);
 		song2.title = "New Title";
 

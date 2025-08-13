@@ -1,6 +1,5 @@
 import mongoose from "mongoose";
-import initializeApp from "./init.js";
-import { applyMigrations } from "./migrations.js";
+
 
 const db = mongoose.connection;
 
@@ -14,7 +13,7 @@ const connectToDatabase = async () => {
 	if(process.env.NODE_ENV === "test") {
 		return;
 	}
-	console.log("Connected to MongoDB");
+	console.info("Connected to MongoDB");
 };
 
 const disconnectFromDatabase = async () => {
@@ -30,7 +29,7 @@ const clearDatabase = async () => {
 	if(process.env.NODE_ENV === "test") {
 		return;
 	}
-	console.log("Database cleared.");
+	console.info("Database cleared.");
 };
 
 
