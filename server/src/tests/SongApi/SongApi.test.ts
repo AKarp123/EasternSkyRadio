@@ -14,6 +14,7 @@ afterAll(async() => {
 describe("Test Create Song API", function () {
 	let agent: Awaited<ReturnType<typeof withUser>>;
 	beforeAll(async () => {
+
 		await initTest();
 		agent = await withUser();
 	});

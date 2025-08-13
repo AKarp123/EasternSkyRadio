@@ -6,7 +6,7 @@ import { ShowEntry } from "../types/ShowData.js";
 
 const showEntrySchema = new schema<ShowEntry>(
 	{
-		showId: { type: Number, required: true, default: -1, index: true },
+		showId: { type: Number, required: true, default: -1, index: true }, // Might remove and make client side and use showDate as order instead
 		showDate: { type: Date, required: true },
 		showDescription: { type: String },
 		showLink: {

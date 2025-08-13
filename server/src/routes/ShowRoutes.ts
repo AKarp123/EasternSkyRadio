@@ -2,7 +2,7 @@ import { Router, Request, Response, } from "express";
 import ShowEntry from "../models/ShowEntry.js";
 import requireLogin from "./requireLogin.js";
 import Increment from "../models/IncrementModel.js";
-import { removeMissingShows, updateLastPlayed } from "../dbMethods.js";
+import { updateShowIds, updateLastPlayed } from "../dbMethods.js";
 import { ISongEntry } from "../types/SongEntry.js";
 import {  ShowEntrySubmission } from "../types/ShowData.js";
 import mongoose from "mongoose";
@@ -17,6 +17,7 @@ showRouter.get("/show/:id", async (req: Request, res: Response) => {
 		return;
 	}
 	else {
+
 		const showData = await ShowEntry.findOne(
 			{ showId: Number.parseInt(req.params.id) },
 			{ _id: 0, __v: 0 }
@@ -36,7 +37,7 @@ showRouter.get("/shows", async (req: Request, res: Response) => {
 	if (req.query.offset) {
 		const offset = Number.parseInt(req.query.offset as string);
 		const shows = await ShowEntry.find({}, { _id: 0, __v: 0 })
-			.sort({ showId: "desc" })
+			.sort({ showId: "asc" })
 			.skip(offset)
 			.limit(5)
 			.select("-songsList -_id")
@@ -45,7 +46,7 @@ showRouter.get("/shows", async (req: Request, res: Response) => {
 		res.json(shows);
 	} else {
 		const shows = await ShowEntry.find({}, { _id: 0, __v: 0 })
-			.sort({ showId: "desc" })
+			.sort({ showId: "asc" })
 			.select("-songsList -_id")
 			.lean();
 
@@ -134,7 +135,7 @@ showRouter.delete("/show/:id", requireLogin, async (req: Request, res: Response)
 				return;
 			}
 
-			removeMissingShows();
+			await updateShowIds(showId);
 
 			res.json({ success: true, message: "Show deleted." });
 		} catch (error) {

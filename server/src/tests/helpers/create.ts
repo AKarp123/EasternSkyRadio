@@ -1,8 +1,8 @@
 import withUser from "./withUser.js";
 import { ISongEntry, ISongEntrySubmission } from "../../types/SongEntry.js";
-import { ShowEntrySubmission } from "../../types/ShowData.js";
+import { ShowEntry, ShowEntrySubmission } from "../../types/ShowData.js";
 import { Types } from "mongoose";
-import { Response } from "supertest";
+
 
 
 /**
@@ -40,7 +40,8 @@ export const createShow = async(showData: ShowEntrySubmission, agent?: Awaited<R
 
 export const bulkCreateTestSongs = async (count: number, agent?: Awaited<ReturnType<typeof withUser>>) : Promise<{_id: string, songId: number}[]> => {
 	const localAgent = agent || await withUser();
-	const promises = Array.from({ length: count }, (_, i) => {
+	const songs = <{_id: string, songId: number}[]>[];
+	for(let i = 1; i <= count; i++) {
 		const songData: ISongEntrySubmission = {
 			title: `Test Song ${i % 10}`,
 			artist: `Test Artist ${i % 5}`,
@@ -49,18 +50,17 @@ export const bulkCreateTestSongs = async (count: number, agent?: Awaited<ReturnT
 			duration: Math.random() * 300,
 			genres: ["Vocaloid"]
 		};
-		return createSong(songData, localAgent);
-	});
-	const res = await Promise.all(promises);
-	return res.map((response) => {
-		return {
-			_id: response.body.song._id,
-			songId: response.body.song.songId
-		};
-	});
+		const res = await createSong(songData, localAgent);
+		songs.push({
+			_id: res.body.song._id,
+			songId: res.body.song.songId
+		});
+	}
+	return songs;
 };
 
-export const bulkCreateShows = async(count: number, agent?: Awaited<ReturnType<typeof withUser>>) : Promise<Response[]> => {
+
+export const bulkCreateShows = async(count: number, agent?: Awaited<ReturnType<typeof withUser>>) : Promise<ShowEntry[]> => {
 	const localAgent = agent || await withUser();
 	const songSubmission = {
 		title: "Mesmerizer",
@@ -73,15 +73,16 @@ export const bulkCreateShows = async(count: number, agent?: Awaited<ReturnType<t
 
 	let res = await createSong(songSubmission, localAgent);
 	const song = res.body.song as ISongEntry & { _id: Types.ObjectId };
-
-	const promises = Array.from({ length: count }, (_, i) => {
+	const shows: ShowEntry[] = [];
+	for(let i = 1; i<= count; i++) {
 		const showData: ShowEntrySubmission = {
 			showDate: `2025-07-20`,
-			showDescription: `Test Show ${i + 1}`,
+			showDescription: `Test Show ${i}`,
 			songsList: [song]
 		};
-		return createShow(showData, localAgent);
-	});
-	const shows = await Promise.all(promises);
+		res = await createShow(showData, localAgent);
+		shows.push(res.body.show as ShowEntry);
+	}
+	
 	return shows;
 };

@@ -29,7 +29,9 @@ const ShowPage = () => {
 		axios
 			.get<StandardResponse<"shows", ShowEntryMin[]>>("/api/shows")
 			.then((res) => {
-				setShowList(res.data.shows);
+				setShowList(res.data.shows.sort((a, b) => {
+					return b.showId - a.showId;
+				}));
 				setLoading(false);
 			})
 			.catch(() => {

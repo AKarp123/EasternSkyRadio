@@ -75,46 +75,33 @@ export const findSong = async (songName: string) => {
 //     return await show.save();
 // };
 
-export const removeMissingShows = async () => {
-	try {
-		// Get all shows sorted by showId
-		const shows = await ShowEntry.find().sort({ showId: "asc" });
-
-		// Update showIds to be sequential starting from 1
-		for (const [i, show] of shows.entries()) {
-			show.showId = i + 1;
-			await show.save();
-		}
-		await Increment.findOneAndUpdate(
-			{ model: "ShowEntry" },
-			{ $set: { counter: shows.length } }
-		);
-
-	} catch (error) {
-		console.error("Error updating show IDs:", error);
-	}
+export const updateShowIds = async(deletedId: number) => {
+	await ShowEntry.updateMany(
+		{ showId: { $gt: deletedId } },
+		{ $inc: { showId: -1 } }
+	);
 };
 
-export const removeMissingSongs = async () => {
-	try {
-		// Get all songs sorted by songId
-		const songs = await SongEntry.find().sort({ songId: "asc" });
+// export const removeMissingSongs = async () => {
+// 	try {
+// 		// Get all songs sorted by songId
+// 		const songs = await SongEntry.find().sort({ songId: "asc" });
 
-		// Update songIds to be sequential starting from 1
-		for (const [i, song] of songs.entries()) {
-			song.songId = i + 1;
-			await song.save();
-		}
-		await Increment.findOneAndUpdate(
-			{ model: "SongEntry" },
-			{ $set: { counter: songs.length } }
-		);
+// 		// Update songIds to be sequential starting from 1
+// 		for (const [i, song] of songs.entries()) {
+// 			song.songId = i + 1;
+// 			await song.save();
+// 		}
+// 		await Increment.findOneAndUpdate(
+// 			{ model: "SongEntry" },
+// 			{ $set: { counter: songs.length } }
+// 		);
 
-		console.info("Song IDs updated successfully.");
-	} catch (error) {
-		console.error("Error updating song IDs:", error);
-	}
-};
+// 		console.info("Song IDs updated successfully.");
+// 	} catch (error) {
+// 		console.error("Error updating song IDs:", error);
+// 	}
+// };
 
 export const generateStats = async () => {
 	const data = {

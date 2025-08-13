@@ -1,4 +1,4 @@
-import { describe, test, expect, beforeEach, afterAll } from "bun:test";
+import { describe, test, expect, beforeEach, afterAll, afterEach } from "bun:test";
 import { initTest } from "../../init.js";
 import { clearDatabase } from "../../db.js";
 import { ISongEntrySubmission, ISongEntry } from "../../types/SongEntry.js";
@@ -12,6 +12,9 @@ describe("Test Delete Api", () => {
 	beforeEach(async () => {
 		await initTest();
 		agent = await withUser();
+	});
+	afterEach(async() => {
+		await clearDatabase();
 	});
 	afterAll(async() => {
 		await clearDatabase();
@@ -36,32 +39,46 @@ describe("Test Delete Api", () => {
 	});
 
 	test("delete non-existent song", async () => {
-		const res = await agent.post("/api/deleteSong").send({ songId: 99 });
+		const res = await agent.delete("/api/song/99");
 		expect(res.status).toBe(404);
 	});
 
+	test("NaN songId", async () => {
+		const res = await agent.delete("/api/song/abc");
+		expect(res.status).toBe(400);
+	});
+
+	test("delete no id", async() => {
+		const res = await agent.delete("/api/song/");
+		expect(res.status).toBe(404);
+	});
+
+	
+
 	test("Check that songIDs are updated", async () => {
-		const newSong: ISongEntrySubmission = {
-			title: "Hello",
-			artist: "World",
-			album: "Test Album",
-			duration: 180,
-			genres: ["Rock"],
-			albumImageLoc: "",
-		};
-		for(let i = 1; i <=10; i++) {
-			const song = structuredClone(newSong);
-			song.title = `${song.title} ${i}`;
-			let res = await createSong(song, agent);
-			expect(res.status).toBe(200);
+		
+		for(let i = 1; i<=10; i++) {
+			const song: ISongEntrySubmission = {
+				title: `Test Song ${i}`,
+				artist: `Hatsune Miku`,
+				album: `Test Album`,
+				albumImageLoc: "",
+				duration: 5,
+				genres: ["Vocaloid"]
+			};
+			await createSong(song, agent);
 		}
 
-		let res = await agent.delete("/api/song/7");
+		let res = await agent.delete("/api/song/1");
 		expect(res.status).toBe(200);
 		expect(res.body).toHaveProperty("success", true);
-		res = await agent.get("/api/getSongInfo").query({ songId: 7 });
-		const song = res.body.song as ISongEntry;
-		expect(song.title).toBe("Hello 8");
+		for(let i = 2; i<=10; i++) {
+			res = await agent.get("/api/getSongInfo").query({ songId: i });
+			expect(res.status).toBe(200);
+			const song = res.body.song as ISongEntry;
+			expect(song.title).toBe(`Test Song ${i}`);
+		}
+		
 	});
 });
 

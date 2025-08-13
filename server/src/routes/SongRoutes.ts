@@ -1,6 +1,6 @@
 import { Router, Request, Response } from "express";
 import SongEntry, { songEntry_selectAllFields } from "../models/SongEntry.js";
-import { addSong, generateSearchQuery, removeMissingSongs } from "../dbMethods.js";
+import { addSong, generateSearchQuery } from "../dbMethods.js";
 import requireLogin from "./requireLogin.js";
 import { ISongEntry } from "../types/SongEntry.js";
 
@@ -113,8 +113,8 @@ songRouter.post("/addSong", requireLogin, async (req : Request, res : Response) 
 songRouter.delete("/song/:songId", requireLogin, async (req: Request, res: Response) => {
 	const { songId } = req.params;
 
-	if (!songId) {
-		res.status(403).json({ success: false, message: "No song ID provided." });
+	if (!songId || Number.isNaN(Number(songId))) {
+		res.status(400).json({ success: false, message: "No song ID provided." });
 		return;
 	}
 
@@ -124,7 +124,7 @@ songRouter.delete("/song/:songId", requireLogin, async (req: Request, res: Respo
 				res.status(404).json({ success: false, message: "Song not found." });
 				return;
 			}
-			await removeMissingSongs();
+
 			res.json({ success: true, message: "Song deleted successfully." });
 		})
 		.catch((error) => {
