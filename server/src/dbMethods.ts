@@ -31,7 +31,6 @@ export const addSong = async (songData: Omit<ISongEntry, "songId">) => {
 			for (const [field, errorObj] of Object.entries(error.errors)) {
 				accumulatedErrors.push(`Field: ${field}, Message: ${errorObj.message}`);
 			}
-			console.error(accumulatedErrors.join(", "));
 
 
 			throw new Error("Validation error: " + accumulatedErrors.join(", "), {

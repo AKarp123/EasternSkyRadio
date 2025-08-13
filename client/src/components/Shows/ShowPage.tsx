@@ -15,6 +15,7 @@ import ErrorContext from "../../providers/ErrorContext";
 import axios from "axios";
 import PageHeader from "../PageHeader";
 import type { ShowEntryMin } from "../../types/Shows";
+import { StandardResponse } from "../../types/global";
 
 
 
@@ -26,9 +27,9 @@ const ShowPage = () => {
 
 	useEffect(() => {
 		axios
-			.get<ShowEntryMin[]>("/api/shows")
+			.get<StandardResponse<"shows", ShowEntryMin[]>>("/api/shows")
 			.then((res) => {
-				setShowList(res.data);
+				setShowList(res.data.shows);
 				setLoading(false);
 			})
 			.catch(() => {

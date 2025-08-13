@@ -1,4 +1,4 @@
-import { describe, test, expect, beforeEach, beforeAll, afterAll, afterEach } from "bun:test";
+import { describe, test, expect, beforeAll, afterAll } from "bun:test";
 
 import { initTest } from "../../init.js";
 import { withUser } from ".././helpers/withUser.js";
@@ -7,7 +7,9 @@ import { generateSearchQuery } from "../../dbMethods.js";
 import { clearDatabase } from "../../db.js";
 import { createSong } from ".././helpers/create.js";
 
-
+afterAll(async() => {
+	await clearDatabase();
+});
 
 describe("Test Create Song API", function () {
 	let agent: Awaited<ReturnType<typeof withUser>>;
@@ -51,12 +53,14 @@ describe("Test Create Song API", function () {
 			.send({ songData: newSong });
 		expect(res.body).toHaveProperty("success", true);
 		expect(res.status).toBe(200);
+		const { songId } = res.body.song;
 
 		res = await agent
 			.post("/api/addSong")
 			.send({ songData: newSong });
 		expect(res.body).toHaveProperty("success", false);
 		expect(res.body.message).toBe("Song already exists.");
+		expect(res.body.song.songId).toBe(songId);
 	});
 
 	test("create song with missing params", async () => {
@@ -197,7 +201,6 @@ describe("Get Song Info", async() => {
 	beforeAll(async () => {
 		agent = await withUser();
 	});
-
 	test("get song info", async () => {
 		const res = await agent.get("/api/getSongInfo").query({ songId: 1 });
 		expect(res.status).toBe(200);

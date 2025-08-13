@@ -1,5 +1,6 @@
 import { Schema as schema, model, models } from "mongoose";
 import { ISongEntry } from "../types/SongEntry.js";
+import { generateSearchQuery } from "../dbMethods.js";
 
 
 
@@ -120,17 +121,7 @@ songEntrySchema.pre("save", function (next) {
 	if(!this.isModified(["artist", "title", "album", "origTitle", "origAlbum"])) {
 		return next();
 	}
-	this.searchQuery = [
-		this.artist,
-		this.title,
-		this.album,
-		this.origTitle || "",
-		this.origAlbum || "",
-	].join(" ")
-		.replaceAll(/[^\p{L}\p{N}\s]/gu, "") // remove special characters
-		.replaceAll(/\s+/g, " ") // collapse multiple spaces
-		.trim();
-
+	this.searchQuery = generateSearchQuery(this);
 	next();
 });
 

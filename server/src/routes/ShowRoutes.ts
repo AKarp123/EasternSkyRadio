@@ -5,6 +5,7 @@ import Increment from "../models/IncrementModel.js";
 import { removeMissingShows, updateLastPlayed } from "../dbMethods.js";
 import { ISongEntry } from "../types/SongEntry.js";
 import {  ShowEntrySubmission } from "../types/ShowData.js";
+import mongoose from "mongoose";
 
 
 
@@ -26,7 +27,7 @@ showRouter.get("/show/:id", async (req: Request, res: Response) => {
 		}   
 
 
-		res.json({ showData });
+		res.json({ success: true, show: showData });
 		return;
 	}
 });
@@ -48,17 +49,16 @@ showRouter.get("/shows", async (req: Request, res: Response) => {
 			.select("-songsList -_id")
 			.lean();
 
-		res.json(shows);
+		res.json({ success: true, shows });
 	}
 });
 
 showRouter.post("/show", requireLogin, async (req : Request, res: Response) => {
-	const { songsList, ...showData } : ShowEntrySubmission = req.body;
+	const { songsList, ...showData } : ShowEntrySubmission = req.body.showData;
 	try {
 
-		showData.showDate = new Date(showData.showDate);
-		showData.showDate.setHours(showData.showDate.getHours() + 5);
-
+		const showDate = new Date(showData.showDate);
+		showDate.setHours(showDate.getHours() + 5);
 		const nextShowId = await Increment.findOneAndUpdate(
 			{ model: "ShowEntry" },
 			{ $inc: { counter: 1 } },
@@ -67,23 +67,28 @@ showRouter.post("/show", requireLogin, async (req : Request, res: Response) => {
 
 		const newShow = new ShowEntry({
 			...showData,
+			showDate,
+			songsList: songsList.map(song => song._id),
 			showId: nextShowId.counter,
 		});
 		await newShow.save();
 		await updateLastPlayed(songsList, newShow.showDate);
 		res.json({ success: true, message: "Show added successfully." });
 	} catch (error) {
-		console.log(error);
 		await Increment.findOneAndUpdate(
 			{ model: "ShowEntry" },
 			{ $inc: { counter: -1 } }
 		);
-		res.status(500).json({ success: false, message: "Error adding show." });
+		if(error instanceof mongoose.Error.ValidationError) {
+			res.status(400).json({ success: false, message: Object.values(error.errors).map(err => err.message).join(', ') });
+		} else {
+			res.status(500).json({ success: false, message: "Error adding show." });
+		}
 	}
 });
 
 showRouter.patch("/show/:id", requireLogin, async (req: Request, res: Response) => {
-	const { ...showData } : Omit<ShowEntry, "songListCount"> = req.body;
+	const { showData } : { showData: Omit<ShowEntry, "songListCount"> } = req.body;
 	if(Number.parseInt(req.params.id) === undefined || isNaN(Number.parseInt(req.params.id))) {
 		res.status(400).json({ success: false, message: "No Show ID provided." });
 		return;

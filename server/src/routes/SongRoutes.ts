@@ -49,7 +49,7 @@ songRouter.get("/search", requireLogin, async (req: Request, res: Response) => {
 				.replaceAll(/[^\p{L}\p{N}\s]/gu, "")
 				.toLowerCase();
 			
-			const words = raw.split(/\s+/)
+			const words = raw.split(/\s+/);
 			const conditions = words.map((word) => ({
 				searchQuery: { $regex: new RegExp(word, "i") },
 			}));
@@ -79,7 +79,6 @@ songRouter.post("/addSong", requireLogin, async (req : Request, res : Response) 
 	const escapedArtist = escapeRegex(songData.artist);
 	const escapedAlbum = escapeRegex(songData.album);
 
-	console.log(escapedTitle, escapedArtist, escapedAlbum);
 
 	const checkDup = await SongEntry.findOne({
 		$and: [

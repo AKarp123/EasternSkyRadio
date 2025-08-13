@@ -13,8 +13,8 @@ export interface ShowEntry {
 }
 
 
-export interface ShowEntrySubmission extends Omit<ShowEntry, "songsList"> {
-    _id : Types.ObjectId; // Passed by UI, not stored in DB
-    song : ISongEntry;
+export interface ShowEntrySubmission extends Omit<ShowEntry, "songsList" | "showDate" | "showId"> {
+    _id? : Types.ObjectId; // Passed by UI, not stored in DB
+    showDate: string;
     songsList: (ISongEntry & { _id: Types.ObjectId })[]; // Array of song objects, not IDs
 }

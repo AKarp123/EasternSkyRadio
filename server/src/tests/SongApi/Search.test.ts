@@ -103,9 +103,9 @@ describe("Test Search API", () => {
 	});
 	
 	test("No query", async() => {
-		const res = await agent.get("/api/search")
+		const res = await agent.get("/api/search");
 		expect(res.status).toBe(400);
-	})
+	});
 
 	test("Elcro ID Search", async() => {
 		const newSong: ISongEntrySubmission = {
@@ -128,6 +128,7 @@ describe("Test Search API", () => {
 		
 
 		let res = await createSong(newSong, agent);
+		await createSong(newSong2, agent);
 		expect(res.status).toBe(200);
 		res = await agent.get("/api/search").query({
 			elcroId: "013245",

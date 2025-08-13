@@ -31,6 +31,7 @@ import ErrorContext from "../../providers/ErrorContext";
 import PageHeader from "../PageHeader";
 import { SongEntry } from "../../types/Song";
 import { ShowEntry } from "../../types/Shows";
+import { StandardResponse } from "../../types/global";
 
 
 const SetList = () => {
@@ -41,9 +42,9 @@ const SetList = () => {
 
 	useEffect(() => {
 		axios
-			.get<{ showData: ShowEntry }>(`/api/show/${showId}`)
+			.get<StandardResponse<"show", ShowEntry>>(`/api/show/${showId}`)
 			.then((res) => {
-				setShowData(res.data.showData);
+				setShowData(res.data.show);
 				setLoading(false);
 			})
 			.catch(() => {

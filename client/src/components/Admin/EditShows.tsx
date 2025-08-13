@@ -50,7 +50,7 @@ const EditShows = () => {
 	}, 500);
 
 	const submit = () => {
-		axios.patch<{ success: boolean; message: string }>(`/api/show/${showId}`, { showData }).then((res) => {
+		axios.patch<{ success: boolean; message: string }>(`/api/show/${showId}`, { showData: showData }).then((res) => {
 			if (res.data.success === false) {
 				setError(res.data.message);
 				return;

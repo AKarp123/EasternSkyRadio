@@ -30,7 +30,7 @@ const InitialState : NewShowState = {
 const NewShow = () => {
 	const setError = useContext(ErrorContext);
 	const [state, dispatch] = useReducer(reducer, InitialState);
-
+	console.log(state.showDate)
 	useEffect(() => {
 		let showState = localStorage.getItem("showState");
 		if (showState) {

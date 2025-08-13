@@ -18,6 +18,12 @@ const showEntrySchema = new schema<ShowEntry>(
 			type: [schema.Types.ObjectId],
 			ref: "SongEntry",
 			default: [],
+			validate: {
+				validator: function (v: Array<schema.Types.ObjectId>) {
+					return v.length > 0;
+				},
+				message: "Songs list cannot be empty.",
+			}
 		},
 	},
 	{
