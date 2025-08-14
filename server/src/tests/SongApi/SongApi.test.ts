@@ -29,7 +29,7 @@ describe("Test Create Song API", function () {
 			albumImageLoc: "",
 		};
 		const res = await agent
-			.post("/api/addSong")
+			.post("/api/song")
 			.send({ songData: newSong });
 		const song = res.body.song as ISongEntry;
 		expect(res.status).toBe(200);
@@ -50,14 +50,14 @@ describe("Test Create Song API", function () {
 			albumImageLoc: "",
 		};
 		let res = await agent
-			.post("/api/addSong")
+			.post("/api/song")
 			.send({ songData: newSong });
 		expect(res.body).toHaveProperty("success", true);
 		expect(res.status).toBe(200);
 		const { songId } = res.body.song;
 
 		res = await agent
-			.post("/api/addSong")
+			.post("/api/song")
 			.send({ songData: newSong });
 		expect(res.body).toHaveProperty("success", false);
 		expect(res.body.message).toBe("Song already exists.");
@@ -72,7 +72,7 @@ describe("Test Create Song API", function () {
 		};
 
 		const res = await agent
-			.post("/api/addSong")
+			.post("/api/song")
 			.send({ songData: newSong });
 		expect(res.body).toHaveProperty("success", false);
 		expect(res.status).toBe(400);
@@ -88,7 +88,7 @@ describe("Test Create Song API", function () {
 		};
 
 		const res = await agent
-			.post("/api/addSong")
+			.post("/api/song")
 			.send({ songData: newSong });
 		expect(res.body).toHaveProperty("success", false);
 		expect(res.status).toBe(400);
@@ -106,7 +106,7 @@ describe("Test Create Song API", function () {
 		};
 
 		const res = await agent
-			.post("/api/addSong")
+			.post("/api/song")
 			.send({ songData: newSong });
 		expect(res.body).toHaveProperty("success", false);
 		expect(res.status).toBe(400);
@@ -122,14 +122,13 @@ describe("Test Create Song API", function () {
 			genres: ["Rock"],
 		};
 
-		let res = await agent.post("/api/addSong").send({ songData: newSong });
+		let res = await agent.post("/api/song").send({ songData: newSong });
 
 		const song = res.body.song as ISongEntry;
 		expect(res.body).toHaveProperty("success", true);
 		expect(res.status).toBe(200);
 		res = await agent
-			.get("/api/getSongInfo")
-			.query({ songId: song.songId });
+			.get(`/api/song/${song.songId}`);
 
 		expect(res.status).toBe(200);
 		expect(res.body.song.artist).toBe("Test Artist");
@@ -138,7 +137,7 @@ describe("Test Create Song API", function () {
 
 	test("no data", async () => {
 
-		const res = await agent.post("/api/addSong").send({ songData: {} });
+		const res = await agent.post("/api/song").send({ songData: {} });
 		expect(res.body).toHaveProperty("success", false);
 		expect(res.body).toHaveProperty("message", "No song data provided.");
 		expect(res.status).toBe(400);
@@ -154,7 +153,7 @@ describe("Test Create Song API", function () {
 			genres: ["Rock"],
 		};
 
-		const res = await agent.post("/api/addSong").send({ songData: newSong });
+		const res = await agent.post("/api/song").send({ songData: newSong });
 		expect(res.body).toHaveProperty("success", true);
 		expect(res.status).toBe(200);
 
@@ -202,25 +201,25 @@ describe("Get Song Info", async() => {
 		agent = await withUser();
 	});
 	test("get song info", async () => {
-		const res = await agent.get("/api/getSongInfo").query({ songId: 1 });
+		const res = await agent.get("/api/song/1");
 		expect(res.status).toBe(200);
 		expect(res.body).toHaveProperty("success", true);
 	});
 
 	test("get song info for non-existent song", async () => {
-		const res = await agent.get("/api/getSongInfo").query({ songId: 99 });
+		const res = await agent.get("/api/song/99");
 		expect(res.status).toBe(404);
 		expect(res.body).toHaveProperty("success", false);
 	});
 
 	test("NaN songId", async () => {
-		const res = await agent.get("/api/getSongInfo").query({ songId: "NaN" });
+		const res = await agent.get("/api/song/NaN");
 		expect(res.status).toBe(400);
 		expect(res.body).toHaveProperty("success", false);
 	});
 	
 	test("Undefined", async() => {
-		const res = await agent.get("/api/getSongInfo");
+		const res = await agent.get("/api/song/undefined");
 		expect(res.status).toBe(400);
 		expect(res.body).toHaveProperty("success", false);
 	});
@@ -253,7 +252,7 @@ describe("Test Editing song API", () => {
 			title: "Edited Title",
 		};
 
-		res = await agent.post("/api/editSong").send({ songData: editedSong });
+		res = await agent.patch(`/api/song/${rest.songId}`).send({ songData: editedSong });
 		expect(res.status).toBe(200);
 		expect(res.body).toHaveProperty("success", true);
         
@@ -262,18 +261,50 @@ describe("Test Editing song API", () => {
 	});
 
 	test("edit validator", async() => {
-		let res = await agent.get("/api/getSongInfo").query({ songId: 1 });
+		let res = await agent.get("/api/song/1");
 		let song = res.body.song as ISongEntry;
 
 		song.elcroId = "321";
-		res = await agent.post("/api/editSong").send({ songData: song });
+		res = await agent.patch(`/api/song/${song.songId}`).send({ songData: song });
 		expect(res.status).toBe(400);
 		expect(res.body).toHaveProperty("success", false);
 	});
 
 	test("Edit song of non-existent song", async () => {
-		const res = await agent.post("/api/editSong").send({ songData: { songId: 99 } });
+		const res = await agent.patch("/api/song/99").send({ songData: { songId: 99 } });
 		expect(res.status).toBe(404);
+	});
+
+	test("Edit NaN songId", async () => {
+		const res = await agent.patch("/api/song/NaN").send({ songData: { songId: "NaN" } });
+		expect(res.status).toBe(400);
+		expect(res.body).toHaveProperty("success", false);
+	});
+
+	test("Attempt to modify song id", async() => {
+		const song : ISongEntrySubmission = {
+			title: "Fairytale",
+			artist: "Cillia",
+			album: "Fairytale",
+			albumImageLoc: "",
+			genres: ["Pop"],
+			duration: 15,
+
+		}
+		let res = await createSong(song, agent);
+		expect(res.status).toBe(200);
+		const songId = res.body.song.songId;
+		res = await agent.patch(`/api/song/${songId}`).send({ songData: { songId: 727, album: "Fairytale (Teto)" } });
+		
+		res = await agent.get(`/api/song/727`);
+		expect(res.status).toBe(404);
+		expect(res.body).toHaveProperty("success", false);
+
+		res = await agent.get(`/api/song/${songId}`);
+		expect(res.status).toBe(200);
+		expect(res.body).toHaveProperty("success", true);
+		expect(res.body.song.album).toBe("Fairytale (Teto)");
+
 	});
 });
 

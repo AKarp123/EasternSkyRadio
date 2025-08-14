@@ -13,7 +13,7 @@ import { Types } from "mongoose";
  */
 export const createSong = async (songData: ISongEntrySubmission, agent?: Awaited<ReturnType<typeof withUser>>) => {
 	const localAgent = agent || await withUser();
-	const res = await localAgent.post("/api/addSong").send({ songData });
+	const res = await localAgent.post("/api/song").send({ songData });
 	return res;
 };
 

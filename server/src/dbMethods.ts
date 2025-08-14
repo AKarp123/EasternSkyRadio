@@ -25,15 +25,18 @@ export const addSong = async (songData: Omit<ISongEntry, "songId">) => {
 		if (error instanceof mongoose.Error.ValidationError) {
 			const accumulatedErrors: string[] = [];
 
-
 			for (const [field, errorObj] of Object.entries(error.errors)) {
-				accumulatedErrors.push(`Field: ${field}, Message: ${errorObj.message}`);
+				accumulatedErrors.push(
+					`Field: ${field}, Message: ${errorObj.message}`
+				);
 			}
 
-
-			throw new Error("Validation error: " + accumulatedErrors.join(", "), {
-				cause: error,
-			});
+			throw new Error(
+				"Validation error: " + accumulatedErrors.join(", "),
+				{
+					cause: error,
+				}
+			);
 		} else if (error instanceof mongoose.Error.ValidatorError) {
 			throw new TypeError("Validator error: " + error.message, {
 				cause: error,
@@ -75,7 +78,7 @@ export const findSong = async (songName: string) => {
 //     return await show.save();
 // };
 
-export const updateShowIds = async(deletedId: number) => {
+export const updateShowIds = async (deletedId: number) => {
 	await ShowEntry.updateMany(
 		{ showId: { $gt: deletedId } },
 		{ $inc: { showId: -1 } }
@@ -148,10 +151,16 @@ export const generateSearchQuery = ({
 	album,
 	origTitle,
 	origAlbum,
-}: ISongEntry) => {
+}: Pick<ISongEntry, "artist" | "title" | "album" | "origTitle" | "origAlbum"> &
+    Partial<
+        Omit<
+            ISongEntry,
+            "artist" | "title" | "album" | "origTitle" | "origAlbum"
+        >
+    >) => {
 	return [artist, title, album, origTitle || "", origAlbum || ""]
 		.join(" ")
-		.replaceAll(/[^\p{L}\p{N}\s]/gu, "")  
+		.replaceAll(/[^\p{L}\p{N}\s]/gu, "")
 		.replaceAll(/\s+/g, " ")
 		.toLowerCase()
 		.trim();

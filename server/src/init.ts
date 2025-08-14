@@ -5,6 +5,7 @@ import { clearDatabase, connectToDatabase } from "./db.js";
 
 
 
+
 const initializeDatabase = async () => {
     
 	await new Increment({ model: "SongEntry" }).save();

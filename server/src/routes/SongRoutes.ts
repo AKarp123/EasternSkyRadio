@@ -11,12 +11,12 @@ const escapeRegex = (string : string) => {
 	return string.replaceAll(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`);
 };
 
-songRouter.get("/getSongInfo", requireLogin, async (req : Request, res : Response) => {
-	if (req.query.songId === undefined || Number.isNaN(Number(req.query.songId))) {
+songRouter.get("/song/:id", requireLogin, async (req : Request, res : Response) => {
+	if (req.params.id === undefined || Number.isNaN(Number(req.params.id))) {
 		res.status(400).json({ success: false, message: "No Song ID provided." });
 	} else {
 		const songData = await SongEntry.findOne(
-			{ songId: req.query.songId },
+			{ songId: req.params.id },
 			{ __v: 0 }
 		).lean();
 
@@ -65,7 +65,7 @@ songRouter.get("/search", requireLogin, async (req: Request, res: Response) => {
 	}
 });
 
-songRouter.post("/addSong", requireLogin, async (req : Request, res : Response) => {
+songRouter.post("/song", requireLogin, async (req : Request, res : Response) => {
 	const { songData } : { songData : Omit<ISongEntry, "songId"> } = req.body;
 
 
@@ -132,14 +132,15 @@ songRouter.delete("/song/:songId", requireLogin, async (req: Request, res: Respo
 		});
 });
 
-songRouter.post("/editSong", requireLogin, async (req: Request, res: Response) => {
-	const { songData } : { songData : ISongEntry } = req.body;
-	if (!songData || !songData.songId) {
-		res.status(400).json({ success: false, message: "No song data provided." });
+songRouter.patch("/song/:id", requireLogin, async (req: Request, res: Response) => {
+	const { _id, songId, ...songData } : { _id: string, songId: number } & ISongEntry = req.body.songData;
+	if (!songData || Number.isNaN(parseInt(req.params.id))) {
+		res.status(400).json({ success: false, message: "No Song Data or incorrect id" });
 		return;
 	}
+	const id = parseInt(req.params.id);
 	const searchQuery = generateSearchQuery(songData);
-	SongEntry.findOneAndUpdate({ songId: songData.songId }, { ...songData, searchQuery }, {
+	SongEntry.findOneAndUpdate({ songId: id }, { ...songData, searchQuery }, {
 		new: true,
 		runValidators: true,
 	}).select(songEntry_selectAllFields)

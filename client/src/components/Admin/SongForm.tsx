@@ -97,7 +97,7 @@ const SongForm = ({
 		const songObject = state;
 		e.preventDefault();
 		axios
-			.post<StandardResponse<"song", SongEntry>>("/api/addSong", {
+			.post<StandardResponse<"song", SongEntry>>("/api/song", {
 				songData: songObject,
 			})
 			.then((res) => {

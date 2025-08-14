@@ -34,7 +34,7 @@ showRouter.get("/show/:id", async (req: Request, res: Response) => {
 });
 
 showRouter.get("/shows", async (req: Request, res: Response) => {
-	if (req.query.offset) {
+	if (req.query.offset) { //TODO: Delete if statement - not needed anymore
 		const offset = Number.parseInt(req.query.offset as string);
 		const shows = await ShowEntry.find({}, { _id: 0, __v: 0 })
 			.sort({ showId: "asc" })
@@ -89,7 +89,7 @@ showRouter.post("/show", requireLogin, async (req : Request, res: Response) => {
 });
 
 showRouter.patch("/show/:id", requireLogin, async (req: Request, res: Response) => {
-	const { showData } : { showData: Omit<ShowEntry, "songListCount"> } = req.body;
+	const { _id, showId, ...showData } : { _id: string, showId: number} & Omit<ShowEntry, "songListCount">  = req.body.showData
 	if(Number.parseInt(req.params.id) === undefined || Number.isNaN(Number.parseInt(req.params.id))) {
 		res.status(400).json({ success: false, message: "No Show ID provided." });
 		return;

@@ -58,7 +58,7 @@ const EditSongs = () => {
 	const handleSubmit = (e: React.FormEvent<HTMLFormElement>, songData: SongEntryForm) => {
 		e.preventDefault();
 
-		axios.post("/api/editSong", { songData }).then((res) => {
+		axios.patch(`/api/song/${editSong.songId}`, { songData }).then((res) => {
 			if (res.data.success === false) {
 				setError(res.data.message);
 				return;

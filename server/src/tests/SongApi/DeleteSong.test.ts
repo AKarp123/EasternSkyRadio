@@ -73,7 +73,7 @@ describe("Test Delete Api", () => {
 		expect(res.status).toBe(200);
 		expect(res.body).toHaveProperty("success", true);
 		for(let i = 2; i<=10; i++) {
-			res = await agent.get("/api/getSongInfo").query({ songId: i });
+			res = await agent.get(`/api/song/${i}`);
 			expect(res.status).toBe(200);
 			const song = res.body.song as ISongEntry;
 			expect(song.title).toBe(`Test Song ${i}`);

@@ -551,8 +551,12 @@ const SetPlannerForm = ({ dispatch, entry, index }: SetPlannerFormProperties) =>
 	const setError = useContext(ErrorContext);
 	const [duration, setDuration] = useState("");
 	const editSong = () => {
+		if (entry.type !== "Song" || !entry.item.songId) {
+			setError("Invalid song entry");
+			return;
+		}
 		axios
-			.post(`/api/editSong`, { songData: { ...entry.item, duration } })
+			.patch(`/api/song/${entry.item.songId}`, { songData: { ...entry.item, duration } })
 			.then((res) => {
 				if (res.data.success === false) {
 					setError(res.data.message);

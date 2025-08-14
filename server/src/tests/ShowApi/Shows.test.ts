@@ -205,5 +205,17 @@ describe("Show Deletion Tests", () => {
 			expect(show.showId).toEqual(i+1);
 		}
 	});
+
+	test("Delete non existent show", async() => {
+		let res = await agent.delete("/api/show/999");
+		expect(res.status).toBe(404);
+		expect(res.body.success).toBe(false);
+	});
+
+	test("Delete NaN", async() => {
+		let res = await agent.delete("/api/show/nan");
+		expect(res.status).toBe(400);
+		expect(res.body.success).toBe(false);
+	});
 });
 

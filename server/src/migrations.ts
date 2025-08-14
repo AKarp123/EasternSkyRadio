@@ -2,8 +2,8 @@ import { Migrator } from "ts-migrate-mongoose";
 
 const migrator = await Migrator.connect({
 	uri: process.env.MONGODB_URI || "",
-	autosync: true,
 	migrationsPath: "./migrations",
+	autosync: true,
 	templatePath: "./migrations/template.ts",
 
 });

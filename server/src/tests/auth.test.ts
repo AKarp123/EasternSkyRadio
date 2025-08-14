@@ -47,7 +47,7 @@ describe('Test protected routes', () => {
 	});
 	test('Should not allow a person to access protected routes without logging in', async () => {
 		const agent = request.agent(app);
-		const res = await agent.get('/api/getSongInfo');
+		const res = await agent.get('/api/song/9');
 		expect(res.status).toBe(401);
 	});
 });
