@@ -1,5 +1,6 @@
 import { Migrator } from "ts-migrate-mongoose";
 
+
 export const migrator = await Migrator.connect({
 	uri: process.env.MONGODB_URI || "",
 	migrationsPath: "./migrations",

@@ -89,7 +89,7 @@ showRouter.post("/show", requireLogin, async (req : Request, res: Response) => {
 });
 
 showRouter.patch("/show/:id", requireLogin, async (req: Request, res: Response) => {
-	const { _id, showId, ...showData } : { _id: string, showId: number} & Omit<ShowEntry & { songsList: ISongEntry[] }, "songListCount">  = req.body.showData
+	const { _id, showId, ...showData } : { _id: string, showId: number} & Omit<ShowEntry & { songsList: ISongEntry[] }, "songListCount">  = req.body.showData;
 	if(Number.parseInt(req.params.id) === undefined || Number.isNaN(Number.parseInt(req.params.id))) {
 		res.status(400).json({ success: false, message: "No Show ID provided." });
 		return;

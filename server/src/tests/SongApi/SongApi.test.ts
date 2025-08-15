@@ -290,7 +290,7 @@ describe("Test Editing song API", () => {
 			genres: ["Pop"],
 			duration: 15,
 
-		}
+		};
 		let res = await createSong(song, agent);
 		expect(res.status).toBe(200);
 		const songId = res.body.song.songId;

@@ -134,11 +134,11 @@ songRouter.delete("/song/:songId", requireLogin, async (req: Request, res: Respo
 
 songRouter.patch("/song/:id", requireLogin, async (req: Request, res: Response) => {
 	const { _id, songId, ...songData } : { _id: string, songId: number } & ISongEntry = req.body.songData;
-	if (!songData || Number.isNaN(parseInt(req.params.id))) {
+	if (!songData || Number.isNaN(Number.parseInt(req.params.id))) {
 		res.status(400).json({ success: false, message: "No Song Data or incorrect id" });
 		return;
 	}
-	const id = parseInt(req.params.id);
+	const id = Number.parseInt(req.params.id);
 	const searchQuery = generateSearchQuery(songData);
 	SongEntry.findOneAndUpdate({ songId: id }, { ...songData, searchQuery }, {
 		new: true,
