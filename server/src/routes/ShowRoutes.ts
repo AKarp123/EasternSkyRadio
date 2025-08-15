@@ -74,7 +74,7 @@ showRouter.post("/show", requireLogin, async (req : Request, res: Response) => {
 		});
 		await newShow.save();
 		await updateLastPlayed(songsList, newShow.showDate);
-		res.json({ success: true, message: "Show added successfully." });
+		res.status(201).json({ success: true, message: "Show added successfully." });
 	} catch (error) {
 		await Increment.findOneAndUpdate(
 			{ model: "ShowEntry" },
@@ -89,7 +89,7 @@ showRouter.post("/show", requireLogin, async (req : Request, res: Response) => {
 });
 
 showRouter.patch("/show/:id", requireLogin, async (req: Request, res: Response) => {
-	const { _id, showId, ...showData } : { _id: string, showId: number} & Omit<ShowEntry, "songListCount">  = req.body.showData
+	const { _id, showId, ...showData } : { _id: string, showId: number} & Omit<ShowEntry & { songsList: ISongEntry[] }, "songListCount">  = req.body.showData
 	if(Number.parseInt(req.params.id) === undefined || Number.isNaN(Number.parseInt(req.params.id))) {
 		res.status(400).json({ success: false, message: "No Show ID provided." });
 		return;
@@ -101,22 +101,26 @@ showRouter.patch("/show/:id", requireLogin, async (req: Request, res: Response) 
 			res.status(404).json({ success: false, message: "Show not found." });
 			return;
 		}
-		show.songsList = showData.songsList;
-		let tempShowDate = new Date(showData.showDate);
-		tempShowDate.setHours(tempShowDate.getHours() + 5);
-		show.showDate = tempShowDate;
-    
-		show.showDescription = showData.showDescription;
+		if (showData.songsList) {
+			show.songsList = showData.songsList.map(song => song._id);
+		}
+		if(showData.showDate) {
+			let tempShowDate = new Date(showData.showDate);
+			tempShowDate.setHours(tempShowDate.getHours() + 5);
+			show.showDate = tempShowDate;
+		}
+
+		show.showDescription = showData.showDescription || show.showDescription;
 		show.save()
 			.then(() => {
 				res.json({ success: true, message: "Show Updated!" });
 			})
-			.catch(() => {
-				res.status(500).json({ success: false, message: "Error adding song to show." });
+			.catch((error) => {
+				res.status(500).json({ success: false, message: "Error adding song to show.", error });
 			});
 	} catch(error){
 		console.error(error);
-		res.status(500).json({ success: false, message: "Error updating show." });
+		res.status(500).json({ success: false, message: "Error updating show.", error });
 	}
     
     

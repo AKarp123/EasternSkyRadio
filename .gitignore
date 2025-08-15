@@ -6,3 +6,4 @@ server/src/config/serviceaccountkey.json
 **/.DS_Store
 **/dist/
 **/build/
+test_data/

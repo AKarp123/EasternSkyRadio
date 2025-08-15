@@ -23,7 +23,7 @@ import { SongSearch } from "./NewShow";
 import { SongEntry } from "../../types/Song";
 import { reducer } from "../../reducers/EditShowsReducer";
 import { ShowEntry } from "../../types/Shows";
-import { StandardResponseNoData } from "../../types/global";
+import { StandardResponse, StandardResponseNoData } from "../../types/global";
 
 const EditShows = () => {
 	const [showData, dispatch] = useReducer(reducer, {
@@ -38,9 +38,9 @@ const EditShows = () => {
 	const fillShow = useDebouncedCallback(() => {
 		if (showId === "") return;
 		axios
-			.get<{ showData: ShowEntry }>(`/api/show/${showId}`)
+			.get<StandardResponse<"show", ShowEntry>>(`/api/show/${showId}`)
 			.then((res) => {
-				dispatch({ type: "fill", payload: { ...res.data.showData } });
+				dispatch({ type: "fill", payload: { ...res.data.show } });
 			})
 			.catch((error) => {
 				console.error(error);

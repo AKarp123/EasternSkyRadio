@@ -8,6 +8,7 @@ services:
     command: bun run test
     volumes:
       - ./server:/app
+      - ./test_data:/test_data
     ports:
       - "8000:3000"
     env_file:

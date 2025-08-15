@@ -41,7 +41,7 @@ describe("Create Show Tests", () => {
 		};
 		let res = await agent.post("/api/show").send({ showData: show });
 
-		expect(res.status).toBe(200);
+		expect(res.status).toBe(201);
 		expect(res.body.success).toBe(true);
 
 		res = await agent.get("/api/show/1");
@@ -74,11 +74,11 @@ describe("Create Show Tests", () => {
 		};
 
 		let res = await agent.post("/api/show").send({ showData: show });
-		expect(res.status).toBe(200);
+		expect(res.status).toBe(201);
 		expect(res.body.success).toBe(true);
 
 		res = await agent.post("/api/show").send({ showData: show });
-		expect(res.status).toBe(200);
+		expect(res.status).toBe(201);
 		expect(res.body.success).toBe(true);
 
 		res = await agent.get("/api/show/2");

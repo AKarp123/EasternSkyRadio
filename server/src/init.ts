@@ -20,7 +20,6 @@ const initializeDatabase = async () => {
 const initializeApp = async() => {
 	const user = await User.findOne({ username: "admin" });
 	if (user) {
-
 		if(!user.migrated) {
 			await user.setPassword(process.env.ADMIN_PASSWORD || "default");
 			user.migrated = true;
