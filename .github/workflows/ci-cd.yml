@@ -10,7 +10,8 @@ on:
 jobs:
   lint-backend:
     runs-on: ubuntu-latest
-    
+    continue-on-error: true
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
@@ -24,3 +25,28 @@ jobs:
       - name: Run linter
         run: bun run lint
         working-directory: ./server
+  lint-frontend:
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    defaults:
+      run:
+        working-directory: ./client
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: "Set up node"
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      
+
+      - name: "Install pnpm"
+        run: "npm install -g pnpm"
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Run linter
+        run: pnpm run lint
