@@ -75,7 +75,7 @@ const Graphic = () => {
 							height: "auto",
 						}}
 					>
-                    Show #{showId} -{" "}
+						Show #{showId} -{" "}
 						{new Date(showData.showDate).toDateString()}
 					</Typography>
 				</Container>

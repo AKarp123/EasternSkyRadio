@@ -23,7 +23,7 @@ import { SongSearch } from "./NewShow";
 import { SongEntry } from "../../types/Song";
 import { reducer } from "../../reducers/EditShowsReducer";
 import { ShowEntry } from "../../types/Shows";
-import { StandardResponseNoData } from "../../types/global";
+import { StandardResponse, StandardResponseNoData } from "../../types/global";
 
 const EditShows = () => {
 	const [showData, dispatch] = useReducer(reducer, {
@@ -38,9 +38,9 @@ const EditShows = () => {
 	const fillShow = useDebouncedCallback(() => {
 		if (showId === "") return;
 		axios
-			.get<{ showData: ShowEntry }>(`/api/show/${showId}`)
+			.get<StandardResponse<"show", ShowEntry>>(`/api/show/${showId}`)
 			.then((res) => {
-				dispatch({ type: "fill", payload: { ...res.data.showData } });
+				dispatch({ type: "fill", payload: { ...res.data.show } });
 			})
 			.catch((error) => {
 				console.error(error);
@@ -50,7 +50,7 @@ const EditShows = () => {
 	}, 500);
 
 	const submit = () => {
-		axios.patch<{ success: boolean; message: string }>(`/api/show/${showId}`, { showData }).then((res) => {
+		axios.patch<{ success: boolean; message: string }>(`/api/show/${showId}`, { showData: showData }).then((res) => {
 			if (res.data.success === false) {
 				setError(res.data.message);
 				return;
@@ -111,7 +111,7 @@ const EditShows = () => {
 								/>
 								<Button onClick={() => submit()}>Submit</Button>
 								<Button color="error" onClick={() => deleteShow()}>
-                                    Delete Show
+									Delete Show
 								</Button>
 							</Stack>
                 
@@ -185,9 +185,9 @@ const EditShows = () => {
 };
 
 type SongListProperties = {
-    song: SongEntry;
-    removeSong: (index: number) => void;
-    index: number;
+	song: SongEntry;
+	removeSong: (index: number) => void;
+	index: number;
 }
 
 const SongListItem = ({ song, removeSong, index }: SongListProperties) => (
@@ -199,7 +199,7 @@ const SongListItem = ({ song, removeSong, index }: SongListProperties) => (
 );
 
 const EditSongOrder = ({ editOrder } : {
-    editOrder: (currentIndex: number, newIndex: number) => void;
+	editOrder: (currentIndex: number, newIndex: number) => void;
 }) => {
 	const [currentIndex, setCurrentIndex] = useState(-1);
 	const [newIndex, setNewIndex] = useState(-1);
@@ -233,7 +233,7 @@ const EditSongOrder = ({ editOrder } : {
 					<Button
 						onClick={() => editOrder(currentIndex - 1, newIndex - 1)}
 					>
-                        Edit Order
+						Edit Order
 					</Button>
 				</ListItem>
 			</List>

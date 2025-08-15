@@ -1,5 +1,5 @@
 import admin from "firebase-admin";
-import "dotenv/config";
+
 
 const { credential } = admin;
 
@@ -25,6 +25,6 @@ const initializeAdmin = () => {
 	console.log("Connected to Firebase"); //eslint-disable-line no-console
 };
 
-export default initializeAdmin
+export default initializeAdmin;
 
 

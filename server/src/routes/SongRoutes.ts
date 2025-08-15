@@ -1,8 +1,9 @@
 import { Router, Request, Response } from "express";
-import SongEntry from "../models/SongEntry.js";
-import { addSong, generateSearchQuery, removeMissingShows, removeMissingSongs } from "../dbMethods.js";
+import SongEntry, { songEntry_selectAllFields } from "../models/SongEntry.js";
+import { addSong, generateSearchQuery } from "../dbMethods.js";
 import requireLogin from "./requireLogin.js";
-import { SongEntry as ISongEntry } from "../types/SongEntry.js";
+import { ISongEntry } from "../types/SongEntry.js";
+
 
 const songRouter = Router();
 
@@ -10,27 +11,33 @@ const escapeRegex = (string : string) => {
 	return string.replaceAll(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`);
 };
 
-songRouter.get("/getSongInfo", async (req : Request, res : Response) => {
-	if (req.query.songId === undefined) {
-		res.json({ success: false, message: "No Song ID provided." });
+songRouter.get("/song/:id", requireLogin, async (req : Request, res : Response) => {
+	if (req.params.id === undefined || Number.isNaN(Number(req.params.id))) {
+		res.status(400).json({ success: false, message: "No Song ID provided." });
 	} else {
 		const songData = await SongEntry.findOne(
-			{ songID: req.query.songId },
+			{ songId: req.params.id },
 			{ __v: 0 }
-		);
-		res.json(songData);
+		).lean();
+
+		if (!songData) {
+			res.status(404).json({ success: false, message: "Song not found." });
+			return;
+		}
+
+		res.json({ success: true, song: songData });
 	}
 });
 
 songRouter.get("/search", requireLogin, async (req: Request, res: Response) => {
 	try {
-		if (req.query.query === "") {
-			res.json({ success: false, message: "No search query provided." });
+		if (req.query.query === "" || (req.query.query === undefined && req.query.elcroId === undefined)) {
+			res.status(400).json({ success: false, message: "No search query provided." });
 		} else if (req.query.elcroId) {
 			const searchResults = await SongEntry.find({
 				elcroId: req.query.elcroId,
 			}).select(
-				"-__v" + (req.user ? " +elcroId +duration +lastPlayed" : "")
+				(req.user ? songEntry_selectAllFields : "")
 			);
 			res.json({
 				success: true,
@@ -39,16 +46,17 @@ songRouter.get("/search", requireLogin, async (req: Request, res: Response) => {
 		} else {
 			const raw = (req.query.query as string)
 				.trim()
+				.replaceAll(/[^\p{L}\p{N}\s]/gu, "")
 				.toLowerCase();
-
-			const words = raw.split(/\s+/).map((word) => escapeRegex(word));
+			
+			const words = raw.split(/\s+/);
 			const conditions = words.map((word) => ({
 				searchQuery: { $regex: new RegExp(word, "i") },
 			}));
 			const searchResults = await SongEntry.find({
 				$and: conditions,
 			})
-				.select("-__v" + (req.user ? " +elcroId +duration +lastPlayed" : ""))
+				.select((req.user ? songEntry_selectAllFields : ""))
 				.limit(20);
 			res.json({ success: true, searchResults: searchResults });
 		}
@@ -57,11 +65,12 @@ songRouter.get("/search", requireLogin, async (req: Request, res: Response) => {
 	}
 });
 
-songRouter.post("/addSong", requireLogin, async (req : Request, res : Response) => {
+songRouter.post("/song", requireLogin, async (req : Request, res : Response) => {
 	const { songData } : { songData : Omit<ISongEntry, "songId"> } = req.body;
 
-	if (!songData) {
-		res.json({ success: false, message: "No song data provided." });
+
+	if (!songData || !songData.title || !songData.artist || !songData.album) {
+		res.status(400).json({ success: false, message: "No song data provided." });
 		return;
 	}
 
@@ -70,7 +79,6 @@ songRouter.post("/addSong", requireLogin, async (req : Request, res : Response) 
 	const escapedArtist = escapeRegex(songData.artist);
 	const escapedAlbum = escapeRegex(songData.album);
 
-	console.log(escapedTitle, escapedArtist, escapedAlbum);
 
 	const checkDup = await SongEntry.findOne({
 		$and: [
@@ -78,7 +86,7 @@ songRouter.post("/addSong", requireLogin, async (req : Request, res : Response) 
 			{ artist: { $regex: new RegExp(`^${escapedArtist}$`, "i") } },
 			{ album: { $regex: new RegExp(`^${escapedAlbum}$`, "i") } },
 		],
-	}).select("-__v +elcroId +duration");
+	}).select(songEntry_selectAllFields);
 
     
 	if (checkDup) {
@@ -89,7 +97,6 @@ songRouter.post("/addSong", requireLogin, async (req : Request, res : Response) 
 		});
 		return;
 	}
-
 	addSong(songData)
 		.then((newSong) => {
 			res.json({
@@ -99,21 +106,25 @@ songRouter.post("/addSong", requireLogin, async (req : Request, res : Response) 
 			});
 		})
 		.catch((error) => {
-			res.json({ success: false, message: error.message });
+			res.status(400).json({ success: false, message: error.message });
 		});
 });
 
-songRouter.delete("/song", requireLogin, async (req: Request, res: Response) => {
-	const { songId } = req.query;
+songRouter.delete("/song/:songId", requireLogin, async (req: Request, res: Response) => {
+	const { songId } = req.params;
 
-	if (!songId) {
-		res.json({ success: false, message: "No song ID provided." });
+	if (!songId || Number.isNaN(Number(songId))) {
+		res.status(400).json({ success: false, message: "No song ID provided." });
 		return;
 	}
 
 	SongEntry.deleteOne({ songId: songId })
-		.then(async () => {
-			await removeMissingSongs();
+		.then(async (result) => {
+			if(result.deletedCount === 0) {
+				res.status(404).json({ success: false, message: "Song not found." });
+				return;
+			}
+
 			res.json({ success: true, message: "Song deleted successfully." });
 		})
 		.catch((error) => {
@@ -121,19 +132,23 @@ songRouter.delete("/song", requireLogin, async (req: Request, res: Response) => 
 		});
 });
 
-songRouter.post("/editSong", requireLogin, async (req: Request, res: Response) => {
-	const { songData } : { songData : ISongEntry } = req.body;
-
-	if (!songData) {
-		res.json({ success: false, message: "No song data provided." });
+songRouter.patch("/song/:id", requireLogin, async (req: Request, res: Response) => {
+	const { _id, songId, ...songData } : { _id: string, songId: number } & ISongEntry = req.body.songData;
+	if (!songData || Number.isNaN(Number.parseInt(req.params.id))) {
+		res.status(400).json({ success: false, message: "No Song Data or incorrect id" });
 		return;
 	}
+	const id = Number.parseInt(req.params.id);
 	const searchQuery = generateSearchQuery(songData);
-	SongEntry.findOneAndUpdate({ songId: songData.songId }, { songData, searchQuery }, {
+	SongEntry.findOneAndUpdate({ songId: id }, { ...songData, searchQuery }, {
 		new: true,
 		runValidators: true,
-	})
+	}).select(songEntry_selectAllFields)
 		.then((updatedSong) => {
+			if(!updatedSong) {
+				res.status(404).json({ success: false, message: "Song not found." });
+				return;
+			}
 			res.json({
 				success: true,
 				message: "Song updated successfully.",
@@ -141,8 +156,10 @@ songRouter.post("/editSong", requireLogin, async (req: Request, res: Response) =
 			});
 		})
 		.catch((error) => {
-			res.json({ success: false, message: error.message });
+			res.status(400).json({ success: false, message: error.message });
 		});
+	;
+	
 });
 
 export default songRouter;

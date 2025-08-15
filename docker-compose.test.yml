@@ -1,0 +1,22 @@
+
+
+services: 
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile.dev
+    command: bun run test
+    volumes:
+      - ./server:/app
+      - ./test_data:/test_data
+    ports:
+      - "8000:3000"
+    env_file:
+      - ./server/.env.test
+    depends_on:
+      - mongo
+  mongo:
+    image: mongo:latest
+    ports:
+      - "27020:27017"
+    attach: false

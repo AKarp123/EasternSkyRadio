@@ -1,7 +1,6 @@
 import { Router, Request, Response } from "express";
 import SyncModel from "../models/SyncModel.js";
 import requireLogin from "./requireLogin.js";
-import { Sync } from "../types/Sync.js";
 
 const SyncRouter = Router();
 

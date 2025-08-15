@@ -15,6 +15,7 @@ import ErrorContext from "../../providers/ErrorContext";
 import axios from "axios";
 import PageHeader from "../PageHeader";
 import type { ShowEntryMin } from "../../types/Shows";
+import { StandardResponse } from "../../types/global";
 
 
 
@@ -26,9 +27,11 @@ const ShowPage = () => {
 
 	useEffect(() => {
 		axios
-			.get<ShowEntryMin[]>("/api/shows")
+			.get<StandardResponse<"shows", ShowEntryMin[]>>("/api/shows")
 			.then((res) => {
-				setShowList(res.data);
+				setShowList(res.data.shows.sort((a, b) => {
+					return b.showId - a.showId;
+				}));
 				setLoading(false);
 			})
 			.catch(() => {
@@ -55,8 +58,8 @@ const ShowPage = () => {
 };
 
 type ShowPageProperties = {
-    showList: ShowEntryMin[];
-    setShowList: (shows: ShowEntryMin[]) => void;
+	showList: ShowEntryMin[];
+	setShowList: (shows: ShowEntryMin[]) => void;
 };
 
 const ShowPageMain = ({ showList } : ShowPageProperties) => {
@@ -66,7 +69,7 @@ const ShowPageMain = ({ showList } : ShowPageProperties) => {
 				variant="h2"
 				sx={{ fontFamily: "Tiny5, Roboto", mx: "auto" }}
 			>
-                No shows available
+				No shows available
 			</Typography>
 		);
 	}
@@ -129,7 +132,7 @@ const ShowListItem = ({ show } : { show: ShowEntryMin}) => {
 				}}
 			>
 				<Typography variant="h3" sx={{ fontFamily: "Tiny5, Roboto" }}>
-                    #{show.showId} - {showDate.getMonth() + 1}/
+					#{show.showId} - {showDate.getMonth() + 1}/
 					{showDate.getDate()}/{showDate.getFullYear()}
 				</Typography>
 				<SvgIcon

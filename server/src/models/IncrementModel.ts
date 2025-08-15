@@ -1,5 +1,5 @@
 import { Schema as schema, model } from "mongoose";
-import { Increment } from "../types/Increment";
+import { Increment } from "../types/Increment.js";
 
 
 const IncrementSchema = new schema<Increment>({
@@ -9,7 +9,7 @@ const IncrementSchema = new schema<Increment>({
 
 const Increment = model<Increment>("Increment", IncrementSchema);
 
-export default Increment
+export default Increment;
 
 
 

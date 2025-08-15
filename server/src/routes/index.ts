@@ -4,16 +4,15 @@ import showRouter from "./ShowRoutes.js";
 import SongRouter from "./SongRoutes.js";
 import passport from "passport";
 import multer from "multer";
-import { getStorage } from "firebase-admin/storage";
+import { getStorage } from "firebase-admin/storage"; //eslint-disable-line import/extensions
 import initializeAdmin from "../config/admin.js";
 import requireLogin from "./requireLogin.js";
-import { generateStats, updateShowTimes } from "../dbMethods.js";
+import { generateStats } from "../dbMethods.js";
 import axios from "axios";
 import NodeCache from "node-cache";
 import SyncRouter from "./SyncRoutes.js";
 import UserRouter from "./UserRoutes.js";
-import { UserDocument } from "../types/User.js";
-import User from "../models/UserModel.js";
+
 
 const statsCache = new NodeCache({ stdTTL: 300 });
 
@@ -35,7 +34,7 @@ router.get("/getStats", async (req, res) => {
 	}
 
 	const stats = await generateStats();
-	console.log(stats)
+
 	statsCache.set("stats", stats);
 
 	res.json(stats);
@@ -91,7 +90,7 @@ router.post(
 		const storageRef = storage
 			.bucket()
 			.file(
-				`albumCovers/${req.file.originalname} + ${artist} + ${album}`
+				`/${req.file.originalname} + ${artist} + ${album}`
 			);
 
 		if (
@@ -116,7 +115,7 @@ router.post(
 				});
 			})
 			.catch((error) => {
-				console.log(error);
+				console.error(error);
 				res.status(500).json({ success: false, message: "Error uploading file" });
 			});
 	}
@@ -152,7 +151,7 @@ router.post("/uploadURL", requireLogin, async (req: Request, res: Response) => {
 			});
 		})
 		.catch((error) => {
-			console.log(error);
+			console.error(error);
 			res.status(500).json({ success: false, message: "Error uploading file" });
 		});
 });

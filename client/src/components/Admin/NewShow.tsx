@@ -30,7 +30,7 @@ const InitialState : NewShowState = {
 const NewShow = () => {
 	const setError = useContext(ErrorContext);
 	const [state, dispatch] = useReducer(reducer, InitialState);
-
+	console.log(state.showDate)
 	useEffect(() => {
 		let showState = localStorage.getItem("showState");
 		if (showState) {
@@ -141,7 +141,7 @@ const NewShow = () => {
 								variant="h6"
 								sx={{ alignItems: "center" }}
 							>
-                                Songs List
+								Songs List
 							</Typography>
 							<Stack spacing={1}>
 								{state.songsList.map((song) => (

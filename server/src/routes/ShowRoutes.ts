@@ -1,42 +1,43 @@
-import { Router, Request, Response } from "express";
+import { Router, Request, Response, } from "express";
 import ShowEntry from "../models/ShowEntry.js";
 import requireLogin from "./requireLogin.js";
 import Increment from "../models/IncrementModel.js";
-import { removeMissingShows, updateLastPlayed } from "../dbMethods.js";
-import SongEntry from "../models/SongEntry.js";
+import { updateShowIds, updateLastPlayed } from "../dbMethods.js";
+import { ISongEntry } from "../types/SongEntry.js";
 import {  ShowEntrySubmission } from "../types/ShowData.js";
-import { parse } from "node:path";
+import mongoose from "mongoose";
 
 
 
 const showRouter = Router();
 
 showRouter.get("/show/:id", async (req: Request, res: Response) => {
-	if (req.params.id === undefined || req.params.id === "" || isNaN(Number.parseInt(req.params.id))) {
+	if (req.params.id === undefined || req.params.id === "" || Number.isNaN(Number.parseInt(req.params.id))) {
 		res.status(400).json({ success: false, message: "No Show ID provided." });
 		return;
 	}
 	else {
+
 		const showData = await ShowEntry.findOne(
 			{ showId: Number.parseInt(req.params.id) },
 			{ _id: 0, __v: 0 }
-		).lean().populate<{ songsList: SongEntry[] }>({ path: "songsList", select: "-__v " });
+		).lean().populate<{ songsList: ISongEntry[] }>({ path: "songsList", select: "-__v " });
 		if (showData === null) {
 			res.status(404).json({ success: false, message: "Show not found." });
 			return;
 		}   
 
 
-		res.json({ showData });
+		res.json({ success: true, show: showData });
 		return;
 	}
 });
 
 showRouter.get("/shows", async (req: Request, res: Response) => {
-	if (req.query.offset) {
+	if (req.query.offset) { //TODO: Delete if statement - not needed anymore
 		const offset = Number.parseInt(req.query.offset as string);
 		const shows = await ShowEntry.find({}, { _id: 0, __v: 0 })
-			.sort({ showId: "desc" })
+			.sort({ showId: "asc" })
 			.skip(offset)
 			.limit(5)
 			.select("-songsList -_id")
@@ -45,21 +46,20 @@ showRouter.get("/shows", async (req: Request, res: Response) => {
 		res.json(shows);
 	} else {
 		const shows = await ShowEntry.find({}, { _id: 0, __v: 0 })
-			.sort({ showId: "desc" })
+			.sort({ showId: "asc" })
 			.select("-songsList -_id")
 			.lean();
 
-		res.json(shows);
+		res.json({ success: true, shows });
 	}
 });
 
 showRouter.post("/show", requireLogin, async (req : Request, res: Response) => {
-	const { songsList, ...showData } : ShowEntrySubmission = req.body;
+	const { songsList, ...showData } : ShowEntrySubmission = req.body.showData;
 	try {
 
-		showData.showDate = new Date(showData.showDate);
-		showData.showDate.setHours(showData.showDate.getHours() + 5);
-
+		const showDate = new Date(showData.showDate);
+		showDate.setHours(showDate.getHours() + 5);
 		const nextShowId = await Increment.findOneAndUpdate(
 			{ model: "ShowEntry" },
 			{ $inc: { counter: 1 } },
@@ -68,24 +68,29 @@ showRouter.post("/show", requireLogin, async (req : Request, res: Response) => {
 
 		const newShow = new ShowEntry({
 			...showData,
+			showDate,
+			songsList: songsList.map(song => song._id),
 			showId: nextShowId.counter,
 		});
 		await newShow.save();
 		await updateLastPlayed(songsList, newShow.showDate);
-		res.json({ success: true, message: "Show added successfully." });
+		res.status(201).json({ success: true, message: "Show added successfully." });
 	} catch (error) {
-		console.log(error);
 		await Increment.findOneAndUpdate(
 			{ model: "ShowEntry" },
 			{ $inc: { counter: -1 } }
 		);
-		res.status(500).json({ success: false, message: "Error adding show." });
+		if(error instanceof mongoose.Error.ValidationError) {
+			res.status(400).json({ success: false, message: Object.values(error.errors).map(err => err.message).join(', ') });
+		} else {
+			res.status(500).json({ success: false, message: "Error adding show." });
+		}
 	}
 });
 
 showRouter.patch("/show/:id", requireLogin, async (req: Request, res: Response) => {
-	const { ...showData } : Omit<ShowEntry, "songListCount"> = req.body;
-	if(Number.parseInt(req.params.id) === undefined || isNaN(Number.parseInt(req.params.id))) {
+	const { _id, showId, ...showData } : { _id: string, showId: number} & Omit<ShowEntry & { songsList: ISongEntry[] }, "songListCount">  = req.body.showData;
+	if(Number.parseInt(req.params.id) === undefined || Number.isNaN(Number.parseInt(req.params.id))) {
 		res.status(400).json({ success: false, message: "No Show ID provided." });
 		return;
 	}
@@ -96,22 +101,26 @@ showRouter.patch("/show/:id", requireLogin, async (req: Request, res: Response) 
 			res.status(404).json({ success: false, message: "Show not found." });
 			return;
 		}
-		show.songsList = showData.songsList;
-		let tempShowDate = new Date(showData.showDate);
-		tempShowDate.setHours(tempShowDate.getHours() + 5);
-		show.showDate = tempShowDate;
-    
-		show.showDescription = showData.showDescription;
+		if (showData.songsList) {
+			show.songsList = showData.songsList.map(song => song._id);
+		}
+		if(showData.showDate) {
+			let tempShowDate = new Date(showData.showDate);
+			tempShowDate.setHours(tempShowDate.getHours() + 5);
+			show.showDate = tempShowDate;
+		}
+
+		show.showDescription = showData.showDescription || show.showDescription;
 		show.save()
 			.then(() => {
 				res.json({ success: true, message: "Show Updated!" });
 			})
 			.catch((error) => {
-				res.status(500).json({ success: false, message: "Error adding song to show." });
+				res.status(500).json({ success: false, message: "Error adding song to show.", error });
 			});
 	} catch(error){
-		console.log(error);
-		res.status(500).json({ success: false, message: "Error updating show." });
+		console.error(error);
+		res.status(500).json({ success: false, message: "Error updating show.", error });
 	}
     
     
@@ -119,7 +128,7 @@ showRouter.patch("/show/:id", requireLogin, async (req: Request, res: Response) 
 
 showRouter.delete("/show/:id", requireLogin, async (req: Request, res: Response) => {
 	const showId = Number.parseInt(req.params.id);
-	if (isNaN(showId)) {
+	if (Number.isNaN(showId)) {
 		res.status(400).json({ success: false, message: "No Show ID provided." });
 	} else {
 		try {
@@ -130,11 +139,11 @@ showRouter.delete("/show/:id", requireLogin, async (req: Request, res: Response)
 				return;
 			}
 
-			removeMissingShows();
+			await updateShowIds(showId);
 
 			res.json({ success: true, message: "Show deleted." });
 		} catch (error) {
-			console.log(error);
+			console.error(error);
 			res.status(500).json({ success: false, message: "Error deleting show." });
 		}
 	}

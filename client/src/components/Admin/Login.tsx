@@ -71,7 +71,7 @@ const Login = () => {
 					align="center"
 					sx={{ mt: 2, fontFamily: "Tiny5, Roboto" }}
 				>
-                    Login
+					Login
 				</Typography>
 				<Divider sx={{ mt: 2 }} />
 				<Container>
@@ -103,7 +103,7 @@ const Login = () => {
 								onClick={login}
 								type="submit"
 							>
-                                Login
+								Login
 							</Button>
 						</Stack>
 					</form>

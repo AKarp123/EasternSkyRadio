@@ -1,5 +1,5 @@
 
-export interface SongEntry {
+export interface ISongEntry {
     songId: number,
     elcroId? : string,
     artist: string,
@@ -14,8 +14,12 @@ export interface SongEntry {
     duration: number,
     lastPlayed? : Date,
     searchQuery: string, 
+    createdAt: Date
 }
 
+export interface ISongEntrySubmission extends Omit<ISongEntry, "songId" | "searchQuery" | "createdAt"> {
+
+}
 
 type songReleaseLocation = {
     service: songReleaseService,

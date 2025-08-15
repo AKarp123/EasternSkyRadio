@@ -1,8 +1,8 @@
 {
   "compilerOptions": {
     "target": "es2021",
-    "module": "ESNext",
-    "moduleResolution": "node",
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
     "esModuleInterop": true,
     "allowJs": true,
     "checkJs": false,
@@ -10,6 +10,7 @@
     "rootDir": ".",
     "strict": true,
     "skipLibCheck": true,
+    "sourceMap": true,
     "forceConsistentCasingInFileNames": true,
     "typeRoots": [
       "./node_modules/@types",

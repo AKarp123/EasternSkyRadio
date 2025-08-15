@@ -2,23 +2,25 @@ import { defineConfig } from 'eslint/config';
 import parser from '@typescript-eslint/parser';
 import unicorn from 'eslint-plugin-unicorn';
 import typescript from '@typescript-eslint/eslint-plugin';
+import importPlugin from 'eslint-plugin-import';
 export default defineConfig([
     unicorn.configs.recommended,
 	{
         files: ['**/*.ts'],
-
         plugins: {
             '@typescript-eslint': typescript,
+            'import': importPlugin,
         },
         rules: {
             'camelcase': 'off',
             'indent': ['error', 'tab'],
             'no-await-in-loop': 'off',
-            'no-console': ['warn', { allow: ['warn', 'error'] }],
+            'no-console': ['warn', { allow: ['warn', 'error', 'info'] }],
             'unicorn/filename-case': 'off',
             'unicorn/prevent-abbreviations': 'off',
             'unicorn/no-null': 'off',
             'no-unused-vars': 'off',
+            "import/extensions": ["error", "always"],
             '@typescript-eslint/no-unused-vars': ['error', {
                 vars: 'all',
                 args: 'after-used',
@@ -26,6 +28,7 @@ export default defineConfig([
             }],
             'eqeqeq': ['error', 'always'],
             'object-curly-spacing': ['error', 'always'],
+            'semi': ['error', 'always']
         },
 		languageOptions: {
 			parser,
@@ -34,4 +37,5 @@ export default defineConfig([
             },
 		},
 	},
+
 ]);

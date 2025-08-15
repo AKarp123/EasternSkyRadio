@@ -1,28 +1,20 @@
 import express from "express";
-import mongoose from "mongoose";
 import session from "express-session";
 import MongoStore from "connect-mongo";
 import passport from "passport";
 import User from "./models/UserModel.js";
 import apiRouter from "./routes/index.js";
-import "dotenv/config";
+
 import { UserDocument } from "./types/User.js";
 import { logRoute } from "./routelogging.js";
-import SongEntry from "./models/SongEntry.js";
-import { removeMissingSongs } from "./dbMethods.js";
-import { applyMigrations } from "./migrations.js";
-import initializeApp from "./init.js";
 
 
-const port = process.env.PORT || 3000;
 
-mongoose.connect(process.env.MONGODB_URI || "");
-const db = mongoose.connection;
 
-applyMigrations().then(() => {
-}).catch(err => {
-	console.error("Error applying migrations:", err);
-});
+
+
+
+
 
 const app = express();
 
@@ -57,20 +49,8 @@ passport.use(User.createStrategy());
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
-app.use(logRoute)
+app.use(logRoute);
 app.use("/api", apiRouter);
 
 
-app.listen(port, () => {
-	console.log(`Server running on port ${port}`); //eslint-disable-line no-console
-});
-
-db.on("error", console.error.bind(console, "connection error:"));
-db.once("open", async function () {
-	console.log("Connected to MongoDB"); //eslint-disable-line no-console
-	await initializeApp();
-});
-	
-
-
-
+export { app };

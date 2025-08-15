@@ -18,7 +18,7 @@ const VisuallyHiddenInput = styled("input")({
 
 
 type InputFileUploadProperties = {
-    uploadImage: (file: File) => void;
+	uploadImage: (file: File) => void;
 };
 export default function InputFileUpload({ uploadImage }: InputFileUploadProperties) {
 
@@ -36,7 +36,7 @@ export default function InputFileUpload({ uploadImage }: InputFileUploadProperti
 					tabIndex={-1}
 					startIcon={<CloudUploadIcon />}
 				>
-                Upload file
+					Upload file
 					<VisuallyHiddenInput type="file" />
 				</Button>
 			</div>

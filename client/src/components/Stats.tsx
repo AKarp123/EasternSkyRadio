@@ -106,7 +106,7 @@ const Stats = () => {
 						align="center"
 						sx={{ fontFamily: "Tiny5, Roboto" }}
 					>
-                        Stats
+						Stats
 					</Typography>
 				</Stack>
 
@@ -117,19 +117,19 @@ const Stats = () => {
 					) : (
 						<>
 							<Typography variant="h4" align="center" sx={style}>
-                                Total Shows: {stats.totalShows}
+								Total Shows: {stats.totalShows}
 							</Typography>
 							<Typography variant="h4" align="center" sx={style}>
-                                Songs Played: {stats.totalSongs}
+								Songs Played: {stats.totalSongs}
 							</Typography>
 							<Typography variant="h4" align="center" sx={style}>
-                                Unique Songs: {stats.uniqueSongs}
+								Unique Songs: {stats.uniqueSongs}
 							</Typography>
 							<Typography variant="h4" align="center" sx={style}>
-                                Unique Artists: {stats.uniqueArtists}
+								Unique Artists: {stats.uniqueArtists}
 							</Typography>
 							<Typography variant="h4" align="center" sx={style}>
-                                Unique Albums: {stats.uniqueAlbums}
+								Unique Albums: {stats.uniqueAlbums}
 							</Typography>
 						</>
 					)}

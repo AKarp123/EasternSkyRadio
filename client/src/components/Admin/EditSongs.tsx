@@ -10,30 +10,30 @@ import { SongEntry, SongEntryForm } from "../../types/Song";
 
 const reducer = (state: SongEntry, action: { type: string; payload?: any }) => {
 	switch (action.type) {
-	case "fill": {
-		return {
-			...action.payload,
-		};
-	}
-	case "submit": {
-		return {
-			songId: -1,
-			elcroId: "",
-			artist: "",
-			title: "",
-			origTitle: "",
-			album: "",
-			origAlbum: "",
-			albumImageLoc: "",
-			genres: [],
-			specialNote: "",
-			songReleaseLoc: [],
-			duration: "",
-		};
-	}
-	default: {
-		return state;
-	}
+		case "fill": {
+			return {
+				...action.payload,
+			};
+		}
+		case "submit": {
+			return {
+				songId: -1,
+				elcroId: "",
+				artist: "",
+				title: "",
+				origTitle: "",
+				album: "",
+				origAlbum: "",
+				albumImageLoc: "",
+				genres: [],
+				specialNote: "",
+				songReleaseLoc: [],
+				duration: "",
+			};
+		}
+		default: {
+			return state;
+		}
 	}
 };
 
@@ -58,7 +58,7 @@ const EditSongs = () => {
 	const handleSubmit = (e: React.FormEvent<HTMLFormElement>, songData: SongEntryForm) => {
 		e.preventDefault();
 
-		axios.post("/api/editSong", { songData }).then((res) => {
+		axios.patch(`/api/song/${editSong.songId}`, { songData }).then((res) => {
 			if (res.data.success === false) {
 				setError(res.data.message);
 				return;

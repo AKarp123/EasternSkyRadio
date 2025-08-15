@@ -5,7 +5,7 @@ const requireLogin = (req: Request, res: Response, next: NextFunction) => {
 		next();
         
 	} else {
-		res.status(401).json({ success: false, message: "User not logged in." })
+		res.status(401).json({ success: false, message: "User not logged in." });
 	}
 };
 

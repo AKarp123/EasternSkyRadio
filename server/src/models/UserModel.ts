@@ -1,12 +1,13 @@
 import { Schema } from "mongoose";
 import mongoose from "mongoose";
 import passportLocalMongoose from "passport-local-mongoose";
-import { UserDocument } from "../types/User";
+import { UserDocument } from "../types/User.js";
 
 
 
 const UserSchema = new Schema<UserDocument>({
 	username: { type: String, required: true, unique: true },
+	migrated: { type: Boolean }
 });
 
 UserSchema.plugin(passportLocalMongoose, {
