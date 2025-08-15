@@ -25,7 +25,7 @@ export default defineConfig([
             'camelcase': 'off',
             '@stylistic/indent': ['error', 'tab'],
             'no-await-in-loop': 'off',
-            'no-console': ['warn', { allow: ['warn', 'error'] }],
+            'no-console': ['error', { allow: ['warn', 'error'] }],
             'unicorn/filename-case': 'off',
             'unicorn/prevent-abbreviations': 'off',
             'unicorn/no-null': 'off',
