@@ -28,7 +28,7 @@ const SongSearch = ({ dispatch, parent }: SongSearchProperties) => {
 	const [searchResults, setSearchResults] = useState<SongEntry[]>([]);
 	const setError = useContext(ErrorContext);
 	const searchDebounced = useDebouncedCallback((query) => {
-		console.log(query);
+
 		if (query === "") {
 			setSearchResults([]);
 			return;
@@ -45,7 +45,6 @@ const SongSearch = ({ dispatch, parent }: SongSearchProperties) => {
 					}
 					return;
 				}
-				console.log(res.data);
 				setSearchResults(res.data.searchResults);
 			})
 			.catch((error) => {

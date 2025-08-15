@@ -127,7 +127,7 @@ const SongForm = ({
 			.catch((error: AxiosError<{ message: string }>) => {
 				
 				setError(error.response?.data?.message || "Error Adding Song");
-				console.log(error);
+
 			});
 	};
 
@@ -184,7 +184,7 @@ const SongForm = ({
 			setError("Please enter artist and album before uploading image");
 			return;
 		}
-		console.log(file);
+
 		const formData = new FormData();
 
 		// if(!file.name) {

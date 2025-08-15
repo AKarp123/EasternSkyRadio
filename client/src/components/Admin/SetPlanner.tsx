@@ -76,7 +76,7 @@ const SetPlanner = () => {
 			.post("/api/sync", { type: "SetPlanner", data: state.songsList })
 			.then((res) => {
 				if (res.data.success === false) {
-					console.log(res.data.message);
+
 
 					dispatch({
 						type: SetPlannerActionType.SetSyncStatus,
@@ -331,7 +331,7 @@ type SetPlannerCardProperties = {
 	index: number;
 };
 const SetPlannerCard = ({ entry, state, dispatch, durationAtPoint, index }: SetPlannerCardProperties) => {
-	console.log(entry);
+
 	if (entry.type === "Song" && entry.item.duration === 0) {
 		return <SetPlannerForm dispatch={dispatch} entry={entry} index={index} />;
 	}
@@ -562,7 +562,6 @@ const SetPlannerForm = ({ dispatch, entry, index }: SetPlannerFormProperties) =>
 					setError(res.data.message);
 					return;
 				}
-				console.log("Updated song duration");
 			});
 		dispatch({
 			type: SetPlannerActionType.EditSong,

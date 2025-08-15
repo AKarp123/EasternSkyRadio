@@ -27,10 +27,8 @@ const AdminPage = () => {
 
 	const logout = (e : React.MouseEvent<HTMLDivElement, MouseEvent>) => {
 		e.preventDefault();
-		axios.post("/api/logout").then((res) => {
-			console.log(res);
-			console.log(res.data);
-			console.log("Logged out");
+		axios.post("/api/logout").then(() => {
+			setError("Logged out successfully", "success");
 		});
 		setUser(null);
 	};
