@@ -18,6 +18,9 @@ const serviceAccountKey = {
 };
 
 const initializeAdmin = () => {
+	if(process.env.NODE_ENV === "gh_test") {
+		return;
+	}
 	admin.initializeApp({
 		credential: credential.cert(serviceAccountKey as admin.ServiceAccount),
 		storageBucket: process.env.FIREBASE_STORAGE_BUCKET,

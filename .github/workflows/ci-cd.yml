@@ -10,7 +10,7 @@ on:
 jobs:
   lint-backend:
     runs-on: ubuntu-latest
-    continue-on-error: true
+
 
     steps:
       - name: Checkout code
@@ -27,7 +27,6 @@ jobs:
         working-directory: ./server
   lint-frontend:
     runs-on: ubuntu-latest
-    continue-on-error: true
     defaults:
       run:
         working-directory: ./client
@@ -50,3 +49,36 @@ jobs:
 
       - name: Run linter
         run: pnpm run lint
+
+
+  backend-tests:
+    runs-on: ubuntu-latest
+    env:
+      NODE_ENV: "gh_test"
+      MONGODB_URI: "mongodb://localhost:27017/easternSkyRadio_test"
+      EXP_SESSION_SECRET: "test_secret"
+      TEST_MIGRATIONS: false
+    services:
+      mongodb:
+        image: mongo:latest
+        ports:
+          - 27017:27017
+    defaults:
+      run:
+        working-directory: ./server
+
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: "Set up bun"
+        uses: oven-sh/setup-bun@v2
+
+      - name: Install dependencies
+        run: bun install
+        
+      - name: Run tests
+        run: bun run test
+
+
