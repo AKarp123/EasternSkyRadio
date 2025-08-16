@@ -9,6 +9,7 @@ on:
 
 jobs:
   lint-backend:
+
     runs-on: ubuntu-latest
 
 
@@ -49,8 +50,6 @@ jobs:
 
       - name: Run linter
         run: pnpm run lint
-
-
   backend-tests:
     runs-on: ubuntu-latest
     env:
@@ -92,5 +91,86 @@ jobs:
 
       - name: Run tests
         run: bun run test
+  build-server:
+    runs-on: ubuntu-latest
+    needs: [backend-tests]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+      - name: "Build Dockerfile"
+        run: docker build -f ./server/Dockerfile -t esr-backend:latest .
+  build-client:
+    runs-on: ubuntu-latest
+    needs: [backend-tests]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
 
+      - name: "Build Dockerfile"
+        run: docker build -f ./client/Dockerfile -t esr-frontend:latest .
+  push-dev-backend:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/dev'
+    needs: [build-server]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ vars.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+      - name: Push backend image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./server/Dockerfile
+          push: true
+          tags: ${{ vars.DOCKER_USERNAME }}/esr-backend:dev-latest
 
+  push-dev-frontend:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/dev'
+    needs: [build-client,]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ vars.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+      - name: Push frontend image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./client/Dockerfile
+          push: true
+          tags: ${{ vars.DOCKER_USERNAME }}/esr-frontend:dev-latest
+
+  push-prod-images:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    needs: [build-server, build-client]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ vars.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+      - name: Push backend image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./server/Dockerfile
+          push: true
+          tags: ${{ vars.DOCKER_USERNAME }}/esr-backend:latest
+      - name: Push frontend image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./client/Dockerfile
+          push: true
+          tags: ${{ vars.DOCKER_USERNAME }}/esr-frontend:latest
