@@ -54,15 +54,26 @@ jobs:
   backend-tests:
     runs-on: ubuntu-latest
     env:
-      NODE_ENV: "gh_test"
-      MONGODB_URI: "mongodb://mongodb:27017/easternSkyRadio_test"
+      MONGODB_URI: "mongodb://127.0.0.1:27017/easternSkyRadio_test?directConnection=true"
       EXP_SESSION_SECRET: "test_secret"
-      TEST_MIGRATIONS: false
+      TEST_MIGRATIONS: "false"
+      ADMIN_PASSWORD: "test_password"
+      FIREBASE_PRIVATE_KEY_ID: ${{ secrets.FIREBASE_PRIVATE_KEY_ID }}
+      FIREBASE_PRIVATE_KEY: ${{ secrets.FIREBASE_PRIVATE_KEY }}
+      FIREBASE_CLIENT_EMAIL: ${{ secrets.FIREBASE_CLIENT_EMAIL }}
+      FIREBASE_CLIENT_ID: ${{ secrets.FIREBASE_CLIENT_ID }}
+      FIREBASE_CLIENT_X509_CERT_URL: ${{ secrets.FIREBASE_CLIENT_X509_CERT_URL }}
+      FIREBASE_STORAGE_BUCKET: ${{ secrets.FIREBASE_STORAGE_BUCKET }}
     services:
-      mongodb:
+      mongo:
         image: mongo:latest
         ports:
           - 27017:27017
+        options: >-
+          --health-cmd "mongosh --eval 'db.adminCommand(\"ping\")'"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
     defaults:
       run:
         working-directory: ./server
@@ -71,6 +82,7 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
+
 
       - name: "Set up bun"
         uses: oven-sh/setup-bun@v2

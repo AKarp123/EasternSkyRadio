@@ -1,4 +1,3 @@
-import { app } from "../../app.js";
 import request from "supertest";
 
 
@@ -7,6 +6,7 @@ import request from "supertest";
  * @returns Returns a supertest agent that is already logged in as the admin user.
  */
 export const withUser = async() => {
+	const { app } = await import("../../app.js");
 	const agent = request.agent(app);
 
 	await agent.post('/api/login').send({

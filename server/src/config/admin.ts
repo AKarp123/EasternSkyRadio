@@ -3,6 +3,7 @@ import admin from "firebase-admin";
 
 const { credential } = admin;
 
+
 const serviceAccountKey = {
 	type: "service_account",
 	project_id: "easternskyradio",
@@ -16,11 +17,7 @@ const serviceAccountKey = {
 	client_x509_cert_url: process.env.FIREBASE_CLIENT_X509_CERT_URL,
 	universe_domain: "googleapis.com",
 };
-
 const initializeAdmin = () => {
-	if(process.env.NODE_ENV === "gh_test") {
-		return;
-	}
 	admin.initializeApp({
 		credential: credential.cert(serviceAccountKey as admin.ServiceAccount),
 		storageBucket: process.env.FIREBASE_STORAGE_BUCKET,

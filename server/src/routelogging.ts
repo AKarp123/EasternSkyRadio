@@ -6,7 +6,7 @@ const logRoute = (req: Request, res: Response, next: NextFunction) => {
 	res.on('finish', () => {
 		const duration = Date.now() - start;
 
-		if(res.statusCode !== 200 && res.statusCode !== 304 && process.env.NODE_ENV !== "test") {
+		if(res.statusCode !== 200 && res.statusCode !== 304 && (process.env.NODE_ENV !== "test" )) {
 			console.error(chalk.hex("#FF7F50")(`${req.method} ${req.originalUrl} ${res.statusCode} - ${duration}ms`));
 		}
 		else {
