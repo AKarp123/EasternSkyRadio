@@ -28,11 +28,11 @@ services:
 ```
 You can also add a local mongodb instance but update the env to make sure it finds the correct one
 
-##Developing
+## Developing
 
 run `docker compose -f docker-compose.dev.yml up`
 
-##Creating Migrations
+## Creating Migrations
 
 `docker exec -it easternskyradio-server-1 bun migrate create <migration_name>`
 
