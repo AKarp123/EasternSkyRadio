@@ -14,7 +14,6 @@ import axios from "axios";
 import HomeButton from "./HomeButton";
 import ErrorContext from "../../providers/ErrorContext";
 import { SiteData } from "../../types/pages/home/Home";
-import { Button } from "@radix-ui/themes";
 const Home = React.memo(() => {
 	const [siteData, setSiteData] = useState<SiteData | null>(null);
 	const [loading, setLoading] = useState(true);

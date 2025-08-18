@@ -49,81 +49,81 @@ function App() {
 	return (
 		<ThemeProvider theme={darkTheme}>
 			<Theme appearance="dark">
-			<CssBaseline />
-			{process.env.NODE_ENV === "production" && <StarParticles />}
-			{/* <StarParticles /> */}
-			<ErrorContext.Provider value={displayError}>
-				<UserProvider>
-					<div className="App">
-						{error && (
-							<Snackbar
-								open={error !== undefined && error !== null}
-								autoHideDuration={2000}
-								onClose={() => setError(null)}
-							>
-								<Alert
-									severity={error.variant}
+				<CssBaseline />
+				{process.env.NODE_ENV === "production" && <StarParticles />}
+				{/* <StarParticles /> */}
+				<ErrorContext.Provider value={displayError}>
+					<UserProvider>
+						<div className="App">
+							{error && (
+								<Snackbar
+									open={error !== undefined && error !== null}
+									autoHideDuration={2000}
 									onClose={() => setError(null)}
 								>
-									{error.errorMessage}
-								</Alert>
-							</Snackbar>
-						)}
-						<Switch>
-							<Route exact path="/">
-								<Home />
-							</Route>
-							<Route exact path="/shows">
-								<ShowPage />
-							</Route>
-							<Route exact path="/shows/:showId">
-								<SetList />
-							</Route>
-							<Route exact path="/graphic/:showId">
-								<Graphic />
-							</Route>
-							<Route exact path="/blog">
-								<BlogPage />
-							</Route>
-							<Route exact path="/stats">
-								<Stats />
-							</Route>
-							<Route exact path="/login">
-								<Login />
-							</Route>
+									<Alert
+										severity={error.variant}
+										onClose={() => setError(null)}
+									>
+										{error.errorMessage}
+									</Alert>
+								</Snackbar>
+							)}
+							<Switch>
+								<Route exact path="/">
+									<Home />
+								</Route>
+								<Route exact path="/shows">
+									<ShowPage />
+								</Route>
+								<Route exact path="/shows/:showId">
+									<SetList />
+								</Route>
+								<Route exact path="/graphic/:showId">
+									<Graphic />
+								</Route>
+								<Route exact path="/blog">
+									<BlogPage />
+								</Route>
+								<Route exact path="/stats">
+									<Stats />
+								</Route>
+								<Route exact path="/login">
+									<Login />
+								</Route>
 
-							<AuthRoute
-								exact
-								path="/admin"
-								component={AdminPage}
-							/>
-							<AuthRoute
-								exact
-								path="/admin/newShow"
-								component={NewShow}
-							/>
-							<AuthRoute
-								exact
-								path="/admin/editsong"
-								component={EditSongs}
-							/>
-							<AuthRoute
-								exact
-								path="/admin/editshow"
-								component={EditShows}
-							/>
-							<AuthRoute
-								exact
-								path="/admin/SetPlanner" 
-								component={SetPlanner}
-							/>
-						</Switch>
+								<AuthRoute
+									exact
+									path="/admin"
+									component={AdminPage}
+								/>
+								<AuthRoute
+									exact
+									path="/admin/newShow"
+									component={NewShow}
+								/>
+								<AuthRoute
+									exact
+									path="/admin/editsong"
+									component={EditSongs}
+								/>
+								<AuthRoute
+									exact
+									path="/admin/editshow"
+									component={EditShows}
+								/>
+								<AuthRoute
+									exact
+									path="/admin/SetPlanner" 
+									component={SetPlanner}
+								/>
+							</Switch>
 
                         
-					</div>
-				</UserProvider>
-			</ErrorContext.Provider>
-		</Theme>
+						</div>
+					</UserProvider>
+				</ErrorContext.Provider>
+			</Theme>
 		</ThemeProvider>
 	);
 }
