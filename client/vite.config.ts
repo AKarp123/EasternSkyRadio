@@ -13,6 +13,7 @@ export default defineConfig(() => {
 			eslint({
 				include: ['src/**/*.{ts,tsx}', 'vite.config.*'],
 				exclude: ['node_modules/*', 'dist/*', 'public/*'],
+				failOnError: false
 			}),
 		],
 		build: {

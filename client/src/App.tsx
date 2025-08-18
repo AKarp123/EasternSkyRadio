@@ -24,6 +24,7 @@ import AuthRoute from "./AuthRoute";
 import Stats from "./components/Stats";
 import SetPlanner from "./components/Admin/SetPlanner";
 import { ErrorVariant, DisplayError} from "./types/global";
+import { Theme} from "@radix-ui/themes"
 
 let darkTheme = createTheme({
 	palette: {
@@ -47,6 +48,7 @@ function App() {
 
 	return (
 		<ThemeProvider theme={darkTheme}>
+			<Theme appearance="dark">
 			<CssBaseline />
 			{process.env.NODE_ENV === "production" && <StarParticles />}
 			{/* <StarParticles /> */}
@@ -121,6 +123,7 @@ function App() {
 					</div>
 				</UserProvider>
 			</ErrorContext.Provider>
+		</Theme>
 		</ThemeProvider>
 	);
 }
