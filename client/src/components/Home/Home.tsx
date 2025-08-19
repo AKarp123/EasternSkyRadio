@@ -1,19 +1,17 @@
 import React, { useContext } from "react";
 import {
-
 	Stack,
-	Container,
 	Paper,
 	Typography,
 	Divider,
 	Fade,
-
 } from "@mui/material";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import HomeButton from "./HomeButton";
 import ErrorContext from "../../providers/ErrorContext";
 import { SiteData } from "../../types/pages/home/Home";
+import { Box, Container, Grid } from "@radix-ui/themes";
 const Home = React.memo(() => {
 	const [siteData, setSiteData] = useState<SiteData | null>(null);
 	const [loading, setLoading] = useState(true);
@@ -34,7 +32,7 @@ const Home = React.memo(() => {
 	}, []);
 
 	const nextShowDate = () => {
-		if(!siteData) {
+		if (!siteData) {
 			return;
 		}
 
@@ -52,99 +50,47 @@ const Home = React.memo(() => {
 		}
 		nextShow.setDate(now.getDate() + daysUntilNextShow);
 
-		return new Date(nextShow.toLocaleString("en-US", { timeZone: siteData.timezone }));
-        
-        
+		return new Date(
+			nextShow.toLocaleString("en-US", { timeZone: siteData.timezone })
+		);
 	};
 
 	return (
-		<Container
-			sx={{
-				display: "flex",
-				justifyContent: "center",
-				height: "100vh",
-				alignItems: "center",
-				flexDirection: "column",
-			}}
+		<Container size={{
+			xs: "1",
+			sm: "2"
+			
+		}}
+		className="px-8 sm:px-0 min-h-screen flex flex-col justify-center"
 		>
-			<Fade in={!loading} timeout={500}>
-				<Typography
-					variant="body1"
-					align="center"
-					sx={{ fontFamily: "Tiny5, Roboto" }}
-				>
-					{siteData === null ? "No Data Available" : (siteData.onBreak
-						? "On break for the semester"
-						: `Next show: ${nextShowDate()?.toDateString()} at ${nextShowDate()?.toLocaleTimeString()}`)}
-				</Typography>
-			</Fade>
-			<Paper
-				sx={{
-					height: { xs: "55%", sm: "450px" },
-					width: { xs: "90%", sm: "450px" },
-					margin: "0 auto",
-					border: "1.5px solid #495057",
-					borderRadius: "10px",
-					backgroundColor: "rgba(56, 56, 56, 0.5)",
-					WebkitBackdropFilter: "blur(3px)",
-					backdropFilter: "blur(3px)",
-				}}
-			>
-				<Typography
-					variant="h3"
-					align="center"
-					sx={{ mt: 2, fontFamily: "Tiny5, Roboto" }}
-				>
-					Eastern Sky
-				</Typography>
-				<Divider sx={{ mt: 2 }} />
-				<Container>
-					<Stack spacing={3} sx={{ mt: 2 }}>
-						<HomeButton route="/shows" text="Shows" />
-						{/* <HomeButton route="/blog" text="Blog" /> */}
-						<HomeButton route="/stats" text="Stats" />
-						<HomeButton
-							link="https://www.instagram.com/easternsky90.3/"
-							text="Instagram"
-						/>
-						<HomeButton
-							link="https://thecore.fm/public/shows/people/eastern-sky.php"
-							text="Listen live!"
-						/>
-                        
-					</Stack>
-				</Container>
-				<footer
-					style={{
-						position: "fixed",
-						bottom: 0,
-						left: 0,
-						width: "100%",
-
-						color: "#888888 ",
-						textAlign: "center",
-						fontFamily: "PixelOperator, Roboto",
-					}}
-				>
-					Created by Ashton Karp |{" "}
-					<a
-						href="https://github.com/AKarp123/EasternSkyRadio"
-						style={{ color: "#888888" }}
-						target="_blank"
-						rel="noopener noreferrer"
-					>
-						Source Code
-					</a>
-				</footer>
-			</Paper>
-			<Typography
-				variant="body1"
-				align="left"
-				sx={{ fontFamily: "Tiny5, Roboto", color: "white" }}
-			>
-				Exploring music from across the Pacific! Only on 90.3 The Core!
-			</Typography>
+			<Grid columns={{xs: "1", sm: "2"}} gap={{xs: "0", sm: "6"}} className="md:min-h-screen" align="center" justify="center">
+				<Box className="flex font-tiny text-6xl white flex-col text-center">
+					<p className="text-lg font-pixel align-top flex justify-center">Next Show Date: {loading ? "..." :  `${nextShowDate()?.toDateString()} at ${nextShowDate()?.toLocaleTimeString()}`}</p>
+					<Box className="items-center flex flex-col justify-center flex-1">
+						<p>Eastern</p>
+						<p>Sky</p>
+					</Box>
+					<p className="text-lg hidden md:flex font-pixel align-botto">Exploring music from across the Pacific! Only on 90.3 The Core!</p>
+				</Box>
+				<Box className="flex flex-col">
+					<HomeButton route="/shows" text="Shows" />
+					{/* <HomeButton route="/blog" text="Blog" /> */}
+					<HomeButton route="/stats" text="Stats" />
+					<HomeButton
+						link="https://www.instagram.com/easternsky90.3/"
+						text="Instagram"
+					/>
+					<HomeButton
+						link="https://thecore.fm/public/shows/people/eastern-sky.php"
+						text="Listen live!"
+					/>
+					<p className="text-sm pt-3 md:hidden font-pixel text-center">
+						Exploring music from across the Pacific! Only on 90.3 The Core!
+					</p>
+				</Box>
+			</Grid>
 		</Container>
+		
 	);
 });
 
