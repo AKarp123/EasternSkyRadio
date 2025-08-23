@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useMemo } from "react";
 import {
 	Stack,
 	Paper,
@@ -55,6 +55,17 @@ const Home = React.memo(() => {
 		);
 	};
 
+	const showDateString = useMemo<string>(() => {
+		if(!siteData) {
+			return "Error"
+		}
+		if(siteData?.onBreak) {
+			return "on break"
+		}
+		const nextShow = nextShowDate();
+		return `${nextShow?.toDateString()} at ${nextShow?.toLocaleTimeString()}`;
+	}, [siteData])
+
 	return (
 		<Container size={{
 			xs: "1",
@@ -65,7 +76,7 @@ const Home = React.memo(() => {
 		>
 			<Grid columns={{xs: "1", sm: "2"}} gap={{xs: "0", sm: "6"}} className="md:min-h-screen" align="center" justify="center">
 				<Box className="flex font-tiny text-6xl white flex-col text-center">
-					<p className="text-lg font-pixel align-top flex justify-center">Next Show Date: {loading ? "..." :  `${nextShowDate()?.toDateString()} at ${nextShowDate()?.toLocaleTimeString()}`}</p>
+					<p className="text-lg font-pixel align-top flex justify-center">Next Show Date: {loading ? "..." :  showDateString}</p>
 					<Box className="items-center flex flex-col justify-center flex-1">
 						<p>Eastern</p>
 						<p>Sky</p>

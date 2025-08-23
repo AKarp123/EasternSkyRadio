@@ -8,6 +8,7 @@
     "@emotion/styled": "^11.14.1",
     "@mui/icons-material": "^5.18.0",
     "@mui/material": "^5.18.0",
+    "@radix-ui/react-toggle-group": "^1.1.11",
     "@radix-ui/themes": "^3.2.1",
     "@rollup/rollup-linux-arm64-gnu": "^4.9.2",
     "@tailwindcss/vite": "^4.1.12",

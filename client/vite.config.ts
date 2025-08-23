@@ -28,7 +28,6 @@ export default defineConfig(() => {
 					ws: true,
 				},
 			},
-			open: true,
 			host: "0.0.0.0"
 		},
 	};

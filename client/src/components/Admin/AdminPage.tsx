@@ -1,7 +1,6 @@
 import PageBackdrop from "../PageBackdrop";
 import PageHeader from "../PageHeader";
 import {
-	Box,
 	Container,
 	Divider,
 	Stack,
@@ -17,6 +16,7 @@ import { useAuth } from "../../providers/UserProvider";
 import HomeButton, { HomeButtonNoRoute } from "../Home/HomeButton";
 import axios from "axios";
 import ErrorContext from "../../providers/ErrorContext";
+import { Box } from "@radix-ui/themes";
 
 const AdminPage = () => {
 	const { setUser } = useAuth()!;

@@ -21,4 +21,6 @@
     --font-pixel: "PixelOperator";
     --font-dogica: "DogicaPixel";
     --font-tiny: "Tiny5";
+    --breakpoint-xs: 0px;
+    --breakpoint-sm: 768px;
 }
