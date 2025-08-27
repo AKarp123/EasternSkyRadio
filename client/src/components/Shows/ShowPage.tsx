@@ -9,7 +9,7 @@ import axios from "axios";
 import PageHeader from "../PageHeader";
 import type { ShowEntryMin } from "../../types/Shows";
 import { StandardResponse } from "../../types/global";
-import { Container, Box, Link as RadixLink, ScrollArea, Text, Grid, Spinner } from "@radix-ui/themes";
+import { Container, Box, Link as RadixLink, ScrollArea, Text, Grid, Spinner, Flex } from "@radix-ui/themes";
 import * as ToggleGroup from "@radix-ui/react-toggle-group";
 
 const ShowPage = () => {
@@ -35,24 +35,23 @@ const ShowPage = () => {
 
 	return (
 		<Container size="3" className="min-h-screen flex flex-row justify-center items-center">
-			<Box className="flex justify-center">
-				<PageHeader title="Shows" />
-				<Grid columns={{xs: "1", sm: "3"}}>
-					<ShowPageScrollTo />
+		
+			<PageHeader title="Shows" />
+			<Grid columns={{xs: "1", sm: "3"}}>
+				<ShowPageScrollTo />
 
-					<ScrollArea scrollbars="vertical" className="max-h-[70vh] min-h-[70vh] justify-center ">
-						{loading ? (
-							<Spinner className="mx-auto" />
-						) : (
-							<ShowPageMain
-								showList={showList}
-								setShowList={setShowList}
+				<ScrollArea scrollbars="vertical" className="max-h-[70vh] min-h-[70vh] justify-center ">
+					{loading ? (
+						<Spinner className="mx-auto" />
+					) : (
+						<ShowPageMain
+							showList={showList}
+							setShowList={setShowList}
 								
-							/>
-						)}
-					</ScrollArea>
-				</Grid>
-			</Box>
+						/>
+					)}
+				</ScrollArea>
+			</Grid>
 		</Container>
 	);
 };
@@ -86,7 +85,7 @@ const ShowPageMain = ({ showList }: ShowPageProps) => {
 const ShowListItem = ({ show }: { show: ShowEntryMin }) => {
 	const showDate = new Date(show.showDate);
 	return (
-		<Box className="my-4 border rounded-md max-w-[291px] flex flex-col justify-center items-center text-center mx-auto">
+		<Box className="my-4 border rounded-md flex flex-col justify-center items-center text-center mx-auto">
 			<RadixLink
 				asChild
 				className="show-button"
@@ -119,7 +118,7 @@ const ShowListItem = ({ show }: { show: ShowEntryMin }) => {
 					</Box>
 				
 					{show.showDescription.length > 0 && (
-						<Text size="3" className={`font-pixel text-center w-full inline-block`} truncate={true}>
+						<Text size="3" className={`font-pixel text-center w-full inline-block`} >
 							{show.showDescription}
 						</Text>
 					)}
@@ -132,19 +131,24 @@ const ShowListItem = ({ show }: { show: ShowEntryMin }) => {
 
 
 const ShowPageScrollTo = () => {
+
+	const semesters = [
+		{ value: "Summer25", label: "Summer 2025" },
+		{ value: "Spring25", label: "Spring 2025" },
+	];
+
 	return (
 		
 		<Box>
-			<ToggleGroup.Root orientation="vertical" type="single" className="flex flex-col border rounded-md overflow-hidden w-auto h-auto self-start m-4 xs:hidden sm:flex">
+			<ToggleGroup.Root orientation="vertical" type="single" className="flex-col border rounded-md overflow-hidden w-auto h-auto self-start m-4 xs:hidden sm:flex">
 				<Text size="3" className="font-pixel backdrop-blur-[2px] border-b-1 text-center ToggleGroupHeader">
 					Jump to Semester
 				</Text>
-				<ToggleGroup.Item className="ToggleGroupItem" value="Summer25">
-					<Text size="3" className="font-pixel">Summer 2025</Text>
-				</ToggleGroup.Item>
-				<ToggleGroup.Item className="ToggleGroupItem" value="Fall25">
-					<Text size="3" className="font-pixel">Fall 2025</Text>
-				</ToggleGroup.Item>
+				{semesters.map((semester) => (
+					<ToggleGroup.Item key={semester.value} className="ToggleGroupItem" value={semester.value}>
+						<Text size="3" className="font-pixel">{semester.label}</Text>
+					</ToggleGroup.Item>
+				))}
 			</ToggleGroup.Root>
 		</Box>
 	);

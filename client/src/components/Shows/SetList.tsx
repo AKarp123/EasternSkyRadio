@@ -5,17 +5,10 @@ import {
 	Divider,
 	Container,
 	Grid,
-	Card,
-	CardContent,
-	CardMedia,
 	Box,
-	Stack,
-	Chip,
-	Tooltip,
-	IconButton,
 	SvgIcon,
-	Link,
 } from "@mui/material";
+import { Flex, Text, Tooltip } from "@radix-ui/themes";
 import PageBackdrop from "../PageBackdrop";
 import { useParams } from "react-router-dom";
 import DownloadIcon from "@mui/icons-material/Download";
@@ -23,15 +16,17 @@ import ShoppingBagIcon from "@mui/icons-material/ShoppingBag";
 import AppleIcon from "@mui/icons-material/Apple";
 import YouTubeIcon from "@mui/icons-material/YouTube";
 import MusicIcon from "@mui/icons-material/MusicNote";
-import DoNotDisturbIcon from "@mui/icons-material/DoNotDisturb";
+import * as Collapsible from "@radix-ui/react-collapsible";
 import SpotifyIcon from "../../icons/spotify.svg?react"
-import { useState, useEffect, useContext,  Key } from "react";
+import { useState, useEffect, useContext,  Key, useRef } from "react";
 import axios from "axios";
 import ErrorContext from "../../providers/ErrorContext";
 import PageHeader from "../PageHeader";
 import { SongEntry } from "../../types/Song";
 import { ShowEntry } from "../../types/Shows";
 import { StandardResponse } from "../../types/global";
+import { ChevronDownIcon } from "raster-react"
+import DisplayTooltip from "../Util/Tooltip";
 
 
 const SetList = () => {
@@ -86,6 +81,22 @@ const SetList = () => {
 
 const SetListCard = ({ song } : { song: SongEntry}) => {
 
+	const titleRef = useRef<HTMLDivElement>(null);
+	const albumRef = useRef<HTMLDivElement>(null);
+	const [isOverflowTitle, setIsOverflowTitle] = useState(false);
+	const [isOverflowAlbum, setIsOverflowAlbum] = useState(false);
+
+	useEffect(() => {
+		setIsOverflowTitle(titleRef.current ? titleRef.current.scrollHeight > titleRef.current.clientHeight+1 : false)
+		setIsOverflowAlbum(albumRef.current ? albumRef.current.scrollHeight > albumRef.current.clientHeight+1 : false)
+		window.addEventListener("resize", () => {
+			setIsOverflowTitle(titleRef.current ? titleRef.current.scrollHeight > titleRef.current.clientHeight+1 : false)
+		});
+		window.addEventListener("resize", () => {
+			setIsOverflowAlbum(albumRef.current ? albumRef.current.scrollHeight > albumRef.current.clientHeight+1 : false)
+		});
+	}, []);
+
 	const iconSwitch: { [key: string]: React.ReactElement } = {
 		Spotify: (
 			<SvgIcon
@@ -102,181 +113,45 @@ const SetListCard = ({ song } : { song: SongEntry}) => {
 	};
 
 	return (
-		<Card
-			sx={{
-				display: "flex",
-				justifyContent: "space-between",
-				flexWrap: "wrap",
-				flexDirection: "column",
-				backgroundColor: "rgba(22, 22, 22, 0.1)",
-				WebkitBackdropFilter: "blur(3px)",
-				backdropFilter: "blur(3px)",
-				height: "100%",
-			}}
-		>
-			<Box
-				sx={{
-					display: "flex",
-					flexWrap: "nowrap",
-				}}
-			>
-				<CardMedia
-					component={"img"}
-					image={song.albumImageLoc}
-					sx={{
-						width: "125px",
-						height: "125px",
-						objectFit: "cover",
-						padding: "8px",
-						borderRadius: "10%",
-					}}
-				/>
-
-				<CardContent
-					sx={{
-						display: "flex",
-						flexDirection: "column",
-						alignItems: "start",
-						textAlign: "left",
-						overflow: "hidden",
-						justifyContent: "space-between",
-						overflowX: "auto",
-						// paddingBottom: "0px !important",
-						paddingTop: "12px !important",
-						paddingBottom: "12px !important",
-					}}
-				>
-					<Tooltip
-						title={
-							"Original Title: " +
-                            (song.origTitle === undefined ||
-                            song.origTitle === ""
-                            	? "N/A"
-                            	: song.origTitle)
-						}
-						placement="top"
-						arrow
-					>
-						<Typography
-							variant="h6"
-							sx={{
-								fontSize:
-                                    song.title.length > 24
-                                    	? (song.title.length > 48
-                                    		? "0.9rem !important"
-                                    		: "1rem !important ")
-                                    	: "1.25rem !important",
-							}}
-						>
-							{song.title}
-						</Typography>
-					</Tooltip>
-
-					<Typography variant="body1">{song.artist}</Typography>
-					<Typography variant="body2" sx={{ fontStyle: "italic" }}>
-						{song.album}
-					</Typography>
-				</CardContent>
-			</Box>
-			<Divider variant="middle">Genres</Divider>
-
-			<CardContent
-				sx={{
-					display: "flex",
-					flexDirection: "row",
-					overflow: "hidden",
-					justifyContent: "center",
-
-					overflowY: "hidden",
-					paddingTop: "4px !important",
-					paddingBottom: "4px !important",
-					width: "100%",
-
-					// paddingBottom: "4px !important",
-				}}
-			>
-				<Stack
-					direction="row"
-					spacing={1}
-					sx={{
-						overflowX: "auto",
-						scrollbarWidth: "none",
-						"&::-webkit-scrollbar": {
-							display: "none",
-						},
-					}}
-				>
-					{song.genres.map((genre) => {
-						return (
-							<Chip
-								key={genre}
-								label={genre}
-								size="small"
-								sx={{ margin: "2px" }}
-							/>
-						);
-					})}
-				</Stack>
-			</CardContent>
-
-			<Divider variant="middle">Release Locations</Divider>
-			<CardContent
-				sx={{
-					display: "flex",
-					flexDirection: "row",
-					overflow: "hidden",
-					justifyContent: "center",
-					overflowX: "auto",
-					overflowY: "hidden",
-					paddingTop: "0px !important",
-					paddingBottom: "0px !important",
-					width: "100%",
-					scrollbarWidth: "none",
-					"&::-webkit-scrollbar": {
-						display: "none",
-					},
-				}}
-			>
-				<Stack direction="row" spacing={1}>
-					{song.songReleaseLoc.map((release) => {
-						return (
-							<Tooltip
-								key={release.service}
-								title={
-									release.service +
-                                    (release.description
-                                    	? " (" + release.description + ")"
-                                    	: "")
-								}
-								placement="top"
-								arrow
-							>
-								<IconButton
-									size="large"
-									LinkComponent={Link}
-									href={release.link}
-									target="_blank"
-									rel="noopener noreferrer"
-								>
-									{iconSwitch[release.service]}
-								</IconButton>
-							</Tooltip>
-						);
-					})}
-					{song.songReleaseLoc.length === 0 && (
-						<Tooltip
-							title={"No release locations"}
-							placement="top"
-							arrow
-						>
-							<IconButton size="large">
-								<DoNotDisturbIcon />
-							</IconButton>
-						</Tooltip>
-					)}
-				</Stack>
-			</CardContent>
-		</Card>
+		
+		<Collapsible.Root>
+			<Flex className="border rounded-md flex-row flex-nowrap p-2 items-center relative">
+				<img src={song.albumImageLoc} alt={`${song.title} album art`} className="w-[75px] h-[75px] rounded-md"/>
+				<Flex className="flex flex-col justify-center ml-4 overflow-hidden">
+					<Box
+						ref={titleRef}
+						style={{
+							display: "-webkit-box",
+							WebkitBoxOrient: "vertical",
+							overflow: "hidden",
+							WebkitLineClamp: 2
+						}}>
+						{/*lowkey unclean but i can't think how else
+						*/}
+						{isOverflowTitle ? <Tooltip content={`${song.artist} - ${song.title}`}>
+							<Text  size="5" className="font-pixel" trim={"start"}>{song.artist} - {song.title} </Text>
+						</Tooltip> : <Text  size="5" className="font-pixel" trim={"start"}>{song.artist} - {song.title} </Text>}
+					</Box>
+					<Box 
+						ref={albumRef}
+						style={{
+							display: "-webkit-box",
+							WebkitBoxOrient: "vertical",
+							overflow: "hidden",
+							WebkitLineClamp: 1
+						}}>
+						{isOverflowAlbum ? <Tooltip content={song.album}>
+							<Text size="5" className="font-pixel italic" trim={"start"}>{song.album}</Text>
+						</Tooltip> : <Text size="5" className="font-pixel italic" trim={"start"}>{song.album}</Text>}
+					</Box>
+					<DisplayTooltip content="Click for more info">
+						<button className="absolute bottom-0.5 right-0.5 SetButton flex rounded-md">
+							<ChevronDownIcon size={30} strokeWidth={3} radius={0} className="justify-center align-center"/>
+						</button>
+					</DisplayTooltip>
+				</Flex>
+			</Flex>
+		</Collapsible.Root>
 	);
 };
 
