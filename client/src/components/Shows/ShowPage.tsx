@@ -9,7 +9,7 @@ import axios from "axios";
 import PageHeader from "../PageHeader";
 import type { ShowEntryMin } from "../../types/Shows";
 import { StandardResponse } from "../../types/global";
-import { Container, Box, Link as RadixLink, ScrollArea, Text, Grid, Spinner, Flex } from "@radix-ui/themes";
+import { Container, Box, Link as RadixLink, ScrollArea, Text, Grid, Spinner } from "@radix-ui/themes";
 import * as ToggleGroup from "@radix-ui/react-toggle-group";
 
 const ShowPage = () => {

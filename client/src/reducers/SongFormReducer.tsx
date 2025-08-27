@@ -28,7 +28,7 @@ export const SongFormReducer = (state: SongEntryForm, action: SongFormAction): S
 			return { ...state, albumImageLoc: action.payload };
 		}
 		case SongFormActionType.AddGenre: {
-			return { ...state, genres: [...state.genres, action.payload] };
+			return { ...state, genres: [...state.genres, ...action.payload] };
 		}
 		case SongFormActionType.RemoveGenre: {
 			return { ...state, genres: state.genres.filter((genre) => genre !== action.payload) };

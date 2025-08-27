@@ -5,7 +5,7 @@ import {
 	ThemeProvider,
 	responsiveFontSizes,
 } from "@mui/material/styles";
-import { CssBaseline, Alert, Snackbar } from "@mui/material";
+import { Alert, Snackbar } from "@mui/material";
 import { useState } from "react";
 import ErrorContext from "./providers/ErrorContext";
 import Home from "./components/Home/Home";
