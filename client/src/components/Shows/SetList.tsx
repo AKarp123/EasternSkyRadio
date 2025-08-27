@@ -85,9 +85,9 @@ const SetListCard = ({ song } : { song: SongEntry}) => {
 								<Text size="5" className="font-pixel italic" trim={"start"}>{song.album}</Text>
 							</DisplayTooltip> : <Text size="5" className="font-pixel italic" trim={"start"}>{song.album}</Text>}
 						</div>
-						<Collapsible.Trigger>
+						<Collapsible.Trigger className="SetListItemButton">
 							<DisplayTooltip content="Click for more info">
-								<button className="absolute bottom-0.5 right-0.5 SetButton flex rounded-md">
+								<button className="absolute bottom-0.5 right-0.5 SetButton flex rounded-md ">
 									<ChevronDownIcon size={30} strokeWidth={3} radius={0} className="justify-center align-center"/>
 								</button>
 							</DisplayTooltip>

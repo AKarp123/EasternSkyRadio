@@ -3,11 +3,23 @@
 }
 
 .SetListContent[data-state="open"] {
-	animation: slideDown 300ms ease-out;
+	animation: slideDown 500ms ease-out;
 }
 
 .SetListContent[data-state="closed"] {
-	animation: slideUp 300ms ease-out;
+	animation: slideUp 500ms ease-out;
+}
+
+.SetListItemButton > button {
+  transition: transform 500ms ease-out;
+}
+
+.SetListItemButton[data-state="open"] > button {
+  transform: rotate(180deg);
+}
+
+.SetListItemButton[data-state="closed"] > button {
+  transform: rotate(0deg);
 }
 
 @keyframes slideDown {
