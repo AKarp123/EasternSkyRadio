@@ -65,7 +65,7 @@ const Home = React.memo(() => {
 			xs: "1",
 			sm: "2"
 		}}
-		className="px-8 sm:px-0 min-h-screen flex flex-col justify-center items-center"
+		className="px-8 sm:px-0 min-h-screen flex flex-col justify-center items-center Home-Container"
 		>
 			<Text size="4" className="font-pixel text-center w-full inline-block mb-4">
 				Test Announcement

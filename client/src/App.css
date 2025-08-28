@@ -10,7 +10,6 @@
 .home-button::after{ 
   display: block;
   content: '';
-  border-bottom: 0.5px solid white;
   transform: scaleX(0);
   transition: transform 300ms ease-in-out;
 }
@@ -67,4 +66,17 @@
 
 .SetButton:hover {
   background-color: rgb(255, 255, 255, 0.1);
+}
+
+.Home-Container {
+  animation: unblur 0.5s ease-in-out forwards;
+}
+
+@keyframes unblur {
+  from {
+    filter: blur(10px);
+  }
+  to {
+    filter: blur(0);
+  }
 }

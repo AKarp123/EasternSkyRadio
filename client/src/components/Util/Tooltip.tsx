@@ -2,10 +2,14 @@ import * as Tooltip from "@radix-ui/react-tooltip";
 import "./Tooltip.css";
 
 interface TooltipProps {
-	content: string;
+	content: string | null;
 	children: React.ReactNode;
 }
 const DisplayTooltip = ({ content, children }: TooltipProps) => {
+
+	if(!content || content.length === 0) {
+		return children;
+	}
 	return (
 		<Tooltip.Root>
 			<Tooltip.Trigger asChild>{children}</Tooltip.Trigger>

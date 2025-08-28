@@ -71,19 +71,17 @@ const SetListCard = ({ song } : { song: SongEntry}) => {
 							ref={titleRef}
 							className="line-clamp-2 mb-2"
 						>
-							{/*lowkey unclean but i can't think how else
-							*/}
-							{isOverflowTitle ? <DisplayTooltip content={`${song.artist} - ${song.title}`}>
+							<DisplayTooltip content={isOverflowTitle? `${song.artist} - ${song.title}` : null}>
 								<Text size="5" className="font-pixel" trim={"start"} style={{lineHeight: "1"}}>{song.artist} - {song.title} </Text>
-							</DisplayTooltip> : <Text  size="5" className="font-pixel"style={{lineHeight: "1"}}>{song.artist} - {song.title} </Text>}
+							</DisplayTooltip>
 						</div>
 						<div
 							ref={albumRef}
 							className="line-clamp-1"
 						>
-							{isOverflowAlbum ? <DisplayTooltip content={song.album}>
+							 <DisplayTooltip content={isOverflowAlbum ? song.album : null}>
 								<Text size="5" className="font-pixel italic" trim={"start"}>{song.album}</Text>
-							</DisplayTooltip> : <Text size="5" className="font-pixel italic" trim={"start"}>{song.album}</Text>}
+							</DisplayTooltip>
 						</div>
 						<Collapsible.Trigger className="SetListItemButton">
 							<DisplayTooltip content="Click for more info">

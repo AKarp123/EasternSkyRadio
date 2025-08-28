@@ -3,15 +3,15 @@
 }
 
 .SetListContent[data-state="open"] {
-	animation: slideDown 500ms ease-out;
+	animation: slideDown 250ms ease-out;
 }
 
 .SetListContent[data-state="closed"] {
-	animation: slideUp 500ms ease-out;
+	animation: slideUp 250ms ease-out;
 }
 
 .SetListItemButton > button {
-  transition: transform 500ms ease-out;
+  transition: transform 250ms ease-out;
 }
 
 .SetListItemButton[data-state="open"] > button {
