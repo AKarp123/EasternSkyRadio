@@ -38,8 +38,12 @@ const ShowPage = () => {
 
 			<PageHeader title="Shows" />
 			<Grid columns={{xs: "1", sm: "3"}}>
-				<ShowPageScrollTo />
-
+				{/* 
+				TODO: ADD tags for this to work
+				<ShowPageScrollTo /> 
+				Empty div as placeholder for now
+				*/}
+				<div></div>
 				<ScrollArea scrollbars="vertical" className="max-h-[70vh] min-h-[70vh] justify-center ">
 					{loading ? (
 						<Spinner className="mx-auto" />
