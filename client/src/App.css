@@ -6,6 +6,10 @@
   z-index:-1;
 }
 
+.radix-themes {
+  --cursor-button: pointer;
+}
+
 
 .home-button::after{ 
   display: block;

@@ -1,0 +1,17 @@
+.ToastViewport {
+	position: fixed;
+	bottom: 1rem;
+	left: 2rem;
+	width: 300px;
+	max-width: 100%;
+	z-index: 9999;
+}
+
+.ToastRoot {
+	/* backdrop-filter: blur(5px); */
+	animation: unblur 0.5s forwards;
+}
+
+
+
+

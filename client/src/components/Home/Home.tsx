@@ -1,64 +1,16 @@
 import React, { useContext, useMemo } from "react";
-
+import { SiteDataContext } from "../../providers/SiteDataProvider";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import HomeButton from "./HomeButton";
 import ErrorContext from "../../providers/ErrorContext";
-import { SiteData } from "../../types/pages/home/Home";
+import { showDateString } from "../Util/DateUtil";
 import { Box, Container, Flex, Grid, Link, Text } from "@radix-ui/themes";
+
 const Home = React.memo(() => {
-	const [siteData, setSiteData] = useState<SiteData | null>(null);
-	const [loading, setLoading] = useState(true);
 	const setError = useContext(ErrorContext);
-	useEffect(() => {
-		axios
-			.get<SiteData>("/api/getSiteInfo")
-			.then((res) => {
-				setSiteData(res.data);
-				setLoading(false);
-				if (res.data === undefined) {
-					setError("Failed to get site data");
-				}
-			})
-			.catch(() => {
-				setError("Failed to get site data");
-			});
-	}, []);
-
-	const nextShowDate = () => {
-		if (!siteData) {
-			return;
-		}
-
-		let now = new Date();
-		let nextShow = new Date(
-			now.getFullYear(),
-			now.getMonth(),
-			now.getDate(),
-			siteData.showHour
-		);
-		let daysUntilNextShow = (siteData.showDay - now.getDay() + 7) % 7;
-
-		if (daysUntilNextShow === 0 && now.getHours() > siteData.showHour) {
-			daysUntilNextShow = 7;
-		}
-		nextShow.setDate(now.getDate() + daysUntilNextShow);
-
-		return new Date(
-			nextShow.toLocaleString("en-US", { timeZone: siteData.timezone })
-		);
-	};
-
-	const showDateString = useMemo<string>(() => {
-		if(!siteData) {
-			return "Error"
-		}
-		if(siteData?.onBreak) {
-			return "on break"
-		}
-		const nextShow = nextShowDate();
-		return `${nextShow?.toDateString()} at ${nextShow?.toLocaleTimeString()}`;
-	}, [siteData])
+	const { siteData, loading } = useContext(SiteDataContext);
+	
 
 	return (
 		<Container size={{
@@ -72,7 +24,7 @@ const Home = React.memo(() => {
 			</Text>
 			<Grid columns={{xs: "1", sm: "2"}} gap={{xs: "0", sm: "6"}} align="center" justify="center">
 				<Box className="flex font-tiny text-6xl white flex-col text-center">
-					<p className="text-lg font-pixel align-top flex justify-center transition-all duration-300">Next Show Date: {loading ? "..." :  showDateString}</p>
+					<p className="text-lg font-pixel align-top flex justify-center transition-all duration-300">Next Show Date: {loading ? "..." :  showDateString(siteData!)}</p>
 					<Flex className="items-center flex flex-col justify-center flex-1">
 						<p>Eastern</p>
 						<p>Sky</p>

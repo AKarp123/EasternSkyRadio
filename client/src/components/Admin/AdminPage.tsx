@@ -1,22 +1,12 @@
-import PageBackdrop from "../PageBackdrop";
-import PageHeader from "../PageHeader";
-import {
-	Container,
-	Divider,
-	Stack,
-	Dialog,
-	DialogActions,
-	DialogContent,
-	DialogTitle,
-	TextField,
-	Button,
-} from "@mui/material";
+
 import { useContext, useState } from "react";
 import { useAuth } from "../../providers/UserProvider";
 import HomeButton, { HomeButtonNoRoute } from "../Home/HomeButton";
 import axios from "axios";
 import ErrorContext from "../../providers/ErrorContext";
-import { Box } from "@radix-ui/themes";
+import { Box, Container, Flex, Grid, Text } from "@radix-ui/themes";
+import { showDateString } from "../Util/DateUtil";
+import { SiteDataContext } from "../../providers/SiteDataProvider";
 
 const AdminPage = () => {
 	const { setUser } = useAuth()!;
@@ -24,6 +14,7 @@ const AdminPage = () => {
 	const [changePasswordDialog, setChangePasswordDialog] = useState(false);
 	const [password, setPassword] = useState("");
 	const [confirmPassword, setConfirmPassword] = useState("");
+	const { siteData, loading} = useContext(SiteDataContext);
 
 	const logout = (e : React.MouseEvent<HTMLDivElement, MouseEvent>) => {
 		e.preventDefault();
@@ -32,6 +23,8 @@ const AdminPage = () => {
 		});
 		setUser(null);
 	};
+
+
 
 	const updatePassword = () => {
 		if (password !== confirmPassword) {
@@ -49,70 +42,32 @@ const AdminPage = () => {
 	};
 
 	return (
-		<PageBackdrop>
-			<PageHeader title="Admin" />
-			<Divider />
-			<Container>
-				<Stack spacing={2} sx={{ mt: 2 }}>
-					<HomeButton text="New Show Log" route="/admin/newshow" />
-					<HomeButton text="Set Planner" route="/admin/setplanner" />
-					<HomeButton text="Edit Log" route="/admin/editshow" />
-					<HomeButton text="Edit Song" route="/admin/editsong" />
-					<Box onClick={() => setChangePasswordDialog(true)}>
-						<HomeButtonNoRoute text="Change Password" />
-					</Box>
-					<Box onClick={(e) => logout(e)}>
-						<HomeButton text="Logout" route="/login" />
-					</Box>
-				</Stack>
-			</Container>
-			<Dialog
-				open={changePasswordDialog}
-				onClose={() => setChangePasswordDialog(false)}
-			>
-				<form
-					onSubmit={(e) => {
-						e.preventDefault();
-						updatePassword();
-						setChangePasswordDialog(false);
-						setPassword("");
-						setConfirmPassword("");
-					}}
-				>
-					<DialogTitle>Change Password</DialogTitle>
-					<DialogContent sx={{ paddingTop: "10px !important" }}>
-						<Stack spacing={2}>
-							<TextField
-								label="New Password"
-								type="password"
-								value={password}
-								onChange={(e) => setPassword(e.target.value)}
-							/>
-							<TextField
-								label="Confirm New Password"
-								type="password"
-								value={confirmPassword}
-								onChange={(e) =>
-									setConfirmPassword(e.target.value)
-								}
-							/>
-						</Stack>
-					</DialogContent>
-					<DialogActions
-						sx={{
-							display: "flex",
-							justifyContent: "center",
-							padding: 2,
-						}}
-					>
-						<Button onClick={() => setChangePasswordDialog(false)}>
-							Cancel
-						</Button>
-						<Button type="submit">Change Password</Button>
-					</DialogActions>
-				</form>
-			</Dialog>
-		</PageBackdrop>
+		<Container size={{
+			xs: "1",
+			sm: "3"
+		}}
+		className="min-h-screen flex flex-col justify-center items-center pt-20 pb-8">
+		<Box className="flex font-tiny text-6xl white flex-col text-center">
+				</Box>
+		<Grid columns={{ xs: "1", sm: "2" }} gap="16px" justify="center" align="center">
+			<Flex className="items-center flex flex-col justify-center flex-1">
+				<p className="text-lg font-pixel align-top flex justify-center transition-all duration-300">Next Show Date: {loading ? "..." :  showDateString(siteData!)}</p>
+				<Text size="9" className="font-tiny text-center w-full inline-block mb-4">Admin</Text>
+			</Flex>
+			<Flex className="items-center flex flex-col justify-center flex-1">
+				<HomeButton text="New Show Log" route="/admin/newshow" />
+				<HomeButton text="Set Planner" route="/admin/setplanner" />
+				<HomeButton text="Edit Log" route="/admin/editshow" />
+				<HomeButton text="Edit Song" route="/admin/editsong" />
+				<Box onClick={() => setChangePasswordDialog(true)}>
+					<HomeButtonNoRoute text="Change Password" />
+				</Box>
+				<Box onClick={(e) => logout(e)}>
+					<HomeButton text="Logout" route="/login" />
+				</Box>
+			</Flex>
+		</Grid>
+		</Container>
 	);
 };
 

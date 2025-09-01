@@ -34,10 +34,10 @@ const ShowPage = () => {
 	}, []);
 
 	return (
-		<Container size="3" className="min-h-screen flex flex-row justify-center items-center">
+		<Container size="1" className="min-h-screen flex flex-row justify-center items-center">
 
 			<PageHeader title="Shows" />
-			<Grid columns={{xs: "1", sm: "3"}}>
+			<Grid columns={{xs: "1", sm: "1"}}>
 				{/* 
 				TODO: ADD tags for this to work
 				<ShowPageScrollTo /> 

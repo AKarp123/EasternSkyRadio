@@ -69,7 +69,7 @@ const SetListCard = ({ song } : { song: SongEntry}) => {
 					}}>
 						<div
 							ref={titleRef}
-							className="line-clamp-2 mb-2"
+							className="line-clamp-2 pt-0.5 mb-2"
 						>
 							<DisplayTooltip content={isOverflowTitle? `${song.artist} - ${song.title}` : null}>
 								<Text size="5" className="font-pixel" trim={"start"} style={{lineHeight: "1"}}>{song.artist} - {song.title} </Text>
@@ -95,6 +95,21 @@ const SetListCard = ({ song } : { song: SongEntry}) => {
 				<Collapsible.Content className="w-full SetListContent">
 
 					<Flex className="flex flex-col gap-1 p-2">
+
+						{song.origTitle && song.origTitle.length > 0 && (
+							<Flex className="flex-row flex-wrap gap-2">
+								<Text size="3" className="font-pixel">Original Title:</Text>
+								<Text size="3" className="font-pixel">{song.origTitle}</Text>
+							</Flex>
+						)}
+						{
+							song.origAlbum && song.origAlbum.length > 0 && (
+								<Flex className="flex-row flex-wrap gap-2">
+									<Text size="3" className="font-pixel">Original Album:</Text>
+									<Text size="3" className="font-pixel">{song.origAlbum}</Text>
+								</Flex>
+							)
+						}
 						<Flex className="flex-row flex-wrap gap-2">
 							<Text size="3" className="font-pixel">Genres:</Text>
 							{song.genres.map((genre, index) => (

@@ -22,6 +22,15 @@ export type UserContextType = {
 	setUser: (user: UserState) => void
 }
 
+export interface SiteData {
+	timezone: string;
+	showDay: number;
+	showHour: number;
+	showLength: number;
+	onBreak: boolean;
+	messageOfTheDay?: string;
+}
+
 
 /**
  * K is the name of the field that contains the data, T is the type of the data
