@@ -1,6 +1,5 @@
-
 import { useState, useEffect } from "react";
-import { useHistory } from "react-router-dom";
+
 import type { Stats } from "../types/pages/Stats";
 import { Container, Flex, Text, Spinner} from "@radix-ui/themes"
 
@@ -9,7 +8,7 @@ import PageHeader from "./PageHeader";
 const Stats = () => {
 	const [stats, setStats] = useState<Partial<Stats>>({});
 	const [loading, setLoading] = useState(true);
-	const history = useHistory();
+
 
 	useEffect(() => {
 		axios
@@ -23,9 +22,6 @@ const Stats = () => {
 			});
 	}, []);
 
-	const handleBackClick = () => {
-		history.push("/");
-	};
 
 	return (
 		<Container size="1" className="flex justify-center items-center min-h-[100vh] text-center">

@@ -16,18 +16,22 @@ type ToastProps = {
 
 
 const iconDisplay = ({type} : { type: ToastProps["type"]}) => {
-	console.log(type)
 	switch (type) {
-		case "success":
+		case "success": {
 			return <CheckIcon size={35} color="" strokeWidth={0.25} radius={1} />;
-		case "error":
+		}
+		case "error": {
 			return <CircleAlertIcon size={35} color="" strokeWidth={0.25} radius={1} />;
-		case "warning":
+		}
+		case "warning": {
 			return <CircleAlertIcon size={35} color="fef493" strokeWidth={0.25} radius={1} />;
-		case "info":
+		}
+		case "info": {
 			return <InfoIcon size={35} color="#fefefe" strokeWidth={0.25} radius={1} />;
-		default:
+		}
+		default: {
 			return null;
+		}
 	}
 }
 
@@ -46,7 +50,6 @@ const DisplayToast = ({ title, message, type = "error", onClose, open, showClose
 		}, 3000);
 		return () => clearTimeout(timer);
 	}, []);
-	console.log("Hello", displayOpen)
 	return (
 		<Toast.Provider swipeDirection="left">
 			<Toast.Root open={displayOpen} className="font-pixel inline-flex items-center backdrop-blur-md border-1 p-2 rounded-md ToastRoot">

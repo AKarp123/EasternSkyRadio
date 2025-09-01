@@ -1,7 +1,5 @@
-import React, { useContext, useMemo } from "react";
+import React, { useContext} from "react";
 import { SiteDataContext } from "../../providers/SiteDataProvider";
-import { useState, useEffect } from "react";
-import axios from "axios";
 import HomeButton from "./HomeButton";
 import ErrorContext from "../../providers/ErrorContext";
 import { showDateString } from "../Util/DateUtil";

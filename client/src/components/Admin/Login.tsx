@@ -45,16 +45,16 @@ const Login = () => {
 				e.preventDefault();
 				login();
 			}}>
-			<Flex className="flex-col gap-4 text-center border-white border-[1px] py-8 px-4 rounded-xl backdrop-blur-[4px]">
-				<Text size="9" className="font-tiny mb-4"> Login</Text>
-				<Separator orientation="horizontal" className="my-1" size="4" />
+				<Flex className="flex-col gap-4 text-center border-white border-[1px] py-8 px-4 rounded-xl backdrop-blur-[4px]">
+					<Text size="9" className="font-tiny mb-4"> Login</Text>
+					<Separator orientation="horizontal" className="my-1" size="4" />
 					
 					<TextField.Root placeholder="Username" value={"admin"} disabled className="text-gray-500"/>
 					<TextField.Root placeholder="Password" value={password} type="password" onChange={(e) => setPassword(e.target.value)}/>
 
 					<Button type="submit" className="cursor-pointer mt-2" color="gray">Login</Button>
-			</Flex>
-				</form>
+				</Flex>
+			</form>
 
 		</Container>
 	);

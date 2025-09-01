@@ -79,7 +79,7 @@ const SetListCard = ({ song } : { song: SongEntry}) => {
 							ref={albumRef}
 							className="line-clamp-1"
 						>
-							 <DisplayTooltip content={isOverflowAlbum ? song.album : null}>
+							<DisplayTooltip content={isOverflowAlbum ? song.album : null}>
 								<Text size="5" className="font-pixel italic" trim={"start"}>{song.album}</Text>
 							</DisplayTooltip>
 						</div>

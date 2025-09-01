@@ -47,26 +47,26 @@ const AdminPage = () => {
 			sm: "3"
 		}}
 		className="min-h-screen flex flex-col justify-center items-center pt-20 pb-8">
-		<Box className="flex font-tiny text-6xl white flex-col text-center">
-				</Box>
-		<Grid columns={{ xs: "1", sm: "2" }} gap="16px" justify="center" align="center">
-			<Flex className="items-center flex flex-col justify-center flex-1">
-				<p className="text-lg font-pixel align-top flex justify-center transition-all duration-300">Next Show Date: {loading ? "..." :  showDateString(siteData!)}</p>
-				<Text size="9" className="font-tiny text-center w-full inline-block mb-4">Admin</Text>
-			</Flex>
-			<Flex className="items-center flex flex-col justify-center flex-1">
-				<HomeButton text="New Show Log" route="/admin/newshow" />
-				<HomeButton text="Set Planner" route="/admin/setplanner" />
-				<HomeButton text="Edit Log" route="/admin/editshow" />
-				<HomeButton text="Edit Song" route="/admin/editsong" />
-				<Box onClick={() => setChangePasswordDialog(true)}>
-					<HomeButtonNoRoute text="Change Password" />
-				</Box>
-				<Box onClick={(e) => logout(e)}>
-					<HomeButton text="Logout" route="/login" />
-				</Box>
-			</Flex>
-		</Grid>
+			<Box className="flex font-tiny text-6xl white flex-col text-center">
+			</Box>
+			<Grid columns={{ xs: "1", sm: "2" }} gap="16px" justify="center" align="center">
+				<Flex className="items-center flex flex-col justify-center flex-1">
+					<p className="text-lg font-pixel align-top flex justify-center transition-all duration-300">Next Show Date: {loading ? "..." :  showDateString(siteData!)}</p>
+					<Text size="9" className="font-tiny text-center w-full inline-block mb-4">Admin</Text>
+				</Flex>
+				<Flex className="items-center flex flex-col justify-center flex-1">
+					<HomeButton text="New Show Log" route="/admin/newshow" />
+					<HomeButton text="Set Planner" route="/admin/setplanner" />
+					<HomeButton text="Edit Log" route="/admin/editshow" />
+					<HomeButton text="Edit Song" route="/admin/editsong" />
+					<Box onClick={() => setChangePasswordDialog(true)}>
+						<HomeButtonNoRoute text="Change Password" />
+					</Box>
+					<Box onClick={(e) => logout(e)}>
+						<HomeButton text="Logout" route="/login" />
+					</Box>
+				</Flex>
+			</Grid>
 		</Container>
 	);
 };
