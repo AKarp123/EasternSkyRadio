@@ -1,11 +1,11 @@
-import React from "react";
+import React, { JSX } from "react";
 import { Redirect, Route } from "react-router-dom";
 import { useAuth } from "./providers/UserProvider";
 
 
 
 type properties = {
-	component: React.ComponentType<any>;
+	component: React.ComponentType<any> | JSX.Element;
 	location?: Location;
 	[key: string]: any; // Allow other props to be passed
 }
@@ -21,7 +21,7 @@ const AuthRoute = ({ component: Component, location, ...rest }: properties) => {
 			{...rest}
 			render={(properties) =>
 				user ? (
-					<Component {...properties} />
+					typeof Component === "function" ? <Component {...properties} /> : Component
 				) : (
 					<Redirect
 						to={{

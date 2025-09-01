@@ -27,6 +27,7 @@ import { ErrorVariant, DisplayError} from "./types/global";
 import { Theme} from "@radix-ui/themes"
 import DisplayToast from "./components/Util/Toast";
 import SiteDataProvider from "./providers/SiteDataProvider";
+import NotFound from "./components/404";
 
 let darkTheme = createTheme({
 	palette: {
@@ -103,6 +104,14 @@ function App() {
 										path="/admin/SetPlanner"
 										component={SetPlanner}
 									/>
+									<AuthRoute
+										exact
+										path="/admin/*"
+										component={<NotFound auth={true} />}
+									/>
+									<Route path="*">
+										<NotFound auth={false} />
+									</Route>
 								</Switch>
 								{error && <DisplayToast title={error.errorMessage} type={error.variant} onClose={() => setError(null)} open={true} />}
 							</div>
