@@ -6,7 +6,6 @@ interface TooltipProps {
 	children: React.ReactNode;
 }
 const DisplayTooltip = ({ content, children }: TooltipProps) => {
-
 	if(!content || content.length === 0) {
 		return children;
 	}

@@ -1,20 +1,36 @@
 import * as React from "react";
-import { styled } from "@mui/material/styles";
-import Button from "@mui/material/Button";
+import { Button, Text } from "@radix-ui/themes";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { FileUploader } from "react-drag-drop-files";
 
-const VisuallyHiddenInput = styled("input")({
-	clip: "rect(0 0 0 0)",
-	clipPath: "inset(50%)",
-	height: 1,
-	overflow: "hidden",
-	position: "absolute",
-	bottom: 0,
-	left: 0,
-	whiteSpace: "nowrap",
-	width: 1,
-});
+// const VisuallyHiddenInput = styled("input")({
+// 	clip: "rect(0 0 0 0)",
+// 	clipPath: "inset(50%)",
+// 	height: 1,
+// 	overflow: "hidden",
+// 	position: "absolute",
+// 	bottom: 0,
+// 	left: 0,
+// 	whiteSpace: "nowrap",
+// 	width: 1,
+// });
+
+const VisuallyHiddenInput = ({...props}: React.InputHTMLAttributes<HTMLInputElement>) => (
+	<input
+		style={{
+			clip: "rect(0 0 0 0)",
+			clipPath: "inset(50%)",
+			height: 1,
+			overflow: "hidden",
+			position: "absolute",
+			bottom: 0,
+			left: 0,
+			whiteSpace: "nowrap",
+			width: 1,
+		}}
+		{...props}
+	/>
+);
 
 
 type InputFileUploadProperties = {
@@ -29,15 +45,12 @@ export default function InputFileUpload({ uploadImage }: InputFileUploadProperti
 		<FileUploader multiple={false} handleChange={uploadImage} name="filename" types={fileTypes}>
 			<div>
 				<Button
-					size="small"
-					component="label"
-					role={undefined}
-					variant="contained"
-					tabIndex={-1}
-					startIcon={<CloudUploadIcon />}
+				color="gray"
+				className="cursor-pointer"
 				>
-					Upload file
+					<Text size="3" className="font-pixel">Upload file</Text>
 					<VisuallyHiddenInput type="file" />
+
 				</Button>
 			</div>
 		</FileUploader>

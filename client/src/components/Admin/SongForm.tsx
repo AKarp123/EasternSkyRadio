@@ -1,23 +1,16 @@
-import {
-	Stack,
-	TextField,
-	Button,
-	Chip,
-	Select,
-	MenuItem,
 
-	Tooltip,
-} from "@mui/material";
 import { useContext, useReducer, useState, useEffect } from "react";
 import { useDebouncedCallback } from "use-debounce";
 import axios, { AxiosError } from "axios";
 import ErrorContext from "../../providers/ErrorContext";
 import InputFileUpload from "./InputFileUpload";
-
+import { Form } from "radix-ui";
 import { SongFormReducer } from "../../reducers/SongFormReducer";
 import { SongEntry, SongEntryForm } from "../../types/Song";
 import { StandardResponse } from "../../types/global";
 import { SongFormActionType } from "../../types/Song";
+import { Flex, ScrollArea} from "@radix-ui/themes";
+import Chip from "../Util/Chip";
 
 /**
  *
@@ -172,8 +165,8 @@ const SongForm = ({
 				});
 				setError("Image uploaded successfully!", "success");
 			})
-			.catch((error) => {
-				setError(error.message);
+			.catch((error : AxiosError<{ message: string }>) => {
+				setError("Error Uploading Image: " + (error.response?.data?.message || error.message));
 			});
 	};
 
@@ -269,7 +262,7 @@ const SongForm = ({
 			return;
 		}
 		axios
-			.get("/api/search", { params: { query: album } })
+			.get<StandardResponse<"searchResults", SongEntry[]>>("/api/search", { params: { query: album } })
 			.then((res) => {
 				if (res.data.searchResults.length > 0 && 
                         res.data.searchResults[0].album.toUpperCase() ===
@@ -302,366 +295,177 @@ const SongForm = ({
 			});
 	}, 500);
 	return (
-		<form
-			onSubmit={(e) => {
-				handleSubmit(e);
-			}}
-		>
-			<Stack direction="row" spacing={1} sx={{ mt: 1 }}>
-				<TextField
-					label="Elcro ID"
-					value={state.elcroId}
-					onChange={(e) => {
-						dispatch({
-							type: SongFormActionType.ElcroId,
-							payload: e.target.value,
-						});
-
-						fillElcroId(e.target.value);
-					}}
-					fullWidth
-					sx={{ mt: 1 }}
-				/>
-				{type === "edit" && (
-					<TextField
-						label="Song ID"
-						value={state.songId as SongEntry["songId"]}
+		<Form.Root onSubmit={handleSubmit} className="flex flex-col gap-4">
+			<Form.Field className="flex flex-col gap-1" name="elcroId">
+				<Form.Control asChild>
+					<input
+						type="text"
+						placeholder="Elcro ID"
+						value={state.elcroId}
+						onChange={(e) => {
+							dispatch({
+								type: SongFormActionType.ElcroId,
+								payload: e.target.value,
+							});
+							fillElcroId(e.target.value);
+						}}
+						className="border border-gray-300 rounded px-2 py-1 font-pixel"
+						required
+						disabled={type === "edit"}
+					/>
+				</Form.Control>
+			</Form.Field>
+			<Form.Field className="flex flex-col gap-1" name="artist">
+				<Form.Control asChild>
+					<input
+						type="text"
+						placeholder="Artist"
+						value={state.artist}
 						onChange={(e) =>
 							dispatch({
-								type: SongFormActionType.SongId,
+								type: SongFormActionType.Artist,
 								payload: e.target.value,
 							})
 						}
-						fullWidth
-						disabled
-						sx={{ mt: 1 }}
+						className="border border-gray-300 rounded px-2 py-1 font-pixel"
+						required
 					/>
-				)}
-			</Stack>
-			<Stack direction="row" spacing={1} sx={{ mt: "8px" }}>
-				<TextField
-					label="Title"
-					value={state.title}
-					onChange={(e) =>
-						dispatch({
-							type: SongFormActionType.Title,
-							payload: e.target.value,
-						})
-					}
-					fullWidth
-					sx={{ mt: 1 }}
-				/>
-				<TextField
-					label="Artist"
-					value={state.artist}
-					onChange={(e) =>
-						dispatch({
-							type: SongFormActionType.Artist,
-							payload: e.target.value,
-						})
-					}
-					fullWidth
-					sx={{ mt: 1 }}
-				/>
-			</Stack>
-			<TextField
-				label="Original Title"
-				value={state.origTitle}
-				onChange={(e) =>
-					dispatch({
-						type: SongFormActionType.OrigTitle,
-						payload: e.target.value,
-					})
-				}
-				fullWidth
-				sx={{ mt: 1 }}
-			/>
-			<Stack direction="row" spacing={1} sx={{ mt: "8px" }}>
-				<TextField
-					label="Album"
-					value={state.album}
-					onChange={(e) => {
-						dispatch({
-							type: SongFormActionType.Album,
-							payload: e.target.value,
-						});
-
-						fillAlbum(e.target.value);
-					}}
-					fullWidth
-					sx={{ mt: 1 }}
-				/>
-				<TextField
-					label="Original Album"
-					value={state.origAlbum}
-					onChange={(e) =>
-						dispatch({
-							type: SongFormActionType.OrigAlbum,
-							payload: e.target.value,
-						})
-					}
-					fullWidth
-					sx={{ mt: 1 }}
-				/>
-			</Stack>
-			<Stack direction="row" spacing={1} sx={{ mt: "8px" }}>
-				<TextField
-					label="Album Image Location"
-					value={state.albumImageLoc}
-					onChange={(e) =>
-						dispatch({
-							type: SongFormActionType.AlbumImageLoc,
-							payload: e.target.value,
-						})
-					}
-					onPaste={(e) => {
-						// e.preventDefault();
-						for (const item of e.clipboardData.items) {
-							if (item.type.startsWith("image/")) {
-								const file = item.getAsFile();
-								if (file) {
-									uploadImage(file);
-								}
-							}
-						}
-					}}
-					onDrop={(e) => {
-						handleDrop(e);
-					}}
-					onDragOver={(e) => {
-						e.preventDefault();
-					}}
-					fullWidth
-					sx={{ mt: 1 }}
-				/>
-				<InputFileUpload uploadImage={uploadImage} />
-			</Stack>
-			<Stack direction="row" spacing={1} sx={{ mt: 1 }}>
-				<TextField
-					label="Genre"
-					value={genreInput}
-					onChange={(e) => setGenreInput(e.target.value)}
-					onKeyPress={(e) => {
-						if (e.key === "Enter") {
-							e.preventDefault();
-							dispatch({
-								type: SongFormActionType.AddGenre,
-								payload: genreInput
-									.split(",")
-									.map((genre) => genre.trim()),
-							});
-							setGenreInput("");
-						}
-					}}
-					fullWidth
-				/>
-				<Button
-					size="large"
-					variant="contained"
-					onClick={() => {
-						dispatch({
-							type: SongFormActionType.AddGenre,
-							payload: genreInput
-								.split(",")
-								.map((genre) => genre.trim()),
-						});
-						setGenreInput("");
-					}}
-					sx={{
-						fontSize: "12px",
-					}}
-				>
-					Add
-				</Button>
-			</Stack>
-			<Stack
-				direction={"row"}
-				sx={{
-					overflowX: "auto",
-					scrollbarWidth: "none",
-					"&::-webkit-scrollbar": {
-						display: "none",
-					},
-					mt: state.genres.length > 0 ? 1 : 0,
-				}}
-			>
-				{state.genres.map((genre, index) => (
-					<Chip
-						key={index}
-						label={genre}
-						size="small"
-						sx={{ margin: "2px" }}
-						onDelete={() =>
-							dispatch({
-								type: SongFormActionType.RemoveGenre,
-								payload: genre,
-							})
-						}
-					/>
-				))}
-			</Stack>
-			<Stack
-				direction="row"
-				spacing={1}
-				alignItems="center"
-				sx={{ mt: 1 }}
-			>
-				<Select
-					labelId="release-location"
-					id="release-location-select"
-					label="Release Location"
-					value={songReleaseType}
-					onChange={(e) => setSongReleaseType(e.target.value)}
-					sx={{
-						minWidth: "120px",
-					}}
-				>
-					<MenuItem value="Spotify">Spotify</MenuItem>
-					<MenuItem value="Apple Music">Apple Music</MenuItem>
-					<MenuItem value="Youtube">YouTube</MenuItem>
-					<MenuItem value="Download">Download</MenuItem>
-					<MenuItem value="Purchase">Purchase</MenuItem>
-					<MenuItem value="Other">Other</MenuItem>
-				</Select>
-				<TextField
-					label="Release URL"
-					value={songReleaseInput}
-					onChange={(e) => {
-						setSongReleaseInput(e.target.value);
-						handleUrlType(e.target.value);
-					}}
-					onKeyPress={(e) => {
-						if (e.key === "Enter") {
-							e.preventDefault();
-							if (
-								songReleaseType === "Purchase" ||
-                                songReleaseType === "Download" ||
-                                songReleaseType === "Other"
-							) {
-								// handle additional field if needed
-							} else {
+				</Form.Control>
+			</Form.Field>
+			<Flex direction="row" gap="2">
+				<Form.Field className="flex flex-col gap-1 flex-grow" name="title">
+					<Form.Control asChild>
+						<input
+							type="text"
+							placeholder="Title"
+							value={state.title}
+							onChange={(e) =>
 								dispatch({
-									type: SongFormActionType.AddSongReleaseLoc,
-									payload: {
-										service: songReleaseType,
-										link: songReleaseInput,
-										description: songReleaseDesc,
-									},
-								});
-								setSongReleaseInput("");
-							}
-						}
-					}}
-					fullWidth
-					sx={{ mt: 1 }}
-				/>
-				{songReleaseType === "Purchase" ||
-                songReleaseType === "Download" ||
-                songReleaseType === "Other" ? (
-						<TextField
-							label="Description"
-							value={songReleaseDesc}
-							onChange={(e) => setSongReleaseDesc(e.target.value)}
-							onKeyPress={(e) => {
-								if (e.key === "Enter") {
-									e.preventDefault();
-									dispatch({
-										type: SongFormActionType.AddSongReleaseLoc,
-										payload: {
-											service: songReleaseType,
-											link: songReleaseInput,
-											description: songReleaseDesc,
-										},
-									});
-									setSongReleaseInput("");
-									setSongReleaseDesc("");
-								}
-							}}
-							fullWidth
-							sx={{ mt: 1 }}
-						/>
-					) : null}
-
-				<Button
-					variant="contained"
-					onClick={() => {
-						dispatch({
-							type: SongFormActionType.AddSongReleaseLoc,
-							payload: {
-								service: songReleaseType,
-								link: songReleaseInput,
-								description: songReleaseDesc,
-							},
-						});
-						setSongReleaseInput("");
-						setSongReleaseDesc("");
-					}}
-					sx={{ fontSize: "12px" }}
-				>
-					Add Location
-				</Button>
-			</Stack>
-			<Stack
-				direction="row"
-				sx={{
-					overflowX: "auto",
-					scrollbarWidth: "none",
-					"&::-webkit-scrollbar": {
-						display: "none",
-					},
-					mt: state.songReleaseLoc.length > 0 ? 1 : 0,
-				}}
-			>
-				{state.songReleaseLoc.map((release) => (
-					<Tooltip
-						title={release.link}
-						key={release.link}
-						placement="top"
-					>
-						<Chip
-							label={release.service}
-							key={release.link}
-							size="small"
-							sx={{ margin: "2px" }}
-							onDelete={() =>
-								dispatch({
-									type: SongFormActionType.RemoveSongReleaseLoc,
-									payload: release.link,
+									type: SongFormActionType.Title,
+									payload: e.target.value,
 								})
 							}
+							className="border border-gray-300 rounded px-2 py-1 font-pixel"
+							required
 						/>
-					</Tooltip>
-				))}
-			</Stack>
+					</Form.Control>
+				</Form.Field>
+				<Form.Field className="flex flex-col gap-1 flex-grow" name="origTitle">
+					<Form.Control asChild>
+						<input
+							type="text"
+							placeholder="Original Title"
+							value={state.origTitle}
+							onChange={(e) =>
+								dispatch({
+									type: SongFormActionType.OrigTitle,
+									payload: e.target.value,
+								})
+							}
+							className="border border-gray-300 rounded px-2 py-1 font-pixel"
+						/>
+					</Form.Control>
+				</Form.Field>
+			</Flex>
+			<Flex direction="row" gap="2">
+				<Form.Field className="flex flex-col gap-1 flex-grow" name="album">
+					<Form.Control asChild>
+						<input
+							type="text"
+							placeholder="Title"
+							value={state.album}
+							onChange={(e) =>
+								dispatch({
+									type: SongFormActionType.Title,
+									payload: e.target.value,
+								})
+							}
+							className="border border-gray-300 rounded px-2 py-1 font-pixel"
+							required
+						/>
+					</Form.Control>
+				</Form.Field>
+				<Form.Field className="flex flex-col gap-1 flex-grow" name="origAlbum">
+					<Form.Control asChild>
+						<input
+							type="text"
+							placeholder="Original Album"
+							value={state.origAlbum}
+							onChange={(e) =>
+								dispatch({
+									type: SongFormActionType.OrigAlbum,
+									payload: e.target.value,
+								})
+							}
+							className="border border-gray-300 rounded px-2 py-1 font-pixel"
+						/>
+					</Form.Control>
+				</Form.Field>
+			</Flex>
 
-			<TextField
-				label="Duration"
-				value={state.duration.toString() ?? ""}
-				type="number"
-				inputProps={{ step: "any" }}
-				onChange={(e) =>
-					dispatch({
-						type: SongFormActionType.SetDuration,
-						payload: e.target.value,
-					})
-				}
-				fullWidth
-				sx={{
-					mt: 1,
-					"input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button":
-                        {
-                        	WebkitAppearance: "none",
-                        	margin: 0,
-                        },
-					"input[type=number]": {
-						MozAppearance: "textfield",
-					},
-				}}
-			/>
-			<Button type="submit">
-				{type === "edit" ? "Edit" : "Add"} Song
-			</Button>
-		</form>
+			<Flex direction="row" gap="2" width="100%" onDrop={handleDrop} onDragOver={(e) => e.preventDefault()}>
+				<Form.Field className="flex flex-col gap-1 flex-grow" name="albumImageLoc">
+					<Form.Control asChild>
+						<input
+							type="text"
+							placeholder="Album Image URL"
+							value={state.albumImageLoc}
+							onChange={(e) =>
+								dispatch({
+									type: SongFormActionType.AlbumImageLoc,
+									payload: e.target.value,
+								})
+							}
+							onPaste={(e) => {
+								for (const item of e.clipboardData.items) {
+									if (item.type.startsWith("image/")) {
+										const file = item.getAsFile();
+										if (file) {
+											uploadImage(file);
+										}
+									}
+								}
+							}}
+							className="border border-gray-300 rounded px-2 py-1 font-pixel"
+						/>
+					</Form.Control>
+				</Form.Field>
+				<InputFileUpload uploadImage={uploadImage} />
+			</Flex>
+			<Form.Field className="flex flex-col gap-1 flex-grow" name="genreInput">
+				<Form.Control asChild>
+					<input
+						type="text"
+						placeholder="Genres"
+						value={genreInput}
+						onChange={(e) => setGenreInput(e.target.value)}
+						onKeyDown={(e) => {
+						
+							if (e.key === "Enter" && genreInput.trim() !== "") {
+								e.preventDefault();
+								const genres = genreInput.split(",").map((g) => g.trim());
+								dispatch({
+									type: SongFormActionType.AddGenre,
+									payload: genres,
+								});
+								setGenreInput("");
+							}
+						}}
+						className="border border-gray-300 rounded px-2 py-1 font-pixel"
+					/>
+				</Form.Control>
+			</Form.Field>
+			<ScrollArea scrollbars="horizontal" className="inline-flex">
+				<Flex direction="row" gap="2">
+					{state.genres.map((genre, index) => (
+						<Chip key={index} label={genre} onDelete={() => dispatch({
+							type: SongFormActionType.RemoveGenre,
+							payload: genre,
+						})} />
+					))}
+				</Flex>
+			</ScrollArea>
+		</Form.Root>
 	);
 };
 
