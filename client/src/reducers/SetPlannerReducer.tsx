@@ -29,7 +29,7 @@ export const reducer = (state: SetPlannerState, action: SetPlannerAction) => {
 			}
 			let temporary = state.songsList[action.payload];
 			state.songsList[action.payload] =
-                state.songsList[action.payload - 1];
+				state.songsList[action.payload - 1];
 			state.songsList[action.payload - 1] = temporary;
 			return {
 				...state,
@@ -43,7 +43,7 @@ export const reducer = (state: SetPlannerState, action: SetPlannerAction) => {
 			}
 			let temporary2 = state.songsList[action.payload];
 			state.songsList[action.payload] =
-                state.songsList[action.payload + 1];
+				state.songsList[action.payload + 1];
 			state.songsList[action.payload + 1] = temporary2;
 			return {
 				...state,

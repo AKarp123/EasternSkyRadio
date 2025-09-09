@@ -1,7 +1,7 @@
 import { SongFormActionType, SongFormAction } from "../types/Song";
-import { SongEntryForm, SongEntry } from "../types/Song";
+import { SongEntryForm } from "../types/Song";
 
-export const SongFormReducer = (state: SongEntryForm, action: SongFormAction): SongEntryForm | SongEntry => {
+export const SongFormReducer = (state: SongEntryForm, action: SongFormAction): SongEntryForm => {
 	switch (action.type) {
 		case SongFormActionType.SongId: {
 			return { ...state, songId: action.payload };

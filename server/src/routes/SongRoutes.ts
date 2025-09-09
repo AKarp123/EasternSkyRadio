@@ -74,6 +74,8 @@ songRouter.post("/song", requireLogin, async (req : Request, res : Response) => 
 		return;
 	}
 
+
+
 	// Escape any special regex characters for each song field
 	const escapedTitle = escapeRegex(songData.title);
 	const escapedArtist = escapeRegex(songData.artist);

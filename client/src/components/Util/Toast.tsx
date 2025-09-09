@@ -40,19 +40,16 @@ const iconDisplay = ({type} : { type: ToastProps["type"]}) => {
 
 
 const DisplayToast = ({ title, message, type = "error", onClose, open, showClose }: ToastProps) => {
-	const [displayOpen, setDisplayOpen] = useState<boolean>(open);
-
-
+	const [visible, setVisible] = useState(open);
 	useEffect(() => {
-		const timer = setTimeout(() => {
-			setDisplayOpen(false);
-			onClose();
-		}, 3000);
-		return () => clearTimeout(timer);
+		setTimeout(() => {
+			setVisible(false);
+		}, 2500);
 	}, []);
+	
 	return (
 		<Toast.Provider swipeDirection="left">
-			<Toast.Root open={displayOpen} className="font-pixel inline-flex items-center backdrop-blur-md border-1 p-2 rounded-md ToastRoot">
+			<Toast.Root open={open} duration={3000} onOpenChange={onClose} className={"font-pixel inline-flex items-center backdrop-blur-md border-1 p-2 rounded-md ToastRoot" + (visible ? "" : " ToastRootClosed")}>
 				{iconDisplay({type})}
 				<Toast.Title>{title}</Toast.Title>
 				{message && <Toast.Description>{message}</Toast.Description>}

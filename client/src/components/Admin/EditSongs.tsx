@@ -28,7 +28,7 @@ const reducer = (state: SongEntry, action: { type: string; payload?: any }) => {
 				genres: [],
 				specialNote: "",
 				songReleaseLoc: [],
-				duration: "",
+				duration: 0,
 			};
 		}
 		default: {

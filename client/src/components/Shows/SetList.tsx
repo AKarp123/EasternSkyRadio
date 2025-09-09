@@ -55,6 +55,7 @@ const SetListCard = ({ song } : { song: SongEntry}) => {
 		Download: <DownloadIcon sx={{ height: "25px", width: "25px" }} />,
 		"Apple Music": <AppleIcon sx={{ height: "25px", width: "25px" }} />,
 		Youtube: <YouTubeIcon sx={{ height: "25px", width: "25px" }} />,
+		"YouTube": <YouTubeIcon sx={{ height: "25px", width: "25px" }} />,
 		Other: <MusicIcon sx={{ height: "25px", width: "25px" }} />,
 	};
 

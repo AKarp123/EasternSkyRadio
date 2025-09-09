@@ -107,9 +107,9 @@ const SetPlanner = () => {
 				duration = state.songsList[index].item.duration;
 			}
 			array[index] =
-                array[index - 1] === undefined
-                	? duration
-                	: array[index - 1] + duration;
+				array[index - 1] === undefined
+					? duration
+					: array[index - 1] + duration;
 		}
 
 		return array;

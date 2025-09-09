@@ -45,7 +45,7 @@ function App() {
 	const displayError = (errorMessage: string, variant: ErrorVariant = "error") => {
 		setError({ errorMessage, variant });
 	};
-
+	console.log(error)
 
 	return (
 		<ThemeProvider theme={darkTheme}>
@@ -112,7 +112,10 @@ function App() {
 										<NotFound auth={false} />
 									</Route>
 								</Switch>
-								{error && <DisplayToast title={error.errorMessage} type={error.variant} onClose={() => setError(null)} open={true} />}
+								{error && <DisplayToast title={error.errorMessage} type={error.variant} onClose={() => {
+									console.log('test');
+									setError(null);
+								}} open={true} />}
 							</div>
 						</SiteDataProvider>
 					</UserProvider>

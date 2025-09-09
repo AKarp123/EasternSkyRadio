@@ -4,13 +4,15 @@ import { useDebouncedCallback } from "use-debounce";
 import axios, { AxiosError } from "axios";
 import ErrorContext from "../../providers/ErrorContext";
 import InputFileUpload from "./InputFileUpload";
-import { Form } from "radix-ui";
+import { Form, Select } from "radix-ui";
 import { SongFormReducer } from "../../reducers/SongFormReducer";
 import { SongEntry, SongEntryForm } from "../../types/Song";
 import { StandardResponse } from "../../types/global";
 import { SongFormActionType } from "../../types/Song";
-import { Flex, ScrollArea} from "@radix-ui/themes";
+import { Box, Flex, ScrollArea} from "@radix-ui/themes";
 import Chip from "../Util/Chip";
+import Tooltip from "../Util/Tooltip";
+
 
 /**
  *
@@ -70,9 +72,20 @@ const SongForm = ({
 	);
 	const [genreInput, setGenreInput] = useState("");
 	const [songReleaseInput, setSongReleaseInput] = useState("");
+	const [durationInput, setDurationInput] = useState("");
 	const [songReleaseType, setSongReleaseType] = useState("");
 	const [songReleaseDesc, setSongReleaseDesc] = useState("");
+	const [displayGenreWarning, setDisplayGenreWarning] = useState(false);
 
+
+	const songReleaseTypes = [
+		"Spotify",
+		"Apple Music",
+		"YouTube",
+		"Purchase",
+		"Download",
+		"Other",
+	]
 
 	useEffect(() => {
 		if (type === "edit") {
@@ -82,13 +95,32 @@ const SongForm = ({
 			});
 		}
 	}, [type, songData]);
+
+
+	const validate = () => {
+		let valid = true;
+		if (state.genres.length === 0) {
+			setDisplayGenreWarning(true);
+			setError("Please add at least one genre.");
+			valid = false;
+		}
+
+		return valid;
+	}
+
+
+
 	const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+		e.preventDefault();
+		if (!validate()) {
+			return;
+		}
+		
 		if (type === "edit") {
 			submit(e, state);
 			return;
 		}
 		const songObject = state;
-		e.preventDefault();
 		axios
 			.post<StandardResponse<"song", SongEntry>>("/api/song", {
 				songData: songObject,
@@ -125,13 +157,13 @@ const SongForm = ({
 	};
 
 	const handleUrlType = (url: string) => {
-		// console.log(typeof url)
+		url = url.toLowerCase();
 		if (url.includes("spotify")) {
 			setSongReleaseType("Spotify");
 		} else if (url.includes("apple")) {
 			setSongReleaseType("Apple Music");
 		} else if (url.includes("youtube")) {
-			setSongReleaseType("Youtube");
+			setSongReleaseType("YouTube");
 		} else if (url.includes("bandcamp")) {
 			setSongReleaseType("Purchase");
 			setSongReleaseDesc("Bandcamp");
@@ -172,8 +204,10 @@ const SongForm = ({
 
 	const uploadImage = (file: File) => {
 		// e.preventDefault();
+		console.log("Uploading image", file);
 		const { artist, album } = state;
 		if (artist === "" || album === "") {
+			console.log('a')
 			setError("Please enter artist and album before uploading image");
 			return;
 		}
@@ -295,7 +329,11 @@ const SongForm = ({
 			});
 	}, 500);
 	return (
-		<Form.Root onSubmit={handleSubmit} className="flex flex-col gap-4">
+		<Form.Root onSubmit={(e) => {
+			console.log('submit');
+			e.preventDefault();
+			handleSubmit(e);
+		}} className="flex flex-col gap-3">
 			<Form.Field className="flex flex-col gap-1" name="elcroId">
 				<Form.Control asChild>
 					<input
@@ -309,11 +347,13 @@ const SongForm = ({
 							});
 							fillElcroId(e.target.value);
 						}}
-						className="border border-gray-300 rounded px-2 py-1 font-pixel"
-						required
+						className="border border-gray-300 rounded px-2 py-1 font-pixel focus:outline-none"
 						disabled={type === "edit"}
 					/>
 				</Form.Control>
+				<Form.Message match={(value, formData) => value.length !== 6 && value.length > 0} className="text-md font-pixel text-red-300">
+					ElcroID must be 6 characters
+				</Form.Message>
 			</Form.Field>
 			<Form.Field className="flex flex-col gap-1" name="artist">
 				<Form.Control asChild>
@@ -327,8 +367,7 @@ const SongForm = ({
 								payload: e.target.value,
 							})
 						}
-						className="border border-gray-300 rounded px-2 py-1 font-pixel"
-						required
+						className="border border-gray-300 rounded px-2 py-1 font-pixel focus:outline-none"
 					/>
 				</Form.Control>
 			</Form.Field>
@@ -345,8 +384,7 @@ const SongForm = ({
 									payload: e.target.value,
 								})
 							}
-							className="border border-gray-300 rounded px-2 py-1 font-pixel"
-							required
+							className="border border-gray-300 rounded px-2 py-1 font-pixel focus:outline-none"
 						/>
 					</Form.Control>
 				</Form.Field>
@@ -362,7 +400,7 @@ const SongForm = ({
 									payload: e.target.value,
 								})
 							}
-							className="border border-gray-300 rounded px-2 py-1 font-pixel"
+							className="border border-gray-300 rounded px-2 py-1 font-pixel focus:outline-none"
 						/>
 					</Form.Control>
 				</Form.Field>
@@ -372,15 +410,16 @@ const SongForm = ({
 					<Form.Control asChild>
 						<input
 							type="text"
-							placeholder="Title"
+							placeholder="Album"
 							value={state.album}
-							onChange={(e) =>
+							onChange={(e) => {
 								dispatch({
-									type: SongFormActionType.Title,
+									type: SongFormActionType.Album,
 									payload: e.target.value,
-								})
-							}
-							className="border border-gray-300 rounded px-2 py-1 font-pixel"
+								});
+								fillAlbum(e.target.value);
+							}}
+							className="border border-gray-300 rounded px-2 py-1 font-pixel focus:outline-none"
 							required
 						/>
 					</Form.Control>
@@ -397,39 +436,38 @@ const SongForm = ({
 									payload: e.target.value,
 								})
 							}
-							className="border border-gray-300 rounded px-2 py-1 font-pixel"
+							className="border border-gray-300 rounded px-2 py-1 font-pixel focus:outline-none"
 						/>
 					</Form.Control>
 				</Form.Field>
 			</Flex>
 
 			<Flex direction="row" gap="2" width="100%" onDrop={handleDrop} onDragOver={(e) => e.preventDefault()}>
-				<Form.Field className="flex flex-col gap-1 flex-grow" name="albumImageLoc">
-					<Form.Control asChild>
-						<input
-							type="text"
-							placeholder="Album Image URL"
-							value={state.albumImageLoc}
-							onChange={(e) =>
-								dispatch({
-									type: SongFormActionType.AlbumImageLoc,
-									payload: e.target.value,
-								})
-							}
-							onPaste={(e) => {
-								for (const item of e.clipboardData.items) {
-									if (item.type.startsWith("image/")) {
-										const file = item.getAsFile();
-										if (file) {
-											uploadImage(file);
-										}
-									}
+				<input
+					type="text"
+					placeholder="Album Image URL"
+					value={state.albumImageLoc}
+					className="flex flex-col gap-1 flex-grow border border-gray-300 rounded px-2 py-1 font-pixel focus:outline-none"
+					onChange={(e) =>
+						dispatch({
+							type: SongFormActionType.AlbumImageLoc,
+							payload: e.target.value,
+						})
+					}
+					onPaste={(e) => {
+						console.log(e.clipboardData);
+						for (const item of e.clipboardData.items) {
+							if (item.type.startsWith("image/")) {
+								const file = item.getAsFile();
+								if (file) {
+									uploadImage(file);
 								}
-							}}
-							className="border border-gray-300 rounded px-2 py-1 font-pixel"
-						/>
-					</Form.Control>
-				</Form.Field>
+							}
+						}
+					}}
+					
+				/>
+
 				<InputFileUpload uploadImage={uploadImage} />
 			</Flex>
 			<Form.Field className="flex flex-col gap-1 flex-grow" name="genreInput">
@@ -440,7 +478,7 @@ const SongForm = ({
 						value={genreInput}
 						onChange={(e) => setGenreInput(e.target.value)}
 						onKeyDown={(e) => {
-						
+							setDisplayGenreWarning(false);
 							if (e.key === "Enter" && genreInput.trim() !== "") {
 								e.preventDefault();
 								const genres = genreInput.split(",").map((g) => g.trim());
@@ -451,11 +489,14 @@ const SongForm = ({
 								setGenreInput("");
 							}
 						}}
-						className="border border-gray-300 rounded px-2 py-1 font-pixel"
+						className="border border-gray-300 rounded px-2 py-1 font-pixel focus:outline-none"
 					/>
 				</Form.Control>
 			</Form.Field>
-			<ScrollArea scrollbars="horizontal" className="inline-flex">
+			
+			<ScrollArea scrollbars="horizontal" className="inline-flex" style={{
+				display: state.genres.length === 0 ? "none" : "inline-flex",
+			}}>
 				<Flex direction="row" gap="2">
 					{state.genres.map((genre, index) => (
 						<Chip key={index} label={genre} onDelete={() => dispatch({
@@ -465,6 +506,140 @@ const SongForm = ({
 					))}
 				</Flex>
 			</ScrollArea>
+			{displayGenreWarning && <span className="text-md font-pixel text-red-300">Please add at least one genre.</span>}
+			<Form.Field className="flex flex-col gap-1" name="songReleaseLocs">
+				<Flex direction="row" gap="2">
+					<Select.Root value={songReleaseType} onValueChange={(value) => setSongReleaseType(value)}>
+						<Select.Trigger className="inline-flex items-center justify-center rounded px-2 py-1  font-pixel border-[1px] focus:outline-none cursor-pointer border-gray-300">
+							<Select.Value placeholder="Select URL Type">
+								{songReleaseType === "" ? "Select URL Type" : songReleaseType}
+							</Select.Value>
+							<Select.Icon className="ml-2">▼</Select.Icon>
+						</Select.Trigger>
+						<Select.Portal>
+							<Select.Content position="popper" 
+								sideOffset={10} className="overflow-hidden  rounded-md shadow-lg border border-gray-300 z-50">
+								<Select.Viewport className="p-1">
+									<Select.Group>
+										{songReleaseTypes.map((type, index) => 
+											<Select.Item key={index} value={type} className="font-pixel cursor-pointer  p-0.5 text-center text focus:outline-none
+											border-b-[0.5px]
+											border-transparent
+											data-[highlighted]:border-b-[0.5px]
+											data-[highlighted]:border-b-white">
+												<Select.ItemText>{type}</Select.ItemText>
+											</Select.Item>
+										)}
+									</Select.Group>
+								</Select.Viewport>
+							</Select.Content>
+						</Select.Portal>
+					</Select.Root>
+					<Form.Control asChild>
+						<input
+							type="text"
+							placeholder="Song Release URL"
+							value={songReleaseInput}
+							onChange={(e) => {
+								setSongReleaseInput(e.target.value);
+								handleUrlType(e.target.value);
+							}}
+							onKeyDown={(e) => {
+								if (e.key === "Enter" && songReleaseInput.trim() !== "" && songReleaseType !== "") {
+									e.preventDefault();
+									dispatch({
+										type: SongFormActionType.AddSongReleaseLoc,
+										payload: {
+											service: songReleaseType,
+											link: songReleaseInput,
+											description: songReleaseDesc,
+										},
+									});
+									setSongReleaseInput("");
+									setSongReleaseType("");
+									setSongReleaseDesc("");
+								}
+							}}
+							className="border border-gray-300 rounded px-2 py-1 font-pixel flex-grow focus:outline-none"
+						/>
+					</Form.Control>
+					{["Purchase", "Download", "Other"].includes(songReleaseType) && 
+						<input
+							type="text"
+							placeholder="Description"
+							value={songReleaseDesc}
+							onChange={(e) => setSongReleaseDesc(e.target.value)}
+							onKeyDown={(e) => {
+								if (e.key === "Enter" && songReleaseInput.trim() !== "" && songReleaseType !== "") {
+									e.preventDefault();
+									dispatch({
+										type: SongFormActionType.AddSongReleaseLoc,
+										payload: {
+											service: songReleaseType,
+											link: songReleaseInput,
+											description: songReleaseDesc,
+										},
+									});
+									setSongReleaseInput("");
+									setSongReleaseType("");
+									setSongReleaseDesc("");
+								}
+							}}
+							className="border border-gray-300 rounded px-2 py-1 font-pixel focus:outline-none max-w-[130px] shrink-0"
+						/>
+					}
+				</Flex>
+			</Form.Field>
+			{state.songReleaseLoc.length > 0 &&
+				<ScrollArea scrollbars="horizontal" className="inline-flex" style={{
+					display: state.songReleaseLoc.length === 0 ? "none" : "inline-flex",
+				}}>
+					<Flex direction="row" gap="2">
+						{state.songReleaseLoc.map((loc, index) => (
+							<Tooltip content={loc.link}>
+								<Box>
+									<Chip key={index} label={loc.service} onDelete={() => dispatch({
+										type: SongFormActionType.RemoveSongReleaseLoc,
+										payload: loc,
+									})} />
+								</Box>
+							</Tooltip>
+						))}
+					</Flex>
+				</ScrollArea>
+			}
+
+			<Form.Field className="flex flex-col gap-1" name="duration">
+
+				<Form.Control asChild>
+					<input
+						type="text"
+						placeholder="Song Duration"
+						value={durationInput}
+						onChange={(e) => {
+							setDurationInput(e.target.value);
+							if (!Number.isNaN(Number.parseFloat(e.target.value))) {
+								dispatch({
+									type: SongFormActionType.SetDuration,
+									payload: Number.parseFloat(e.target.value),
+								});
+							}
+						}}
+						className="border border-gray-300 rounded px-2 py-1 font-pixel focus:outline-none"
+					/>
+				</Form.Control>
+				<Form.Message match={(value, formData) => isNaN(Number.parseFloat(value)) || Number.parseFloat(value) <= 0} className="text-md font-pixel text-red-300">
+					Duration must be a positive number.
+				</Form.Message>
+			</Form.Field>
+			<Form.Submit>
+				<button
+					type="submit"
+					className=" text-white font-pixel text-sm focus:outline-none focus:shadow-outline flex-1 cursor-pointer"
+				>
+					Add Song
+				</button>
+			</Form.Submit>
 		</Form.Root>
 	);
 };

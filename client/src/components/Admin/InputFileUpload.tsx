@@ -1,6 +1,5 @@
 import * as React from "react";
 import { Button, Text } from "@radix-ui/themes";
-import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { FileUploader } from "react-drag-drop-files";
 
 // const VisuallyHiddenInput = styled("input")({
@@ -28,6 +27,11 @@ const VisuallyHiddenInput = ({...props}: React.InputHTMLAttributes<HTMLInputElem
 			whiteSpace: "nowrap",
 			width: 1,
 		}}
+		onKeyDown={(e) => {
+			if (e.key === "Enter") {
+				e.preventDefault();
+				e.stopPropagation();
+			}}}
 		{...props}
 	/>
 );
@@ -45,11 +49,13 @@ export default function InputFileUpload({ uploadImage }: InputFileUploadProperti
 		<FileUploader multiple={false} handleChange={uploadImage} name="filename" types={fileTypes}>
 			<div>
 				<Button
-				color="gray"
-				className="cursor-pointer"
+					color="gray"
+					type="button"
+					className="cursor-pointer"
+					tabIndex={-1}
 				>
 					<Text size="3" className="font-pixel">Upload file</Text>
-					<VisuallyHiddenInput type="file" />
+					{/* <VisuallyHiddenInput type="file" /> */}
 
 				</Button>
 			</div>

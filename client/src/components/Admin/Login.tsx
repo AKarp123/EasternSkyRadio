@@ -3,7 +3,7 @@ import axios, { AxiosError } from "axios";
 import ErrorContext from "../../providers/ErrorContext";
 import { useHistory, useLocation } from "react-router-dom";
 import { useAuth } from "../../providers/UserProvider";
-import { Button, Container, Flex, Separator, Text, TextField } from "@radix-ui/themes";
+import { Container, Flex, Separator, Text, TextField } from "@radix-ui/themes";
 
 const Login = () => {
 	const [password, setPassword] = useState("");
@@ -45,14 +45,22 @@ const Login = () => {
 				e.preventDefault();
 				login();
 			}}>
-				<Flex className="flex-col gap-4 text-center border-white border-[1px] py-8 px-4 rounded-xl backdrop-blur-[4px]">
-					<Text size="9" className="font-tiny mb-4"> Login</Text>
-					<Separator orientation="horizontal" className="my-1" size="4" />
+				<Flex className="flex-col gap-4 text-center  py-8 px-4 rounded-xl ">
+					<Text size="7" className="font-tiny mb-4"> Login</Text>
+				
 					
 					<TextField.Root placeholder="Username" value={"admin"} disabled className="text-gray-500"/>
 					<TextField.Root placeholder="Password" value={password} type="password" onChange={(e) => setPassword(e.target.value)}/>
 
-					<Button type="submit" className="cursor-pointer mt-2" color="gray">Login</Button>
+					<Flex className="flex-row gap-4 ">
+						<button
+							type="submit"
+							className=" text-white font-pixel text-2xl py-2 px-4 focus:outline-none focus:shadow-outline flex-1 cursor-pointer"
+						>
+							Login
+						</button>
+					</Flex>
+					
 				</Flex>
 			</form>
 
