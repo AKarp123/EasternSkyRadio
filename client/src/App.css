@@ -76,6 +76,17 @@
   animation: unblur 0.5s ease-in-out forwards;
 }
 
+.HoverButtonStyles {
+	transition: background-color 0.3s ease;
+}
+
+.HoverButtonStyles:hover {
+	background-color: #80848066; /* Darker green on hover */
+}
+
+
+
+
 @keyframes unblur {
   from {
     filter: blur(10px);

@@ -19,7 +19,7 @@ import { useReducer, useState, useContext } from "react";
 import { useDebouncedCallback } from "use-debounce";
 import axios from "axios";
 import ErrorContext from "../../providers/ErrorContext";
-import { SongSearch } from "./NewShow";
+import SongSearch from "./SongSearch";
 import { SongEntry } from "../../types/Song";
 import { reducer } from "../../reducers/EditShowsReducer";
 import { ShowEntry } from "../../types/Shows";

@@ -72,11 +72,10 @@ const SongForm = ({
 	);
 	const [genreInput, setGenreInput] = useState("");
 	const [songReleaseInput, setSongReleaseInput] = useState("");
-	const [durationInput, setDurationInput] = useState("");
-	const [songReleaseType, setSongReleaseType] = useState("");
+	const [durationInput, setDurationInput] = useState(songData?.duration.toString() || "");
+	const [songReleaseType, setSongReleaseType] = useState(""); 
 	const [songReleaseDesc, setSongReleaseDesc] = useState("");
 	const [displayGenreWarning, setDisplayGenreWarning] = useState(false);
-
 
 	const songReleaseTypes = [
 		"Spotify",
@@ -93,7 +92,9 @@ const SongForm = ({
 				type: SongFormActionType.Fill,
 				payload: songData,
 			});
+			setDurationInput(songData.duration.toString());
 		}
+
 	}, [type, songData]);
 
 
@@ -510,7 +511,7 @@ const SongForm = ({
 			<Form.Field className="flex flex-col gap-1" name="songReleaseLocs">
 				<Flex direction="row" gap="2">
 					<Select.Root value={songReleaseType} onValueChange={(value) => setSongReleaseType(value)}>
-						<Select.Trigger className="inline-flex items-center justify-center rounded px-2 py-1  font-pixel border-[1px] focus:outline-none cursor-pointer border-gray-300">
+						<Select.Trigger className="inline-flex items-center justify-center rounded px-2 py-1  font-pixel border-[1px] focus:outline-none cursor-pointer border-gray-300 ">
 							<Select.Value placeholder="Select URL Type">
 								{songReleaseType === "" ? "Select URL Type" : songReleaseType}
 							</Select.Value>
@@ -518,7 +519,7 @@ const SongForm = ({
 						</Select.Trigger>
 						<Select.Portal>
 							<Select.Content position="popper" 
-								sideOffset={10} className="overflow-hidden  rounded-md shadow-lg border border-gray-300 z-50">
+								sideOffset={10} className="overflow-hidden rounded-md shadow-lg border bg-blur-sm backdrop-blur-[3px] border-gray-300 z-50">
 								<Select.Viewport className="p-1">
 									<Select.Group>
 										{songReleaseTypes.map((type, index) => 
@@ -635,7 +636,7 @@ const SongForm = ({
 			<Form.Submit>
 				<button
 					type="submit"
-					className=" text-white font-pixel text-sm focus:outline-none focus:shadow-outline flex-1 cursor-pointer"
+					className=" text-white font-pixel text-sm border-[1px] p-1 rounded-md focus:outline-none focus:shadow-outline flex-1 cursor-pointer HoverButtonStyles"
 				>
 					Add Song
 				</button>

@@ -5,7 +5,7 @@ import { useReducer, useContext } from "react";
 import axios from "axios";
 import ErrorContext from "../../providers/ErrorContext";
 import SongForm from "./SongForm";
-import { SongSearch } from "./NewShow";
+import SongSearch from "./SongSearch";
 import { SongEntry, SongEntryForm } from "../../types/Song";
 
 const reducer = (state: SongEntry, action: { type: string; payload?: any }) => {
