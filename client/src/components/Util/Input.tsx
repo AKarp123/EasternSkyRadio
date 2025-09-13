@@ -21,7 +21,7 @@ const Input = ({ type="text", label, placeholder, value, onChange, className, di
 			onChange={onChange}
 			value={value}
 			disabled={disabled}
-			className={className ? className : InputDefaultClasses}
+			className={className || InputDefaultClasses}
 
 		/>
 	</div>

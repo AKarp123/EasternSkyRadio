@@ -6,7 +6,7 @@ import { showDateString } from "../Util/DateUtil";
 import { Box, Container, Flex, Grid, Link, Text } from "@radix-ui/themes";
 
 const Home = React.memo(() => {
-	const setError = useContext(ErrorContext);
+
 	const { siteData, loading } = useContext(SiteDataContext);
 	
 

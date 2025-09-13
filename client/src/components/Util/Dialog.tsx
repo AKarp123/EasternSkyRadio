@@ -1,6 +1,4 @@
 import { Dialog as RadixDialog} from "radix-ui";
-import { isValidElement } from "react";
-import { Theme } from "@radix-ui/themes";
 
 
 

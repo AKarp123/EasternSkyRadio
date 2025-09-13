@@ -133,7 +133,8 @@ const ShowListItem = ({ show }: { show: ShowEntryMin }) => {
 };
 
 
-
+// Placeholder for future functionality 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const ShowPageScrollTo = () => {
 
 	const semesters = [

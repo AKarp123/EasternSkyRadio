@@ -12,7 +12,7 @@ import Input from "../Util/Input";
 
 type SongSearchProperties = {
 	dispatch: React.Dispatch<any>;
-	parent?: string;
+	parent?: "New Show" | "Set Planner" | "Edit Song";
 };
 
 const DispatchContext = createContext<React.Dispatch<any>>(() => {});
@@ -53,7 +53,7 @@ const SongSearch = ({ dispatch, parent }: SongSearchProperties) => {
 
 	const heightMap: Record<string, string> = {
 		"New Show": "50vh",
-		"Set Planner": "45vh",
+		"Set Planner": "70vh",
 		"Edit Song": "60vh",
 	};
 	const height = heightMap[parent] || "60vh";

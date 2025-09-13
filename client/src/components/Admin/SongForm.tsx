@@ -205,10 +205,8 @@ const SongForm = ({
 
 	const uploadImage = (file: File) => {
 		// e.preventDefault();
-		console.log("Uploading image", file);
 		const { artist, album } = state;
 		if (artist === "" || album === "") {
-			console.log('a')
 			setError("Please enter artist and album before uploading image");
 			return;
 		}
@@ -331,7 +329,7 @@ const SongForm = ({
 	}, 500);
 	return (
 		<Form.Root onSubmit={(e) => {
-			console.log('submit');
+
 			e.preventDefault();
 			handleSubmit(e);
 		}} className="flex flex-col gap-3">

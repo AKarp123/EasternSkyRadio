@@ -9,7 +9,7 @@ import { NewShowActionType, NewShowState } from "../../types/pages/admin/NewShow
 import Input, { InputDefaultClasses } from "../Util/Input";
 import { Flex, Separator, Text, Container, Grid, Box } from "@radix-ui/themes";
 import { Tabs } from "radix-ui"
-import useMediaQuery from "../Util/useMediaQuery";
+
 
 const InitialState : NewShowState = {
 	showDate: new Date(Date.now()).toISOString().split("T")[0],
@@ -30,7 +30,7 @@ const NewShow = () => {
 		}
 	}, []);
 
-	const [tab, setTab] = useState(0);
+
 
 	const addShow = () => {
 		axios
