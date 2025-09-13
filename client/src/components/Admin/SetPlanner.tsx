@@ -1,17 +1,12 @@
 import {
-	Container,
 	Divider,
-	Grid,
+
 
 	Paper,
 	Typography,
 	Tab,
 	Button,
-	Dialog,
-	TextField,
-	DialogTitle,
-	DialogContent,
-	DialogActions,
+
 
 } from "@mui/material";
 import PageBackdrop from "../PageBackdrop";
@@ -24,11 +19,14 @@ import SongForm from "./SongForm";
 import { reducer } from "../../reducers/SetPlannerReducer";
 import { SetPlannerActionType, SetPlannerItem, SetPlannerAction, SetPlannerState } from "../../types/pages/admin/SetPlanner";
 import { Sync } from "../../types/global";
-import { Flex, Separator, Text, ScrollArea} from "@radix-ui/themes";
+import { Flex, Separator, Text, ScrollArea, Container, Grid, Spinner} from "@radix-ui/themes";
 import { Tabs } from "radix-ui";
 import Tooltip from "../Util/Tooltip";
+import Dialog from "../Util/Dialog";
+import Input from "../Util/Input";
 
 const SetPlanner = () => {
+	const setError = useContext(ErrorContext);
 	const [state, dispatch] = useReducer(reducer, {
 		songsList: [], //includes events such as mic breaks, announcements, etc. (too lazy to rename everything lol)
 		tabState: 0,
@@ -39,6 +37,7 @@ const SetPlanner = () => {
 		syncStatus: "",
 		firstLoad: true,
 	});
+	const [loading, setLoading] = useState(true);
 
 
 	useEffect(() => {
@@ -49,6 +48,11 @@ const SetPlanner = () => {
 				if (
 					res.data.success === false
 				) {
+					setLoading(false);
+					if (res.data.message) {
+						setError(res.data.message);
+					}
+
 					return;
 				} else {
 					dispatch({ type: SetPlannerActionType.LoadSync, payload: data.data });
@@ -59,6 +63,7 @@ const SetPlanner = () => {
 						})
 						.toLowerCase()
 						.replaceAll(/\s/g, "");
+					setLoading(false);
 					dispatch({
 						type: SetPlannerActionType.SetSyncStatus,
 						payload: `Last synced at ${timeString}`,
@@ -122,44 +127,23 @@ const SetPlanner = () => {
 	const duration = calculateDurationAtPoint();
 
 	return (
-		<PageBackdrop>
+		<Container size="4" className="min-h-screen flex  flex-col mx-auto max-w-[85%]">
 			<PageHeader title="Set Planner" />
-			<Divider
-				sx={{
-					mb: 2,
-				}}
-			/>
-			<Container
-				sx={{
-					height: "100%",
-					overflow: { xs: "auto", lg: "hidden" },
-				}}
-			>
-				<Grid container spacing={2} sx={{ height: { md: "100%" } }}>
-					<Grid
-						item
-						xs={12}
-						lg={8}
-						sx={{
-							height: { sm: "70vh", lg: "100%" },
-							width: {
-								xs: "100%",
-							},
-							display: "flex",
-							flexDirection: "column",
-							overflowY: "hidden",
-						}}
-					>
+			<Separator size='4' orientation="horizontal" className="my-0.5 w-full"/>
+
+				<Grid columns={{ xs: "1", lg: "2" }} gap="16px">
+					<div>
 						<div className="flex justify-center gap-2.5 items-center">
-							<Text size="6" className="font-pixel">Set Planner</Text>
+							<Text size="8" className="font-pixel">Set Planner</Text>
 							<Text size="4" className="font-pixel text-gray-500">
 								{state.syncStatus}
 							</Text>
 						</div>
-
-						<ScrollArea scrollbars="vertical">
-							{state.songsList.map((entry, index) => (
-								<div key={index} className="mb-1">
+						<Separator size='4' orientation="horizontal" className="my-0.5 w-full"/>
+						<ScrollArea scrollbars="vertical" className="max-h-[70vh]">
+							<Flex direction={"column"} gap="16px" className="mt-2">
+								{!loading && state.songsList.map((entry, index) => (
+								
 									<SetPlannerCard
 										entry={entry}
 										state={state}
@@ -168,19 +152,22 @@ const SetPlanner = () => {
 										key={index}
 										index={index}
 									/>
-								</div>
-							))}
+								
+								))}
+								{loading && <Spinner className="mx-auto my-4"/>}
+							</Flex>
 						</ScrollArea>
 
-						<Button
+						<button
 							onClick={() => {
 								dispatch({
 									type: SetPlannerActionType.ClearList,
 								});
 							}}
+							className="flex font-pixel HoverButtonStyles rounded-md p-2 mt-1 cursor-pointer mx-auto"
 						>
 							Clear List
-						</Button>
+						</button>
 						{/* {state.songsList.length > 0 && (
                             <Box
                                 sx={{
@@ -196,10 +183,10 @@ const SetPlanner = () => {
                                 </Button>
                             </Box>
                         )} */}
-					</Grid>
-					<Grid item xs={12} lg={4} sx={{}}>
-						<Text size="6" className="font-pixel mb-2 text-center">Add</Text>
-						<Tabs.Root>
+					</div>
+					<div>
+
+						<Tabs.Root defaultValue="Insert">
 							<Tabs.List className="flex flex-row gap-2 mb-2 justify-center">
 								<Tabs.Trigger
 									value="Insert"
@@ -222,33 +209,15 @@ const SetPlanner = () => {
 										state={state}
 									/>
 								)}
-								{state.toggleNewSongForm && (
-									<Dialog
-										open={state.toggleNewSongForm}
-										sx={{
-											overflow: "hidden",
-										}}
-									>
-										<DialogTitle>Add New Song</DialogTitle>
-										<DialogContent>
-											<SongForm
-												parentDispatch={dispatch}
-												type="add"
-											/>
-										</DialogContent>
-										<DialogActions>
-											<Button
-												onClick={() =>
-													dispatch({
-														type: SetPlannerActionType.ToggleNewSongForm,
-													})
-												}
-											>
-												Cancel
-											</Button>
-										</DialogActions>
-									</Dialog>
-								)}
+
+								<Dialog open={state.toggleNewSongForm} close onClose={() => dispatch({ type: SetPlannerActionType.ToggleNewSongForm })} title="Add New Song">
+									<SongForm
+										parentDispatch={dispatch}
+										type="add"
+
+									/>
+								</Dialog>
+								
 								<SetPlannerButtons dispatch={dispatch} />
 
 							</Tabs.Content>
@@ -258,12 +227,14 @@ const SetPlanner = () => {
 									parent="New Show"
 								/>
 							</Tabs.Content>
-							</Tabs.Root>
-						
+						</Tabs.Root>
+					</div>
 					</Grid>
+					<Grid>
 				</Grid>
-			</Container>
-		</PageBackdrop>
+
+		</Container>
+
 	);
 };
 
@@ -329,27 +300,36 @@ const SetPlannerCard = ({ entry, state, dispatch, durationAtPoint, index }: SetP
 	}
 	if (entry.type === "Break") {
 		return (
-			<Paper sx={{}}>
-				<Container
-					sx={{
-						display: "flex",
-						backgroundColor: "rgba(65, 65, 65, 0.5)",
-						borderRadius: "3px",
-						alignItems: "center",
-					}}
-				>
-					<Typography>{entry.item.label}</Typography>
-
-					<Typography>({entry.item.duration}min)</Typography>
-					<Typography
-						sx={{
-							// put it at the right end
-							marginLeft: "auto",
+			<Flex direction={"column"} className="p-2 border rounded-md">
+				<div className="flex flex-row justify-between">
+					<Text size="5" className="font-pixel pl-2">{entry.item.label} - {entry.item.duration}min</Text>
+					<Text size="4" className="font-pixel">{durationAtPoint}min</Text>
+				</div>
+				<div className="flex flex-row items-center justify-between">
+				<div>
+					<button className="HoverButtonStyles font-pixel rounded-md p-0.5 px-2 disabled:opacity-50 not-disabled:cursor-pointer"
+						onClick={() => {
+							dispatch({
+								type: SetPlannerActionType.SwapUp,
+								payload: index,
+							});
 						}}
+						disabled={index === 0}
 					>
-						{durationAtPoint.toFixed(2)}min
-					</Typography>
-					<Button
+						Up
+					</button>
+					<button className="HoverButtonStyles font-pixel rounded-md p-0.5 px-2 disabled:opacity-50 not-disabled:cursor-pointer"
+						onClick={() => {
+							dispatch({
+								type: SetPlannerActionType.SwapDown,
+								payload: index,
+							});
+						}}
+						disabled={index === state.songsList.length - 1}
+					>
+						Down
+					</button>
+					<button className="HoverButtonStyles font-pixel rounded-md p-0.5 px-2 not-disabled:cursor-pointer"
 						onClick={() =>
 							dispatch({
 								type: SetPlannerActionType.RemoveSong,
@@ -358,38 +338,15 @@ const SetPlannerCard = ({ entry, state, dispatch, durationAtPoint, index }: SetP
 						}
 					>
 						Remove
-					</Button>
-					<Flex direction="column">
-						<Button
-							onClick={() => {
-								dispatch({
-									type: SetPlannerActionType.SwapUp,
-									payload: index,
-								});
-							}}
-							disabled={index === 0}
-						>
-							Up
-						</Button>
-						<Button
-							onClick={() => {
-								dispatch({
-									type: SetPlannerActionType.SwapDown,
-									payload: index,
-								});
-							}}
-							disabled={index === state.songsList.length - 1}
-						>
-							Down
-						</Button>
-					</Flex>
-				</Container>
-			</Paper>
+					</button>
+				</div>
+			</div>
+			</Flex>
 		);
 	}
 	return (
 		<Flex direction={"column"} gap={"10px"} className="p-2 border rounded-md">
-			<div className="flex flex-row">
+			<div className="flex flex-row pl-1">
 				<img
 					src={entry.item.albumImageLoc}
 					className="w-[75px] h-[75px] min-w-[75px] min-h-[75px] rounded-md
@@ -397,44 +354,50 @@ const SetPlannerCard = ({ entry, state, dispatch, durationAtPoint, index }: SetP
 				/>
 				<Flex direction={"column"} className="ml-4 justify-center gap-1 my-auto">
 					<Tooltip content={entry.item.origTitle || "" }>
-						<Text size="5" className="font-pixel">{entry.item.artist} - {entry.item.title}</Text>
+						<Text size="5" className="font-pixel">{entry.item.artist} - {entry.item.title} ({entry.item.duration}min)</Text>
 					</Tooltip>
 					<Text size="4" className="font-pixel italic">{entry.item.album}</Text>
 				</Flex>
 			</div>
-			<div className="flex flex-row items-center">
-				<button className="HoverButtonStyles font-pixel rounded-md p-0.5 px-2 disabled:opacity-50 not-disabled:cursor-pointer"
-					onClick={() => {
-						dispatch({
-							type: SetPlannerActionType.SwapUp,
-							payload: index,
-						});
-					}}
-					disabled={index === 0}
-				>
-					Up
-				</button>
-				<button className="HoverButtonStyles font-pixel rounded-md p-0.5 px-2 disabled:opacity-50 not-disabled:cursor-pointer"
-					onClick={() => {
-						dispatch({
-							type: SetPlannerActionType.SwapDown,
-							payload: index,
-						});
-					}}
-					disabled={index === state.songsList.length - 1}
-				>
-					Down
-				</button>
-				<button className="HoverButtonStyles font-pixel rounded-md p-0.5 px-2 not-disabled:cursor-pointer"
-					onClick={() =>
-						dispatch({
-							type: SetPlannerActionType.RemoveSong,
-							payload: index,
-						})
-					}
-				>
-					Remove
-				</button>
+			<div className="flex flex-row items-center justify-between">
+				<div>
+					<button className="HoverButtonStyles font-pixel rounded-md p-0.5 px-2 disabled:opacity-50 not-disabled:cursor-pointer"
+						onClick={() => {
+							dispatch({
+								type: SetPlannerActionType.SwapUp,
+								payload: index,
+							});
+						}}
+						disabled={index === 0}
+					>
+						Up
+					</button>
+					<button className="HoverButtonStyles font-pixel rounded-md p-0.5 px-2 disabled:opacity-50 not-disabled:cursor-pointer"
+						onClick={() => {
+							dispatch({
+								type: SetPlannerActionType.SwapDown,
+								payload: index,
+							});
+						}}
+						disabled={index === state.songsList.length - 1}
+					>
+						Down
+					</button>
+					<button className="HoverButtonStyles font-pixel rounded-md p-0.5 px-2 not-disabled:cursor-pointer"
+						onClick={() =>
+							dispatch({
+								type: SetPlannerActionType.RemoveSong,
+								payload: index,
+							})
+						}
+					>
+						Remove
+					</button>
+				</div>
+				<div>
+					<Text size="4" className="font-pixel">{durationAtPoint}min</Text>
+					
+				</div>
 			</div>
 				
 		</Flex>
@@ -470,31 +433,32 @@ const SetPlannerForm = ({ dispatch, entry, index }: SetPlannerFormProperties) =>
 	};
 	return (
 		<form>
-			<TextField
-				label="Duration"
+			<Input
+				placeholder="Duration"
 				value={duration}
 				onChange={(e) => setDuration(e.target.value)}
-				fullWidth
 			/>
-			<Button
+			<button
 				type="submit"
 				onClick={(e) => {
 					e.preventDefault();
 					editSong();
 				}}
+				className="font-pixel HoverButtonStyles rounded-md p-2 mt-1 cursor-pointer"
 			>
 				Set Duration
-			</Button>
-			<Button
+			</button>
+			<button
 				onClick={() =>
 					dispatch({
 						type: SetPlannerActionType.RemoveSong,
 						payload: index,
 					})
 				}
+				className="font-pixel HoverButtonStyles rounded-md p-2 cursor-pointer"
 			>
 				Cancel
-			</Button>
+			</button>
 		</form>
 	);
 };
@@ -505,60 +469,29 @@ type DurationFormProperties = {
 	dispatch: React.Dispatch<SetPlannerAction>;
 }
 function DurationForm({ state, dispatch }: DurationFormProperties) {
+	const Buttons = () => {
+		return (
+			<>
+				<button className="font-pixel HoverButtonStyles rounded-md p-2" onClick={() => dispatch({ type: SetPlannerActionType.ToggleDurationForm })}>Close</button>
+				<button className="font-pixel HoverButtonStyles rounded-md p-2" type="submit" onClick={(e) => {
+					e.preventDefault();
+					dispatch({ type: SetPlannerActionType.AddBreak });
+					dispatch({ type: SetPlannerActionType.ResetDurationForm });
+				}}>Add</button>
+			</>
+		);
+	}
+
 	return (
-		<Dialog open={state.toggleDurationForm}>
-			<DialogTitle>{state.label} Duration</DialogTitle>
-			<form>
-				<DialogContent>
-					<TextField
-						label="Duration"
-						type="number"
-						value={state.duration}
-						onChange={(e) =>
-							dispatch({
-								type: SetPlannerActionType.SetDuration,
-								payload: e.target.value,
-							})
-						}
-						sx={{
-							mt: 2,
-							mb: 2,
-							"input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button":
-                                {
-                                	webkitAppearance: "none",
-                                	margin: 0,
-                                },
-							"input[type=number]": {
-								MozAppearance: "textfield",
-							},
-						}}
-					/>
-				</DialogContent>
-				<DialogActions>
-					<Button
-						onClick={() =>
-							dispatch({
-								type: SetPlannerActionType.ToggleDurationForm,
-							})
-						}
-					>
-						Cancel
-					</Button>
-					<Button
-						onClick={(e) => {
-							e.preventDefault();
-							dispatch({
-								type: SetPlannerActionType.AddBreak,
-							});
-							dispatch({
-								type: SetPlannerActionType.ResetDurationForm,
-							});
-						}}
-						type="submit"
-					>
-						Add
-					</Button>
-				</DialogActions>
+		<Dialog open={state.toggleDurationForm} title="Set Duration" buttons={<Buttons />}>
+			<Text  className="font-pixel text-2xl mb-2">Adding: {state.label}</Text>
+			<form onSubmit={(e) => {
+				e.preventDefault();
+				dispatch({ type: SetPlannerActionType.AddBreak });
+				dispatch({ type: SetPlannerActionType.ResetDurationForm });
+			}}>
+				<Input value={state.duration} placeholder="Duration (minutes)" onChange={(e) => dispatch({ type: SetPlannerActionType.SetDuration, payload: e.target.value })} />
+
 			</form>
 		</Dialog>
 	);

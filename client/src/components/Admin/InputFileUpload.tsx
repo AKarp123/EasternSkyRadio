@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Button, Text } from "@radix-ui/themes";
+import { Text } from "@radix-ui/themes";
 import { FileUploader } from "react-drag-drop-files";
 
 // const VisuallyHiddenInput = styled("input")({
@@ -48,16 +48,16 @@ export default function InputFileUpload({ uploadImage }: InputFileUploadProperti
 	return (
 		<FileUploader multiple={false} handleChange={uploadImage} name="filename" types={fileTypes}>
 			<div>
-				<Button
+				<button
 					color="gray"
 					type="button"
-					className="cursor-pointer"
+					className="cursor-pointer HoverButtonStyles font-pixel border-[1px] rounded-md p-1"
 					tabIndex={-1}
 				>
 					<Text size="3" className="font-pixel">Upload file</Text>
 					{/* <VisuallyHiddenInput type="file" /> */}
 
-				</Button>
+				</button>
 			</div>
 		</FileUploader>
 	);
