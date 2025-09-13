@@ -143,7 +143,7 @@ const SetList = () => {
 	const [showData, setShowData] = useState<ShowEntry | null>(null);
 	const [loading, setLoading] = useState(true);
 	const setError = useContext(ErrorContext);
-	const isSm = useMediaQuery("(min-width: 640px)");
+	const isSm = useMediaQuery("(min-width: 768px)");
 
 
 	useEffect(() => {
@@ -167,7 +167,7 @@ const SetList = () => {
 	}
 
 	return (
-		<Container size="2" className="min-h-screen flex flex-col justify-start items-center pt-20 pb-8">
+		<Container size="2" className="min-h-screen flex flex-col mx-auto max-w-[85%] items-center pt-20 pb-8">
 			<PageHeader title={`Show #${showId}`} />
 
 			

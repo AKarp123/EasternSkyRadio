@@ -2,10 +2,9 @@ import {
 	Container,
 	Divider,
 	Grid,
-	Stack,
+
 	Paper,
 	Typography,
-	Tabs,
 	Tab,
 	Button,
 	Dialog,
@@ -13,9 +12,7 @@ import {
 	DialogTitle,
 	DialogContent,
 	DialogActions,
-	Box,
-	Link,
-	Tooltip,
+
 } from "@mui/material";
 import PageBackdrop from "../PageBackdrop";
 import PageHeader from "../PageHeader";
@@ -27,6 +24,9 @@ import SongForm from "./SongForm";
 import { reducer } from "../../reducers/SetPlannerReducer";
 import { SetPlannerActionType, SetPlannerItem, SetPlannerAction, SetPlannerState } from "../../types/pages/admin/SetPlanner";
 import { Sync } from "../../types/global";
+import { Flex, Separator, Text, ScrollArea} from "@radix-ui/themes";
+import { Tabs } from "radix-ui";
+import Tooltip from "../Util/Tooltip";
 
 const SetPlanner = () => {
 	const [state, dispatch] = useReducer(reducer, {
@@ -150,34 +150,16 @@ const SetPlanner = () => {
 							overflowY: "hidden",
 						}}
 					>
-						<Box
-							sx={{
-								display: "flex",
-								justifyContent: "center",
-								gap: "10px",
-								alignItems: "center",
-							}}
-						>
-							<Typography variant="h6">Set Planner</Typography>
-							<Typography
-								variant="subtitle1"
-								color={"textSecondary"}
-							>
+						<div className="flex justify-center gap-2.5 items-center">
+							<Text size="6" className="font-pixel">Set Planner</Text>
+							<Text size="4" className="font-pixel text-gray-500">
 								{state.syncStatus}
-							</Typography>
-						</Box>
+							</Text>
+						</div>
 
-						<Box
-							sx={{
-								flex: 1,
-								overflowY: "auto",
-
-							}}
-						>
+						<ScrollArea scrollbars="vertical">
 							{state.songsList.map((entry, index) => (
-								<Box sx={{
-									mb: 1,
-								}}>
+								<div key={index} className="mb-1">
 									<SetPlannerCard
 										entry={entry}
 										state={state}
@@ -186,9 +168,9 @@ const SetPlanner = () => {
 										key={index}
 										index={index}
 									/>
-								</Box>
+								</div>
 							))}
-						</Box>
+						</ScrollArea>
 
 						<Button
 							onClick={() => {
@@ -216,27 +198,24 @@ const SetPlanner = () => {
                         )} */}
 					</Grid>
 					<Grid item xs={12} lg={4} sx={{}}>
-						<Typography variant="h6" sx={{ alignItems: "center" }}>
-							Add
-						</Typography>
-						<Tabs
-							value={state.tabState}
-							onChange={(e, value) =>
-								dispatch({ type: SetPlannerActionType.SetTabState, payload: value })
-							}
-							centered
-							sx={{ mb: 2 }}
-						>
-							<Tab label="Find Song" />
-							<Tab label="Insert" />
-						</Tabs>
-						{state.tabState === 0 ? (
-							<SongSearch
-								dispatch={dispatch}
-								parent="Set Planner"
-							/>
-						) : (
-							<>
+						<Text size="6" className="font-pixel mb-2 text-center">Add</Text>
+						<Tabs.Root>
+							<Tabs.List className="flex flex-row gap-2 mb-2 justify-center">
+								<Tabs.Trigger
+									value="Insert"
+									className="HoverButtonStyles p-1 rounded-md cursor-pointer data-[state=active]:border-[1px] data-[state=inactive]:m-[1px] data-[state=active]:m-0 font-pixel"
+								>
+									Insert
+								</Tabs.Trigger>
+								<Tabs.Trigger
+									value="searchSong"
+									className="HoverButtonStyles p-1 rounded-md cursor-pointer data-[state=active]:border-[1px] data-[state=inactive]:m-[1px] data-[state=active]:m-0 font-pixel"
+								>
+									Search Songs
+								</Tabs.Trigger>
+							</Tabs.List>
+							<Separator size='4' orientation="horizontal" className="my-0.5 w-full"/>
+							<Tabs.Content value="Insert">
 								{state.toggleDurationForm && (
 									<DurationForm
 										dispatch={dispatch}
@@ -271,8 +250,16 @@ const SetPlanner = () => {
 									</Dialog>
 								)}
 								<SetPlannerButtons dispatch={dispatch} />
-							</>
-						)}
+
+							</Tabs.Content>
+							<Tabs.Content value="searchSong">
+								<SongSearch
+									dispatch={dispatch}
+									parent="New Show"
+								/>
+							</Tabs.Content>
+							</Tabs.Root>
+						
 					</Grid>
 				</Grid>
 			</Container>
@@ -282,34 +269,9 @@ const SetPlanner = () => {
 
 const SetPlannerButtons = ({ dispatch } : { dispatch: React.Dispatch<SetPlannerAction> }) => {
 	return (
-		<Stack spacing={1}>
-			<Button
-				onClick={() => {
-					dispatch({
-						type: SetPlannerActionType.SetLabel,
-						payload: "Mic Break",
-					});
-					dispatch({
-						type: SetPlannerActionType.ToggleDurationForm,
-					});
-				}}
-			>
-				Insert Mic Break
-			</Button>
-			<Button
-				onClick={() => {
-					dispatch({
-						type: SetPlannerActionType.SetLabel,
-						payload: "Announcement",
-					});
-					dispatch({
-						type: SetPlannerActionType.ToggleDurationForm,
-					});
-				}}
-			>
-				Insert Annoucement
-			</Button>
-			<Button
+		<Flex direction={"column"} gap="10px">
+			<button 
+				className="font-pixel cursor-pointer HoverButtonStyles rounded-md text-xl p-2"
 				onClick={() =>
 					dispatch({
 						type: SetPlannerActionType.ToggleNewSongForm,
@@ -317,8 +279,38 @@ const SetPlannerButtons = ({ dispatch } : { dispatch: React.Dispatch<SetPlannerA
 				}
 			>
 				Add New Song
-			</Button>
-		</Stack>
+			</button>
+			<button 
+				className="font-pixel cursor-pointer HoverButtonStyles rounded-md text-xl p-2"
+				onClick={() =>{
+					dispatch({
+						type: SetPlannerActionType.SetLabel,
+						payload: "Mic Break",
+					})
+					dispatch({
+						type: SetPlannerActionType.ToggleDurationForm,
+					})
+				}
+				}
+			>
+				Add Mic Break
+			</button>
+			<button 
+				className="font-pixel cursor-pointer HoverButtonStyles rounded-md text-xl p-2"
+				onClick={() =>{
+					dispatch({
+						type: SetPlannerActionType.SetLabel,
+						payload: "Announcement",
+					})
+					dispatch({
+						type: SetPlannerActionType.ToggleDurationForm,
+					})
+				}
+				}
+			>
+				Add Announcement
+			</button>
+		</Flex>
 	);
 };
 
@@ -367,7 +359,7 @@ const SetPlannerCard = ({ entry, state, dispatch, durationAtPoint, index }: SetP
 					>
 						Remove
 					</Button>
-					<Box sx={{ display: "flex", flexDirection: "column" }}>
+					<Flex direction="column">
 						<Button
 							onClick={() => {
 								dispatch({
@@ -390,154 +382,62 @@ const SetPlannerCard = ({ entry, state, dispatch, durationAtPoint, index }: SetP
 						>
 							Down
 						</Button>
-					</Box>
+					</Flex>
 				</Container>
 			</Paper>
 		);
 	}
 	return (
-		<Paper
-			sx={{
-				// width: "1000px"
-				minWidth: "604px",
-			}}
-		>
-			<Container
-				sx={{
-					display: "flex",
-					flexDirection: "row",
-					backgroundColor: "rgba(65, 65, 65, 0.5)",
-					borderRadius: "3px",
-				}}
-			>
-				<Box
-					sx={{
-						display: "flex",
-						flexDirection: "column",
-						justifyContent: "center",
-						marginRight: "10px", // Space between image and text content
+		<Flex direction={"column"} gap={"10px"} className="p-2 border rounded-md">
+			<div className="flex flex-row">
+				<img
+					src={entry.item.albumImageLoc}
+					className="w-[75px] h-[75px] min-w-[75px] min-h-[75px] rounded-md
+					"
+				/>
+				<Flex direction={"column"} className="ml-4 justify-center gap-1 my-auto">
+					<Tooltip content={entry.item.origTitle || "" }>
+						<Text size="5" className="font-pixel">{entry.item.artist} - {entry.item.title}</Text>
+					</Tooltip>
+					<Text size="4" className="font-pixel italic">{entry.item.album}</Text>
+				</Flex>
+			</div>
+			<div className="flex flex-row items-center">
+				<button className="HoverButtonStyles font-pixel rounded-md p-0.5 px-2 disabled:opacity-50 not-disabled:cursor-pointer"
+					onClick={() => {
+						dispatch({
+							type: SetPlannerActionType.SwapUp,
+							payload: index,
+						});
 					}}
+					disabled={index === 0}
 				>
-					<img
-						src={entry.item.albumImageLoc}
-						alt="Album Art"
-						style={{
-							height: "50px",
-							width: "50px",
-							borderRadius: "5px",
-						}}
-					/>
-				</Box>
-				<Box
-					sx={{
-						display: "flex",
-						flexDirection: "column",
-						width: "100%",
-						marginRight: "10px",
-						justifyContent: "center",
+					Up
+				</button>
+				<button className="HoverButtonStyles font-pixel rounded-md p-0.5 px-2 disabled:opacity-50 not-disabled:cursor-pointer"
+					onClick={() => {
+						dispatch({
+							type: SetPlannerActionType.SwapDown,
+							payload: index,
+						});
 					}}
+					disabled={index === state.songsList.length - 1}
 				>
-					<Box
-						sx={{
-							display: "flex",
-							justifyContent: "space-between",
-							alignItems: "center",
-							width: "100%",
-						}}
-					>
-						<Box sx={{ display: "flex", alignItems: "center" }}>
-							{entry.item.elcroId && (
-								<>
-									<Typography
-										sx={{
-											color: "red",
-										}}
-									>
-										<Link
-											href={`https://thecore.fm/djsonly/music-album-detail.php?id=${entry.item.elcroId}`}
-											sx={{
-												color: "red",
-												textDecoration: "none",
-											}}
-											target="_blank"
-											rel="noopener noreferrer"
-										>
-											{entry.item.elcroId}&nbsp;-&nbsp;
-										</Link>
-									</Typography>
-								</>
-							)}
-							<Tooltip
-								title={entry.item.origTitle}
-								placement="top-start"
-								arrow
-							>
-								<Typography sx={{}}>
-									{entry.item.title}&nbsp;-&nbsp;{entry.item.artist}
-                                    &nbsp;(
-									{entry.item.duration}min)
-								</Typography>
-							</Tooltip>
-						</Box>
-					</Box>
-
-					<Typography
-						sx={{
-							marginTop: "5px",
-							fontStyle: "italic",
-							textAlign: "left",
-						}}
-					>
-						{entry.item.album}
-					</Typography>
-				</Box>
-				<Box
-					sx={{
-						display: "flex",
-						flexDirection: "row",
-						justifyContent: "center",
-					}}
+					Down
+				</button>
+				<button className="HoverButtonStyles font-pixel rounded-md p-0.5 px-2 not-disabled:cursor-pointer"
+					onClick={() =>
+						dispatch({
+							type: SetPlannerActionType.RemoveSong,
+							payload: index,
+						})
+					}
 				>
-					<Typography sx={{ alignSelf: "center" }}>
-						{durationAtPoint.toFixed(2)}min
-					</Typography>
-					<Button
-						onClick={() =>
-							dispatch({
-								type: SetPlannerActionType.RemoveSong,
-								payload: index,
-							})
-						}
-					>
-						Remove
-					</Button>
-				</Box>
-				<Box sx={{ display: "flex", flexDirection: "column" }}>
-					<Button
-						onClick={() => {
-							dispatch({
-								type: SetPlannerActionType.SwapUp,
-								payload: index,
-							});
-						}}
-						disabled={index === 0}
-					>
-						Up
-					</Button>
-					<Button
-						onClick={() => {
-							dispatch({
-								type: SetPlannerActionType.SwapDown,
-								payload: index,
-							});
-						}}
-						disabled={index === state.songsList.length - 1}
-					>
-						Down
-					</Button>
-				</Box>
-			</Container>
-		</Paper>
+					Remove
+				</button>
+			</div>
+				
+		</Flex>
 	);
 };
 

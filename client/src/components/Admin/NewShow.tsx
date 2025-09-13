@@ -9,6 +9,7 @@ import { NewShowActionType, NewShowState } from "../../types/pages/admin/NewShow
 import Input, { InputDefaultClasses } from "../Util/Input";
 import { Flex, Separator, Text, Container, Grid, Box } from "@radix-ui/themes";
 import { Tabs } from "radix-ui"
+import useMediaQuery from "../Util/useMediaQuery";
 
 const InitialState : NewShowState = {
 	showDate: new Date(Date.now()).toISOString().split("T")[0],
@@ -20,6 +21,7 @@ const InitialState : NewShowState = {
 const NewShow = () => {
 	const setError = useContext(ErrorContext);
 	const [state, dispatch] = useReducer(reducer, InitialState);
+
 
 	useEffect(() => {
 		let showState = localStorage.getItem("showState");
@@ -49,7 +51,7 @@ const NewShow = () => {
 	return (
 
 
-			<Container size="4" className="min-h-screen justify-start items-center ">
+			<Container size="4" className="min-h-screen mx-auto items-center max-w-[85%]">
 				<PageHeader title="New Show Log" />
 				<Separator size='4' orientation="horizontal" className="w-full my-1"/>
 				<Grid columns={{ xs: "1", sm: "2" }} gap="16px" className="w-full mb-4">

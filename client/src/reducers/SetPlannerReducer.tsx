@@ -57,6 +57,7 @@ export const reducer = (state: SetPlannerState, action: SetPlannerAction) => {
 				return {
 					...state,
 					songsList: state.songsList.slice(0, -1),
+					firstLoad: false,
 				};
 			}
 			return {

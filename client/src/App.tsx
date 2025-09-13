@@ -45,7 +45,6 @@ function App() {
 	const displayError = (errorMessage: string, variant: ErrorVariant = "error") => {
 		setError({ errorMessage, variant });
 	};
-	console.log(error)
 
 	return (
 		<ThemeProvider theme={darkTheme}>

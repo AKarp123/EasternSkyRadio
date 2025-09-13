@@ -72,7 +72,7 @@ const SongSearch = ({ dispatch, parent }: SongSearchProperties) => {
 					}
 					className="border border-gray-300 rounded px-2 py-1 font-pixel focus:outline-none w-full"
 				/>
-				<ScrollArea style={{ height }} >
+				<ScrollArea type="scroll" scrollbars="vertical" style={{ height }} >
 					<Flex className="w-full h-full flex-col gap-3 mt-1">
 						{searchResults.length > 0 ? (
 							searchResults.map((song) => (
@@ -129,10 +129,10 @@ const SongSearchCard = ({ song, parent }: SongSearchCardProperties) => {
 				}}>
 					<div
 						ref={titleRef}
-						className="line-clamp-2 pt-0.5 mb-2"
+						className="line-clamp-1 pt-1 mb-2"
 					>
 						<DisplayTooltip content={isOverflowTitle? `${song.artist} - ${song.title}` : null}>
-							<Text size="5" className="font-pixel" trim={"start"} style={{lineHeight: "1"}}>{song.artist} - {song.title} </Text>
+							<Text size="5" className="font-pixel text-ellipsis" trim={"start"} style={{lineHeight: "1"}}>{song.artist} - {song.title} </Text>
 						</DisplayTooltip>
 					</div>
 					<div

@@ -12,7 +12,7 @@ import axios from "axios";
 import NodeCache from "node-cache";
 import SyncRouter from "./SyncRoutes.js";
 import UserRouter from "./UserRoutes.js";
-
+import { writeHeapSnapshot } from "v8";
 
 const statsCache = new NodeCache({ stdTTL: 300 });
 

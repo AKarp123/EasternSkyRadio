@@ -34,7 +34,7 @@ const ShowPage = () => {
 	}, []);
 
 	return (
-		<Container size="1" className="min-h-screen flex flex-row justify-center items-center">
+		<Container size="1" className="min-h-screen flex flex-row mx-auto max-w-[85%] justify-center items-center">
 
 			<PageHeader title="Shows" />
 			<Grid columns={{xs: "1", sm: "1"}}>
