@@ -1,7 +1,4 @@
-import {
-	Divider,
-	Stack,
-} from "@mui/material";
+
 import PageHeader from "../PageHeader";
 import { useReducer, useState, useContext } from "react";
 import { useDebouncedCallback } from "use-debounce";
@@ -63,24 +60,11 @@ const EditShows = () => {
 		});
 	};
 
-	const editOrder = (currentIndex: number, newIndex: number) => {
-		let temporary = state.songsList;
-		let temporarySong = temporary[currentIndex];
-		temporary.splice(newIndex, 0, temporarySong);
-		temporary.splice(currentIndex + (currentIndex > newIndex ? 1 : 0), 1);
-		dispatch({ type: "editSongsList", payload: temporary });
-	};
-
-	const removeSong = (index: number) => {
-		let temporary = state.songsList;
-		temporary.splice(index, 1);
-		dispatch({ type: "editSongsList", payload: temporary });
-	};
 
 	return (
 		<Container size="4" className="min-h-screen mx-auto items-center max-w-[85%]">
 			<PageHeader title="Edit Show Log" />
-			<Divider sx={{ mb: 2 }} />
+			<Separator size='4' orientation="horizontal" className="w-full my-1"/>
 
 
 

@@ -128,7 +128,7 @@ const SetPlanner = () => {
 							{state.syncStatus}
 						</Text>
 					</div>
-					<Separator size='4' orientation="horizontal" className="my-0.5 w-full"/>
+
 					<ScrollArea scrollbars="vertical" className="max-h-[70vh]">
 						<Flex direction={"column"} gap="16px" className="mt-2">
 							{!loading && state.songsList.map((entry, index) => (
