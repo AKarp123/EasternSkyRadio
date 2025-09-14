@@ -1,5 +1,5 @@
 import PageHeader from "../PageHeader";
-import { useContext, useEffect, useReducer, useState } from "react";
+import { useContext, useEffect, useReducer} from "react";
 import axios from "axios";
 import ErrorContext from "../../providers/ErrorContext";
 import { reducer } from "../../reducers/NewShowReducer";
@@ -115,20 +115,49 @@ const NewShow = () => {
 				</Tabs.Root>
 				<Flex direction={"column"} >
 					<Text size="6" className="font-pixel mb-2">Songs List:</Text>
-					{state.songsList.map((song) => (
-						<Text
-							size="5"
-							onClick={(e) => {
-								e.preventDefault();
-								dispatch({
-									type: NewShowActionType.RemoveSong,
-									payload: song,
-								});
-							}}
-							className="font-pixel"
-						>
-							{song.artist} - {song.title}
-						</Text>
+					{state.songsList.map((song, i) => (
+						<div key={i} className="flex flex-row justify-between">
+							<Text
+								size="5"
+								className="font-pixel"
+							>
+								{song.artist} - {song.title}
+							</Text>
+							<div>
+								<button className="HoverButtonStyles font-pixel rounded-md p-0.5 px-2 disabled:opacity-50 not-disabled:cursor-pointer"
+									onClick={() => {
+										dispatch({
+											type: NewShowActionType.SwapUp,
+											payload: i,
+										});
+									}}
+									disabled={i === 0}
+								>
+									Up
+								</button>
+								<button className="HoverButtonStyles font-pixel rounded-md p-0.5 px-2 disabled:opacity-50 not-disabled:cursor-pointer"
+									onClick={() => {
+										dispatch({
+											type: NewShowActionType.SwapDown,
+											payload: i,
+										});
+									}}
+									disabled={i === state.songsList.length - 1}
+								>
+									Down
+								</button>
+								<button className="HoverButtonStyles font-pixel rounded-md p-0.5 px-2 not-disabled:cursor-pointer"
+									onClick={() =>
+										dispatch({
+											type: NewShowActionType.RemoveSong,
+											payload: i,
+										})
+									}
+								>
+									Remove
+								</button>
+							</div>
+						</div>
 					))}
 					<button className="font-pixel cursor-pointer HoverButtonStyles rounded-md" onClick={addShow}>Add Show</button>
 				</Flex>

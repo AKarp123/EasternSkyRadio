@@ -12,6 +12,8 @@ export enum NewShowActionType {
 	RemoveSong = "removeSong",
 	Load = "load",
 	Reset = "reset",
+	SwapUp = "swapUp",
+	SwapDown = "swapDown",
 }
 
 export interface NewShowState {
