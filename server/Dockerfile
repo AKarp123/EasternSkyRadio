@@ -14,7 +14,6 @@ COPY --from=backend-build /usr/src/app/server/dist ./dist
 COPY --from=backend-build /usr/src/app/server/package.json ./
 COPY --from=backend-build /usr/src/app/server/bun.lock ./
 COPY --from=backend-build /usr/src/app/server/node_modules ./node_modules
-COPY --from=backend-build /usr/src/app/server/migrations ./migrations
 ENV FORCE_COLOR=1
 ENV NODE_ENV=production
 
