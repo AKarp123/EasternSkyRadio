@@ -32,8 +32,17 @@ You can also add a local mongodb instance but update the env to make sure it fin
 
 run `docker compose -f docker-compose.dev.yml up`
 
+## Testing
+
+`docker compose -f docker-compose.test.yml up`
+
 ## Creating Migrations
 
 `docker exec -it easternskyradio-server-1 bun migrate create <migration_name>`
+
+## Running Migrations
+
+(recommend doing this locally, currently automatic migrations do not work)
+`bun run migrate`
 
 
