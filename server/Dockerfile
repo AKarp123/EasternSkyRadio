@@ -9,13 +9,17 @@ RUN bun install
 COPY ./server .
 RUN bun run build
 
-
-
-
+FROM node:24-slim as BACKEND-PROD
+WORKDIR /app
+COPY --from=backend-build /usr/src/app/server/dist ./dist
+COPY --from=backend-build /usr/src/app/server/package.json ./
+COPY --from=backend-build /usr/src/app/server/bun.lock ./
+COPY --from=backend-build /usr/src/app/server/node_modules ./node_modules
+ENV NODE_ENV=production
 
 EXPOSE 3000
 
 # You will need to set the MONGO_URI environment variable
 # when you run the container in production.
 # e.g., docker run -p 3000:3000 -e MONGO_URI="your_prod_mongo_uri" my-prod-app
-CMD ["bun", "run", "dist/start.js"]
+CMD ["node", "dist/start.js"]

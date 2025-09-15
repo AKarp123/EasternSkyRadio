@@ -3,7 +3,7 @@ import axios, { AxiosError } from "axios";
 import ErrorContext from "../../providers/ErrorContext";
 import { useHistory, useLocation } from "react-router-dom";
 import { useAuth } from "../../providers/UserProvider";
-import { Container, Flex, Separator, Text, TextField } from "@radix-ui/themes";
+import { Container, Flex, Text, TextField } from "@radix-ui/themes";
 
 const Login = () => {
 	const [password, setPassword] = useState("");

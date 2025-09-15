@@ -350,7 +350,7 @@ const SongForm = ({
 						disabled={type === "edit"}
 					/>
 				</Form.Control>
-				<Form.Message match={(value, formData) => value.length !== 6 && value.length > 0} className="text-md font-pixel text-red-300">
+				<Form.Message match={(value) => value.length !== 6 && value.length > 0} className="text-md font-pixel text-red-300">
 					ElcroID must be 6 characters
 				</Form.Message>
 			</Form.Field>
@@ -454,7 +454,7 @@ const SongForm = ({
 						})
 					}
 					onPaste={(e) => {
-						console.log(e.clipboardData);
+
 						for (const item of e.clipboardData.items) {
 							if (item.type.startsWith("image/")) {
 								const file = item.getAsFile();
@@ -627,7 +627,7 @@ const SongForm = ({
 						className="border border-gray-300 rounded px-2 py-1 font-pixel focus:outline-none"
 					/>
 				</Form.Control>
-				<Form.Message match={(value, formData) => isNaN(Number.parseFloat(value)) || Number.parseFloat(value) <= 0} className="text-md font-pixel text-red-300">
+				<Form.Message match={(value) => Number.isNaN(Number.parseFloat(value)) || Number.parseFloat(value) <= 0} className="text-md font-pixel text-red-300">
 					Duration must be a positive number.
 				</Form.Message>
 			</Form.Field>

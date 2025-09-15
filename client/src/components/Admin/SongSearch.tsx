@@ -150,7 +150,7 @@ const SongSearchCard = ({ song, parent }: SongSearchCardProperties) => {
 				<Buttons parent={parent} song={song} />
 				<Text size="3" className="font-pixel items-center ">
 					Last Played:{" "}
-					{isNaN(lastPlayed.getTime())
+					{Number.isNaN(lastPlayed.getTime())
 						? "Never"
 						: lastPlayed.toLocaleDateString()}
 				</Text>

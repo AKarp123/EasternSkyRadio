@@ -7,7 +7,7 @@ import SongForm from "./SongForm";
 import SongSearch from "./SongSearch";
 import { NewShowActionType, NewShowState } from "../../types/pages/admin/NewShow";
 import Input, { InputDefaultClasses } from "../Util/Input";
-import { Flex, Separator, Text, Container, Grid, Box } from "@radix-ui/themes";
+import { Flex, Separator, Text, Container, Grid } from "@radix-ui/themes";
 import { Tabs } from "radix-ui"
 
 

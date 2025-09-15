@@ -1,4 +1,4 @@
-import SongEntry, { songEntry_selectAllFields } from "./models/SongEntry.js";
+import SongEntry from "./models/SongEntry.js";
 import ShowEntry from "./models/ShowEntry.js";
 import Increment from "./models/IncrementModel.js";
 import mongoose from "mongoose";
@@ -194,10 +194,10 @@ export const updateLastPlayed = async (
 		await SongEntry.findOneAndUpdate(
 			{ _id: song._id },
 			[{
-				$set: {lastPlayed: { $max: [date, "$lastPlayed"] }}
+				$set: { lastPlayed: { $max: [date, "$lastPlayed"] } }
 			}],
 			{ new: true }
-		)
+		);
 	
 		
 	}

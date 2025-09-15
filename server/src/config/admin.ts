@@ -18,7 +18,6 @@ const serviceAccountKey = {
 	universe_domain: "googleapis.com",
 };
 const initializeAdmin = () => {
-	console.log(process.env.FIREBASE_STORAGE_BUCKET);
 	admin.initializeApp({
 		credential: credential.cert(serviceAccountKey as admin.ServiceAccount),
 		storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
