@@ -1,5 +1,6 @@
 import { app } from "./app.js";
 import { connectToDatabase } from "./db.js";
+import { applyMigrations } from "./migrations.js";
 import initializeApp from "./init.js";
 
 
@@ -11,7 +12,10 @@ const startServer = async () => {
 		throw new Error("Database connection failed");
 	}
 	await initializeApp();
-	// await applyMigrations();
+	if(process.env.NODE_ENV === "development") {
+		await applyMigrations();
+	}
+		
 	const port = process.env.PORT || 3000;
 
 	app.listen(port, () => {

@@ -30,9 +30,3 @@ export const rollbackMigrations = async() => {
 	}
 };
 
-const main = async() => {
-	await applyMigrations();
-	// await rollbackMigrations();
-};
-
-main();
