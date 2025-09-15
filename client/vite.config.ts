@@ -10,11 +10,6 @@ export default defineConfig(() => {
 			react(),
 			svgr(),
 			tailwindcss(),
-			eslint({
-				include: ['src/**/*.{ts,tsx}', 'vite.config.*'],
-				exclude: ['node_modules/*', 'dist/*', 'public/*'],
-				failOnError: false
-			}),
 		],
 		build: {
 			sourcemap: true,
