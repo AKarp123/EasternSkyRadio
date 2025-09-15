@@ -90,7 +90,7 @@ router.post(
 		const storageRef = storage
 			.bucket()
 			.file(
-				`/${req.file.originalname} + ${artist} + ${album}`
+				`albumCovers/${artist} + ${album}` + `.${req.file.originalname.split(".").pop()}`,
 			);
 
 		if (

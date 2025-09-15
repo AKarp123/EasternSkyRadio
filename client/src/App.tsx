@@ -112,7 +112,6 @@ function App() {
 									</Route>
 								</Switch>
 								{error && <DisplayToast title={error.errorMessage} type={error.variant} onClose={() => {
-									console.log('test');
 									setError(null);
 								}} open={true} />}
 							</div>

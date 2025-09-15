@@ -202,12 +202,7 @@ const EditShows = () => {
 	);
 };
 
-type SongListProperties = {
-	song: SongEntry;
-	removeSong: (index: number) => void;
-	index: number;
-	dispatch: React.Dispatch<any>;
-}
+
 
 
 export default EditShows;
