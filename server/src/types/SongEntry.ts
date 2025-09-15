@@ -1,5 +1,6 @@
 
 export interface ISongEntry {
+    _id?: string,
     songId: number,
     elcroId? : string,
     artist: string,

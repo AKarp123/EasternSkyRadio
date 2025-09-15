@@ -30,6 +30,17 @@ export const createShow = async(showData: ShowEntrySubmission, agent?: Awaited<R
 	return res;
 };
 
+export const createShowSimple = async(songsList: (ISongEntry & { _id: Types.ObjectId})[], agent?: Awaited<ReturnType<typeof withUser>>) => {
+	const localAgent = agent || await withUser();
+	const showData: ShowEntrySubmission = {
+		showDate: new Date(Date.now()).toISOString().split("T")[0],
+		showDescription: "Test Show",
+		songsList
+	};
+	const res = await localAgent.post("/api/show").send({ showData });
+	return res;
+};
+
 
 /**
  * 

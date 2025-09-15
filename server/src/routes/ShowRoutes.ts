@@ -113,6 +113,7 @@ showRouter.patch("/show/:id", requireLogin, async (req: Request, res: Response) 
 		show.showDescription = showData.showDescription || show.showDescription;
 		show.save()
 			.then(() => {
+				updateLastPlayed(show.songsList, show.showDate);
 				res.json({ success: true, message: "Show Updated!" });
 			})
 			.catch((error) => {

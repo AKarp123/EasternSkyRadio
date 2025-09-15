@@ -1,11 +1,13 @@
-import { describe, test, expect, beforeAll, afterAll } from "bun:test";
+import { describe, test, expect, beforeAll, beforeEach, afterAll, afterEach } from "bun:test";
 
 import { initTest } from "../../init.js";
 import { withUser } from ".././helpers/withUser.js";
 import { ISongEntry, ISongEntrySubmission } from "../../types/SongEntry.js";
 import { generateSearchQuery } from "../../dbMethods.js";
 import { clearDatabase } from "../../db.js";
-import { createSong } from ".././helpers/create.js";
+import { createShow, createShowSimple, createSong } from ".././helpers/create.js";
+import { Types } from "mongoose";
+import { ShowEntrySubmission } from "../../types/ShowData.js";
 
 afterAll(async() => {
 	await clearDatabase();
@@ -307,5 +309,118 @@ describe("Test Editing song API", () => {
 
 	});
 });
+
+describe("Song Date Tests", () => {
+	let agent: Awaited<ReturnType<typeof withUser>>;
+	beforeEach(async() => {
+		await initTest();
+		agent = await withUser();
+	});
+
+	afterEach(async () => {
+		await clearDatabase();
+	});
+
+	test("Check default song date", async() => {
+		const song: ISongEntrySubmission = {
+				title: "Mesmerizer",
+				artist: "32ki",
+				album: "Mesmerizer",
+				duration: 180,
+				albumImageLoc: "",
+				genres: ["Vocaloid"],
+			};
+			let songRes = (await createSong(song, agent));
+			const songResObj = songRes.body.song as ISongEntry & { _id: Types.ObjectId };
+			expect(songRes).not.toHaveProperty("lastPlayed");
+
+	})
+
+	test("Set date to latest show log", async() => {
+
+		const song: ISongEntrySubmission = {
+				title: "Mesmerizer",
+				artist: "32ki",
+				album: "Mesmerizer",
+				duration: 180,
+				albumImageLoc: "",
+				genres: ["Vocaloid"],
+			};
+		let songRes = (await createSong(song, agent));
+		const songResObj = songRes.body.song as ISongEntry & { _id: Types.ObjectId };
+		const songsList = [songResObj];
+
+
+		let res = await createShowSimple(songsList, agent);
+		expect(res.status).toBe(201);
+		expect(res.body.success).toBe(true);
+		let songData = await agent.get(`/api/song/${songResObj.songId}`);
+		expect(songData.status).toBe(200);
+		expect(songData.body.song.lastPlayed).toBeDefined();
+		expect(new Date(songData.body.song.lastPlayed)).toBeInstanceOf(Date);
+		let songDate = new Date(songData.body.song.lastPlayed)
+		const today = new Date()
+		expect(songDate.getDay()).toBe(today.getDay());
+		expect(songDate.getMonth()).toBe(today.getMonth());
+		expect(songDate.getFullYear()).toBe(today.getFullYear());
+
+
+	})
+
+	test("Set date to latest when updating log", async() => {
+		const song: ISongEntrySubmission = {
+				title: "Mesmerizer",
+				artist: "32ki",
+				album: "Mesmerizer",
+				duration: 180,
+				albumImageLoc: "",
+				genres: ["Vocaloid"],
+			};
+		let songResObj = (await createSong(song, agent)).body.song as ISongEntry & { _id: Types.ObjectId };
+		await createShowSimple([songResObj], agent);
+		let songData = await agent.get(`/api/song/${songResObj.songId}`)
+		let today = new Date();
+		let songDate = new Date(songData.body.song.lastPlayed);
+		expect(songDate.getDay()).toBe(today.getDay());
+		expect(songDate.getMonth()).toBe(today.getMonth());
+		expect(songDate.getFullYear()).toBe(today.getFullYear());
+
+		let newShow : ShowEntrySubmission = {
+			showDate: "2020-01-01",
+			showDescription: "Old Show",
+			songsList: [songResObj]
+		}
+		let res = await createShow(newShow, agent);
+		expect(res.status).toBe(201);
+		expect(res.body.success).toBe(true);
+
+		songData = await agent.get(`/api/song/${songResObj.songId}`);
+		songDate = new Date(songData.body.song.lastPlayed);
+		expect(songDate.getDay()).toBe(today.getDay());
+		expect(songDate.getMonth()).toBe(today.getMonth());
+		expect(songDate.getFullYear()).toBe(today.getFullYear());
+
+		const nextWeek = new Date(today);
+		nextWeek.setDate(nextWeek.getDate() + 7);
+		newShow = {
+			showDate: nextWeek.toISOString().split("T")[0],
+			showDescription: "Future Show",
+			songsList: [songResObj]
+		}
+		res = await createShow(newShow, agent);
+		expect(res.status).toBe(201);
+		expect(res.body.success).toBe(true);
+
+		songData = await agent.get(`/api/song/${songResObj.songId}`);
+		songDate = new Date(songData.body.song.lastPlayed);
+		expect(songDate.getDay()).toBe(nextWeek.getDay());
+		expect(songDate.getMonth()).toBe(nextWeek.getMonth());
+		expect(songDate.getFullYear()).toBe(nextWeek.getFullYear());
+
+
+	})
+})
+
+
 
 
