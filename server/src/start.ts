@@ -11,7 +11,7 @@ const startServer = async () => {
 		throw new Error("Database connection failed");
 	}
 	await initializeApp();
-	await applyMigrations();
+	// await applyMigrations();
 	const port = process.env.PORT || 3000;
 
 	app.listen(port, () => {
