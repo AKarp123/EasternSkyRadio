@@ -154,10 +154,10 @@ jobs:
           platforms: linux/amd64,linux/arm64
           tags: ${{ vars.DOCKER_USERNAME }}/esr-frontend:dev-latest
 
-  push-prod-images:
+  push-prod-backend:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
-    needs: [build-server, build-client]
+    needs: [build-server]
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
@@ -176,6 +176,21 @@ jobs:
           push: true
           platforms: linux/amd64,linux/arm64
           tags: ${{ vars.DOCKER_USERNAME }}/esr-backend:latest
+
+  push-prod-frontend:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    needs: [build-client]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ vars.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
       - name: Push frontend image
         uses: docker/build-push-action@v5
         with:
