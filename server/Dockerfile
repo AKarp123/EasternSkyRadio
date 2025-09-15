@@ -1,7 +1,6 @@
 # ---- Backend Build ----
 FROM oven/bun:1.2.20-slim AS backend-build
 
-ENV FORCE_COLOR=1
 
 WORKDIR /usr/src/app/server
 COPY ./server/package.json ./server/bun.lock ./
@@ -9,12 +8,13 @@ RUN bun install
 COPY ./server .
 RUN bun run build
 
-FROM node:24-slim as BACKEND-PROD
+FROM node:24-slim as backend-prod
 WORKDIR /app
 COPY --from=backend-build /usr/src/app/server/dist ./dist
 COPY --from=backend-build /usr/src/app/server/package.json ./
 COPY --from=backend-build /usr/src/app/server/bun.lock ./
 COPY --from=backend-build /usr/src/app/server/node_modules ./node_modules
+ENV FORCE_COLOR=1
 ENV NODE_ENV=production
 
 EXPOSE 3000
