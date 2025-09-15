@@ -33,7 +33,6 @@ export const rollbackMigrations = async() => {
 const main = async() => {
 	await applyMigrations();
 	// await rollbackMigrations();
-	process.exit(0);
 };
 
 main();
