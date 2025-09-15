@@ -3,7 +3,7 @@ import { Migrator } from "ts-migrate-mongoose";
 
 export const migrator = await Migrator.connect({
 	uri: process.env.MONGODB_URI || "",
-	migrationsPath: "./migrations",
+	migrationsPath: process.env.MIGRATIONS_PATH || "./migrations",
 	autosync: true,
 	templatePath: "./migrations/template.ts",
 
