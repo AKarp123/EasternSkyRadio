@@ -23,7 +23,7 @@ const Graphic = () => {
 
 	useEffect(() => {
 		axios
-			.get<{showData: ShowEntry}>("/api/getShowData/", { params: { showId } })
+			.get<{showData: ShowEntry}>(`/api/show/${showId}`, { params: { showId } })
 			.then((res) => {
 				setShowData(res.data.showData);
 				setLoading(false);
@@ -75,7 +75,7 @@ const Graphic = () => {
 							height: "auto",
 						}}
 					>
-                    Show #{showId} -{" "}
+						Show #{showId} -{" "}
 						{new Date(showData.showDate).toDateString()}
 					</Typography>
 				</Container>

@@ -1,0 +1,40 @@
+
+services:
+
+
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile.dev
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./server:/app
+    env_file:
+      - ./server/.env.dev
+    depends_on:
+      - mongo
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile.dev
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./client:/app
+      - node_modules:/app/node_modules
+    environment:
+      - API_URL=http://server:3000
+    depends_on:
+      - server
+  mongo:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    attach: false
+
+volumes:
+  mongo_data:
+  node_modules: {}

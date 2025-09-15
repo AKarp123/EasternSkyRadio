@@ -4,14 +4,15 @@ import showRouter from "./ShowRoutes.js";
 import SongRouter from "./SongRoutes.js";
 import passport from "passport";
 import multer from "multer";
-import { getStorage } from "firebase-admin/storage";
+import { getStorage } from "firebase-admin/storage"; //eslint-disable-line import/extensions
 import initializeAdmin from "../config/admin.js";
 import requireLogin from "./requireLogin.js";
-import { generateStats, updateShowTimes } from "../dbMethods.js";
+import { generateStats } from "../dbMethods.js";
 import axios from "axios";
 import NodeCache from "node-cache";
 import SyncRouter from "./SyncRoutes.js";
 import UserRouter from "./UserRoutes.js";
+
 
 const statsCache = new NodeCache({ stdTTL: 300 });
 
@@ -33,13 +34,13 @@ router.get("/getStats", async (req, res) => {
 	}
 
 	const stats = await generateStats();
-	console.log(stats)
+
 	statsCache.set("stats", stats);
 
 	res.json(stats);
 });
 
-router.post("/login", passport.authenticate("local"), async (req, res) => {
+router.post("/login", passport.authenticate("local"), (req, res) => {
 	if (req.user) {
 		res.json({
 			success: true,
@@ -52,6 +53,7 @@ router.post("/login", passport.authenticate("local"), async (req, res) => {
 });
 
 
+
 router.get("/getUser", (req, res) => {
 	if (req.user) {
 		res.json({ user: req.user });
@@ -61,7 +63,12 @@ router.get("/getUser", (req, res) => {
 });
 
 router.post("/logout", (req, res) => {
-	req.logout((err) => console.log(err));
+	req.logout((err) => {
+		if (err) {
+			return res.status(500).json({ success: false, message: "Logout failed" });
+		}
+		res.json({ success: true, message: "Logout successful" });
+	});
 });
 
 router.get("/getBucket", (req, res) => {
@@ -75,7 +82,7 @@ router.post(
 	async (req : Request, res : Response) => {
 		const { artist, album } = req.body;
 		if(!req.file || !artist || !album){
-			res.json({ success: false, message: "Missing required fields" });
+			res.status(400).json({ success: false, message: "Missing required fields" });
 			return;
 		}
 
@@ -83,7 +90,7 @@ router.post(
 		const storageRef = storage
 			.bucket()
 			.file(
-				`albumCovers/${req.file.originalname} + ${artist} + ${album}`
+				`albumCovers/${artist} + ${album}` + `.${req.file.originalname.split(".").pop()}`,
 			);
 
 		if (
@@ -91,7 +98,7 @@ router.post(
             req.file.mimetype !== "image/png" && 
             req.file.mimetype !== "image/webp"
 		) {
-			res.json({ success: false, message: "Invalid file type" });
+			res.status(400).json({ success: false, message: "Invalid file type" });
 			return;
 		}
 		const metadata = {
@@ -108,8 +115,8 @@ router.post(
 				});
 			})
 			.catch((error) => {
-				console.log(error);
-				res.json({ success: false, message: "Error uploading file" });
+				console.error(error);
+				res.status(500).json({ success: false, message: "Error uploading file" });
 			});
 	}
 );
@@ -118,7 +125,7 @@ router.post("/uploadURL", requireLogin, async (req: Request, res: Response) => {
 	const { artist, album, url } = req.body;
 
 	if (!artist || !album || !url) {
-		res.json({ success: false, message: "Missing required fields" });
+		res.status(400).json({ success: false, message: "Missing required fields" });
 		return;
 	}
 
@@ -144,8 +151,8 @@ router.post("/uploadURL", requireLogin, async (req: Request, res: Response) => {
 			});
 		})
 		.catch((error) => {
-			console.log(error);
-			res.json({ success: false, message: "Error uploading file" });
+			console.error(error);
+			res.status(500).json({ success: false, message: "Error uploading file" });
 		});
 });
 

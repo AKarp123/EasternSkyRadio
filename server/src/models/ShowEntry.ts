@@ -1,12 +1,12 @@
 import { Schema as schema, model } from "mongoose";
-import { ShowEntry } from "../types/ShowData";
+import { ShowEntry } from "../types/ShowData.js";
 
 
 
 
 const showEntrySchema = new schema<ShowEntry>(
 	{
-		showId: { type: Number, required: true, default: -1, index: true },
+		showId: { type: Number, required: true, default: -1, index: true }, // Might remove and make client side and use showDate as order instead
 		showDate: { type: Date, required: true },
 		showDescription: { type: String },
 		showLink: {
@@ -18,6 +18,12 @@ const showEntrySchema = new schema<ShowEntry>(
 			type: [schema.Types.ObjectId],
 			ref: "SongEntry",
 			default: [],
+			validate: {
+				validator: function (v: Array<schema.Types.ObjectId>) {
+					return v.length > 0;
+				},
+				message: "Songs list cannot be empty.",
+			}
 		},
 	},
 	{

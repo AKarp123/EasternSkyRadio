@@ -1,11 +1,11 @@
 import { Link } from "react-router-dom";
 import {
-	Container,
 	Typography,
 	SvgIcon,
 	Link as MUILink,
-	Box,
 } from "@mui/material";
+import { Box } from "@radix-ui/themes";
+import { memo } from "react";
 
 // const CustomButton = styled(Button)({
 // 	width: "75%",
@@ -18,25 +18,10 @@ type HomeButtonProperties =
     | { route?: never; text: string; link: string };
 
 
-const HomeButton = ({ route, text, link } : HomeButtonProperties) => {
+const HomeButton = memo(({ route, text, link } : HomeButtonProperties) => {
 	return (
-		<Container
-			sx={{
-				"&:after": {
-					display: "block",
-					content: "''",
-					borderBottom: "0.5px solid white",
-					transform: "scaleX(0)",
-					transition: "transform 300ms ease-in-out",
-				},
-				"&:hover:after": {
-					transform: "scaleX(1)",
-				},
-				"&:hover .svgIcon": {
-					transform: "translateX(20px)",
-					transition: "transform 300ms ease-in-out",
-				},
-			}}
+		<Box
+			className="home-button"
 		>
 			{link ? (
 				<MUILink
@@ -117,41 +102,18 @@ const HomeButton = ({ route, text, link } : HomeButtonProperties) => {
 					</SvgIcon>
 				</Link>
 			)}
-		</Container>
+		</Box>
 	);
-};
+});
 
-export const HomeButtonNoRoute = ({ text } : { text: string }) => {
+export const HomeButtonNoRoute = memo(({ text } : { text: string }) => {
 	return (
-		<Container
-			sx={{
-				"&:after": {
-					display: "block",
-					content: "''",
-					borderBottom: "0.5px solid white",
-					transform: "scaleX(0)",
-					transition: "transform 300ms ease-in-out",
-				},
-				"&:hover:after": {
-					transform: "scaleX(1)",
-				},
-				"&:hover .svgIcon": {
-					transform: "translateX(20px)",
-					transition: "transform 300ms ease-in-out",
-				},
-				"&:hover": {
-					cursor: "pointer",
-				},
-			}}
+		<Box
+			className="home-button cursor-pointer"
 		>
 			<Box
-				sx={{
-					textDecoration: "none",
-					color: "white",
-					display: "flex",
-					alignItems: "center",
-					justifyContent: "space-between",
-				}}
+				className="no-underline text-white flex justify-between items-center"
+				style={{display: "flex"}}
 			>
 				<Typography
 					variant="h3"
@@ -177,8 +139,8 @@ export const HomeButtonNoRoute = ({ text } : { text: string }) => {
 					</svg>
 				</SvgIcon>
 			</Box>
-		</Container>
+		</Box>
 	);
-};
+});
 
 export default HomeButton;

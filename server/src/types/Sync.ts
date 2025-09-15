@@ -1,4 +1,4 @@
-import SongEntry from "../models/SongEntry";
+import { ISongEntry } from "./SongEntry.js";
 
 export interface Sync {
     type: string;
@@ -13,4 +13,4 @@ type Break = {
 
 export type SetPlanner =
     | ({ type: "break" } & Break)
-    | ({ type: "song" } & SongEntry);
+    | ({ type: "song" } & ISongEntry);

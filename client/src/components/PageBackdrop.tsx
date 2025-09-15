@@ -3,9 +3,9 @@ import React, { useRef } from "react";
 
 
 type PageBackdropProperties = {
-    children: React.ReactNode;
-    width?: string;
-    height?: string;
+	children: React.ReactNode;
+	width?: string;
+	height?: string;
 }
 
 

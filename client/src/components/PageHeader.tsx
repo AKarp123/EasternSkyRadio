@@ -11,16 +11,15 @@ const PageHeader = ({title} : {title: string}) => {
 				alignItems: "center",
 				justifyContent: "center",
 				position: "relative",
+				gap: 2
 			}}
 		>
 			<BackButton />
 
 			<Typography
-				variant="h1"
-				align="center"
+				variant="h3"
 				sx={{
 					fontFamily: "Tiny5, Roboto",
-					mx: "auto",
 				}}
 			>
 				{title}

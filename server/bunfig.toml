@@ -1,0 +1,3 @@
+[test]
+root = "src/tests"
+coverageSkipTestFiles = true

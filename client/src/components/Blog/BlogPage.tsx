@@ -13,7 +13,7 @@ const BlogPage = () => {
 			<Divider />
 			<Container>
 				<Typography variant="h2" sx={{ fontFamily: "Tiny5, Roboto" }}>
-                    Blog coming soon!
+					Blog coming soon!
 				</Typography>
 			</Container>
 		</PageBackdrop>

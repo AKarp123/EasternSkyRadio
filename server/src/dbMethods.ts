@@ -1,13 +1,11 @@
 import SongEntry from "./models/SongEntry.js";
 import ShowEntry from "./models/ShowEntry.js";
 import Increment from "./models/IncrementModel.js";
-import SiteData from "./models/SiteData.js";
 import mongoose from "mongoose";
-import User from "./models/UserModel.js";
-import { SongEntry as ISongEntry } from "./types/SongEntry.js";
+import { ISongEntry } from "./types/SongEntry.js";
 import { ShowEntrySubmission } from "./types/ShowData.js";
 
-export const addSong = async (songData : Omit<ISongEntry, "songId">) => {
+export const addSong = async (songData: Omit<ISongEntry, "songId">) => {
 	const nextSongId = await Increment.findOneAndUpdate(
 		{ model: "SongEntry" },
 		{ $inc: { counter: 1 } },
@@ -18,16 +16,35 @@ export const addSong = async (songData : Omit<ISongEntry, "songId">) => {
 		const song = await newSong.save();
 
 		return song;
-	} catch (err) {
-		console.log(
-			err
-		);
+	} catch (error) {
 		await Increment.findOneAndUpdate(
 			{ model: "SongEntry" },
 			{ $inc: { counter: -1 } }
 		);
 
-		throw new Error(`Error adding song: ${newSong.artist} - ${newSong.title}`);
+		if (error instanceof mongoose.Error.ValidationError) {
+			const accumulatedErrors: string[] = [];
+
+			for (const [field, errorObj] of Object.entries(error.errors)) {
+				accumulatedErrors.push(
+					`Field: ${field}, Message: ${errorObj.message}`
+				);
+			}
+
+			throw new Error(
+				"Validation error: " + accumulatedErrors.join(", "),
+				{
+					cause: error,
+				}
+			);
+		} else if (error instanceof mongoose.Error.ValidatorError) {
+			throw new TypeError("Validator error: " + error.message, {
+				cause: error,
+			});
+		} else {
+			console.error("Error adding song:", error);
+			throw new Error("Error adding song: ", { cause: error });
+		}
 	}
 	// console.log("New song added: %s - %s", newSong.artist, newSong.title);
 };
@@ -51,16 +68,8 @@ export const addSong = async (songData : Omit<ISongEntry, "songId">) => {
 //     // console.log("New show added! id: " + newShow.showId);
 // };
 
-export const findSong = async (songName : string) => {
+export const findSong = async (songName: string) => {
 	return SongEntry.findOne({ title: { $regex: songName, $options: "i" } });
-};
-
-export const initializeCounters = async () => {
-	let increment = new Increment({ model: "SongEntry" });
-	await increment.save();
-	increment = new Increment({ model: "ShowEntry" });
-	await increment.save();
-	// console.log("Counters Initialized!");
 };
 
 // export const addSongToShow = async (showId, songId) => {
@@ -69,62 +78,33 @@ export const initializeCounters = async () => {
 //     return await show.save();
 // };
 
-const createAdminAccount = async () => {
-	const user = new User({ username: "admin" });
-	const adminPassword = process.env.ADMIN_PASSWORD;
-	if (!adminPassword) {
-		throw new Error("ADMIN_PASSWORD environment variable is not set");
-	}
-	User.register(user, adminPassword, (err, user) => {
-		if (err) {
-			console.log(err);
-		} else {
-			console.log("User created");
-		}
-	});
+export const updateShowIds = async (deletedId: number) => {
+	await ShowEntry.updateMany(
+		{ showId: { $gt: deletedId } },
+		{ $inc: { showId: -1 } }
+	);
 };
 
-export const removeMissingShows = async () => {
-	try {
-		// Get all shows sorted by showId
-		const shows = await ShowEntry.find().sort({ showId: "asc" });
+// export const removeMissingSongs = async () => {
+// 	try {
+// 		// Get all songs sorted by songId
+// 		const songs = await SongEntry.find().sort({ songId: "asc" });
 
-		// Update showIds to be sequential starting from 1
-		for (let i = 0; i < shows.length; i++) {
-			shows[i].showId = i + 1;
-			await shows[i].save();
-		}
-		await Increment.findOneAndUpdate(
-			{ model: "ShowEntry" },
-			{ $set: { counter: shows.length } }
-		);
+// 		// Update songIds to be sequential starting from 1
+// 		for (const [i, song] of songs.entries()) {
+// 			song.songId = i + 1;
+// 			await song.save();
+// 		}
+// 		await Increment.findOneAndUpdate(
+// 			{ model: "SongEntry" },
+// 			{ $set: { counter: songs.length } }
+// 		);
 
-		console.log("Show IDs updated successfully.");
-	} catch (error) {
-		console.error("Error updating show IDs:", error);
-	}
-};
-
-export const removeMissingSongs = async () => {
-	try {
-		// Get all songs sorted by songId
-		const songs = await SongEntry.find().sort({ songId: "asc" });
-
-		// Update songIds to be sequential starting from 1
-		for (let i = 0; i < songs.length; i++) {
-			songs[i].songId = i + 1;
-			await songs[i].save();
-		}
-		await Increment.findOneAndUpdate(
-			{ model: "SongEntry" },
-			{ $set: { counter: songs.length } }
-		);
-
-		console.log("Song IDs updated successfully.");
-	} catch (error) {
-		console.error("Error updating song IDs:", error);
-	}
-}
+// 		console.info("Song IDs updated successfully.");
+// 	} catch (error) {
+// 		console.error("Error updating song IDs:", error);
+// 	}
+// };
 
 export const generateStats = async () => {
 	const data = {
@@ -135,7 +115,6 @@ export const generateStats = async () => {
 		uniqueAlbums: 0,
 	};
 
-    
 	data.totalShows = await ShowEntry.estimatedDocumentCount();
 	ShowEntry.aggregate([
 		{ $unwind: "$songsList" },
@@ -156,27 +135,40 @@ export const generateStats = async () => {
 	return data;
 };
 
-const resetData = async () => {
-	mongoose.connection.dropDatabase();
-	await new SiteData({ showDay: 2, showHour: 0, onBreak: false }).save();
-	await createAdminAccount();
-	await initializeCounters();
-	console.log("Data reset!");
-};
-
 export const updateShowTimes = async () => {
 	let shows = await ShowEntry.find();
-	shows.forEach((show) => {
+	for (const show of shows) {
 		let tempDate = new Date(show.showDate);
 		tempDate.setHours(tempDate.getHours() + 5); // Convert to EST
 		show.showDate = tempDate;
 		show.save();
-	});
+	}
+};
+
+export const generateSearchQuery = ({
+	artist,
+	title,
+	album,
+	origTitle,
+	origAlbum,
+}: Pick<ISongEntry, "artist" | "title" | "album" | "origTitle" | "origAlbum"> &
+    Partial<
+        Omit<
+            ISongEntry,
+            "artist" | "title" | "album" | "origTitle" | "origAlbum"
+        >
+    >) => {
+	return [artist, title, album, origTitle || "", origAlbum || ""]
+		.join(" ")
+		.replaceAll(/[^\p{L}\p{N}\s]/gu, "")
+		.replaceAll(/\s+/g, " ")
+		.toLowerCase()
+		.trim();
 };
 
 // const addLastPlayed = async () => {
 //     const allShows = await ShowEntry.find().sort({ showId: "desc"}).populate("songsList");
- 
+
 //     allShows.forEach((show) => {
 //         show.songsList.forEach(async (song) => {
 //             if(song.lastPlayed === undefined) {
@@ -192,15 +184,26 @@ export const updateShowTimes = async () => {
 
 // addLastPlayed();
 
-export const updateLastPlayed = async (songsList: ShowEntrySubmission["songsList"], date: Date) =>  {
+export const updateLastPlayed = async (
+	songsList: ShowEntrySubmission["songsList"] | { _id: mongoose.Types.ObjectId }[],
+	date: Date
+) => {
+	
+	for (const song of songsList) {
 
-	songsList.forEach(async (song) => {
-		await SongEntry.findOneAndUpdate({ _id: song }, { lastPlayed: date }, { new: true });
-	})
-}
+		await SongEntry.findOneAndUpdate(
+			{ _id: song._id },
+			[{
+				$set: { lastPlayed: { $max: [date, "$lastPlayed"] } }
+			}],
+			{ new: true }
+		);
+	
+		
+	}
+};
 
 // addLastPlayed();
-
 
 // export const initializeTestData = async () => {
 //     // mongoose.connection.dropCollection("users")
@@ -224,9 +227,6 @@ export const updateLastPlayed = async (songsList: ShowEntrySubmission["songsList
 //     //     })
 //     //     song.save();
 //     // });
-
-    
-
 
 //     // for(let i = 0; i< 5; i++) {
 

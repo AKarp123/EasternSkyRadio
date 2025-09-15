@@ -3,6 +3,7 @@ import { defineConfig } from 'eslint/config';
 import parser from '@typescript-eslint/parser';
 import eslintPluginUnicorn from 'eslint-plugin-unicorn';
 import typescript from '@typescript-eslint/eslint-plugin';
+import stylistic from "@stylistic/eslint-plugin"
 
 export default defineConfig([
 
@@ -18,12 +19,13 @@ export default defineConfig([
         },
         plugins: {
                 '@typescript-eslint': typescript,
+                '@stylistic': stylistic
             },
         rules: {
             'camelcase': 'off',
-            'indent': ['error', 'tab'],
+            '@stylistic/indent': ['error', 'tab'],
             'no-await-in-loop': 'off',
-            'no-console': ['warn', { allow: ['warn', 'error'] }],
+            'no-console': ['error', { allow: ['warn', 'error'] }],
             'unicorn/filename-case': 'off',
             'unicorn/prevent-abbreviations': 'off',
             'unicorn/no-null': 'off',
@@ -33,8 +35,7 @@ export default defineConfig([
                 args: 'after-used',
                 ignoreRestSiblings: true
             }],
-            
-            
+            'eqeqeq': ['error', 'always'],
         },
     },
     {

@@ -1,36 +1,32 @@
-import React, { useState, useContext, Key } from "react";
+import React, { useState, useContext, Key, useRef, useEffect} from "react";
 import axios from "axios";
 import { useDebouncedCallback } from "use-debounce";
-import {
-	TextField,
-	Stack,
-	Typography,
-	Card,
-	Box,
-	CardMedia,
-	CardContent,
-	CardActions,
-	Button,
-} from "@mui/material";
 import ErrorContext from "../../providers/ErrorContext";
 import { SongEntry } from "../../types/Song";
 import { StandardResponse } from "../../types/global";
 import { createContext } from "react";
+import { Flex, Text } from "@radix-ui/themes";
+import DisplayTooltip from "../Util/Tooltip";
+import { ScrollArea, Spinner } from "@radix-ui/themes";
+import Input from "../Util/Input";
 
 type SongSearchProperties = {
-    dispatch: React.Dispatch<any>;
-    parent?: string;
+	dispatch: React.Dispatch<any>;
+	parent?: "New Show" | "Set Planner" | "Edit Song";
 };
 
 const DispatchContext = createContext<React.Dispatch<any>>(() => {});
 const SongSearch = ({ dispatch, parent }: SongSearchProperties) => {
 	parent = parent === undefined ? "New Show" : parent;
 	const [searchResults, setSearchResults] = useState<SongEntry[]>([]);
+	const [loading, setLoading] = useState(false);
+	const [searchText, setSearchText] = useState<string>("");
 	const setError = useContext(ErrorContext);
 	const searchDebounced = useDebouncedCallback((query) => {
-		console.log(query);
+		setLoading(true)
 		if (query === "") {
 			setSearchResults([]);
+			setLoading(false)
 			return;
 		}
 		axios
@@ -45,58 +41,39 @@ const SongSearch = ({ dispatch, parent }: SongSearchProperties) => {
 					}
 					return;
 				}
-				console.log(res.data);
 				setSearchResults(res.data.searchResults);
 			})
 			.catch((error) => {
 				setError(error.message);
+			})
+			.finally(() => {
+				setLoading(false);
 			});
-	}, 500);
+	}, 100);
 
 	const heightMap: Record<string, string> = {
-		"New Show": "40vh",
-		"Set Planner": "45vh",
+		"New Show": "50vh",
+		"Set Planner": "70vh",
 		"Edit Song": "60vh",
 	};
 	const height = heightMap[parent] || "60vh";
 
 	return (
-		<Box
-			sx={{
-				alignItems: "center",
-				justifyContent: "center",
-				pr: 1, // Padding right in case of a scrollbar
-			}}
-		>
+		<>
 			<DispatchContext.Provider value={dispatch}>
-				<TextField
-					label="Search"
-					onChange={(e) => searchDebounced(e.target.value)}
-					fullWidth
-					sx={{ mb: 1, mt: 1 }}
+				<Input
+					placeholder="Search"
+					value={searchText}
+					onChange={(e) =>{
+
+						setSearchText(e.target.value)
+						searchDebounced(e.target.value.trim())
+					}
+					}
+					className="border border-gray-300 rounded px-2 py-1 font-pixel focus:outline-none w-full"
 				/>
-				<Box
-					sx={{
-						justifyContent: "center",
-						overflowY: "auto",
-						// Use vh units to scale with screen height:
-						height: height,
-						maxHeight: height,
-						paddingBottom: "16px", // Extra padding so the last card isn’t cut off
-						boxSizing: "border-box",
-						"&::-webkit-scrollbar": {
-							width: "0.4em",
-						},
-						"&::-webkit-scrollbar-track": {
-							background: "transparent",
-						},
-						"&::-webkit-scrollbar-thumb": {
-							background: "#888",
-							borderRadius: "4px",
-						},
-					}}
-				>
-					<Stack spacing={1} direction="column">
+				<ScrollArea type="scroll" scrollbars="vertical" style={{ height }} >
+					<Flex className="w-full h-full flex-col gap-3 mt-1">
 						{searchResults.length > 0 ? (
 							searchResults.map((song) => (
 								<SongSearchCard
@@ -106,158 +83,127 @@ const SongSearch = ({ dispatch, parent }: SongSearchProperties) => {
 								/>
 							))
 						) : (
-							<Typography>No results</Typography>
+							loading ? <Spinner className="mx-auto"/> : <Text size="4" className="font-pixel text-center mt-4">No results</Text>
 						)}
-					</Stack>
-				</Box>
+					</Flex>
+				</ScrollArea>
 			</DispatchContext.Provider>
-		</Box>
+		</>
 	);
 };
 
 type SongSearchCardProperties = {
-    song: SongEntry;
-    parent: string;
+	song: SongEntry;
+	parent: string;
 };
 const SongSearchCard = ({ song, parent }: SongSearchCardProperties) => {
+
+	const titleRef = useRef<HTMLDivElement>(null);
+	const albumRef = useRef<HTMLDivElement>(null);
+	const [isOverflowTitle, setIsOverflowTitle] = useState(false);
+	const [isOverflowAlbum, setIsOverflowAlbum] = useState(false);
+
+	useEffect(() => {
+		setIsOverflowTitle(titleRef.current ? titleRef.current.scrollHeight > titleRef.current.clientHeight+1 : false)
+		setIsOverflowAlbum(albumRef.current ? albumRef.current.scrollHeight > albumRef.current.clientHeight+1 : false)
+		window.addEventListener("resize", () => {
+			setIsOverflowTitle(titleRef.current ? titleRef.current.scrollHeight > titleRef.current.clientHeight+1 : false)
+		});
+		window.addEventListener("resize", () => {
+			setIsOverflowAlbum(albumRef.current ? albumRef.current.scrollHeight > albumRef.current.clientHeight+1 : false)
+		});
+	}, []);
 	const lastPlayed = song.lastPlayed
 		? new Date(song.lastPlayed)
 		: new Date("Invalid Date");
 
+
+	
+
 	return (
-		<Card
-			sx={{
-				display: "flex",
-				flexWrap: "wrap",
-				flexDirection: "column",
-				backgroundColor: "rgba(22, 22, 22, 0.1)",
-				WebkitBackdropFilter: "blur(3px)",
-				backdropFilter: "blur(3px)",
-			}}
-		>
-			<Box sx={{ display: "flex", flexWrap: "nowrap" }}>
-				<CardMedia
-					component="img"
-					image={song.albumImageLoc}
-					sx={{
-						width: "125px",
-						height: "125px",
-						objectFit: "cover",
-						padding: "8px",
-						borderRadius: "10%",
-					}}
-				/>
-
-				<CardContent
-					sx={{
-						display: "flex",
-						flexDirection: "column",
-						alignItems: "start",
-						justifyContent: "space-between",
-						overflow: "hidden",
-						paddingBottom: "0px !important",
-					}}
-				>
-					<Typography variant="h6">{song.title}</Typography>
-					<Typography variant="body1">{song.artist}</Typography>
-					<Typography variant="body2" sx={{ fontStyle: "italic" }}>
-						{song.album}
-					</Typography>
-				</CardContent>
-			</Box>
-			<CardActions
-				sx={{
-					paddingBottom:
-                        parent === "Set Planner" ? "0px !important" : "",
-				}}
-			>
+		<Flex className="border rounded-md flex-col backdrop-blur-[3px]">
+			<Flex className="flex-row flex-nowrap p-2 items-center relative">
+				<img src={song.albumImageLoc} alt={`${song.title} album art`} className="w-[45px] h-[45px] min-w-[45px] min-h-[45px] rounded-md"/>
+				<Flex className="flex flex-col ml-4 overflow-hidden" style={{
+					lineHeight: "0"
+				}}>
+					<div
+						ref={titleRef}
+						className="line-clamp-1 pt-1 mb-2"
+					>
+						<DisplayTooltip content={isOverflowTitle? `${song.artist} - ${song.title}` : null}>
+							<Text size="5" className="font-pixel text-ellipsis" trim={"start"} style={{lineHeight: "1"}}>{song.artist} - {song.title} </Text>
+						</DisplayTooltip>
+					</div>
+					<div
+						ref={albumRef}
+						className="line-clamp-1"
+					>
+						<DisplayTooltip content={isOverflowAlbum ? song.album : null}>
+							<Text size="5" className="font-pixel italic" trim={"start"}>{song.album}</Text>
+						</DisplayTooltip>
+					</div>
+						
+				</Flex>
+			</Flex>
+			<Flex className="flex-row items-center mb-0.5 mr-2 gap-2" justify={"between"}>
 				<Buttons parent={parent} song={song} />
-			</CardActions>
-
-			{parent === "Set Planner" && (
-				<CardContent
-					sx={{
-						paddingTop: "0px !important",
-						paddingBottom: "8px !important",
-					}}
-				>
-					<Typography variant="body2">
-                        Last Played:{" "}
-						{lastPlayed.toLocaleDateString() === "Invalid Date"
-							? "Never"
-							: lastPlayed.toLocaleDateString()}
-					</Typography>
-				</CardContent>
-			)}
-		</Card>
+				<Text size="3" className="font-pixel items-center ">
+					Last Played:{" "}
+					{Number.isNaN(lastPlayed.getTime())
+						? "Never"
+						: lastPlayed.toLocaleDateString()}
+				</Text>
+			</Flex>
+		</Flex>
 	);
 };
 
 type ButtonProperties = {
-    parent: string;
-    song: SongEntry;
+	parent: string;
+	song: SongEntry;
 };
 const Buttons = ({ parent, song }: ButtonProperties) => {
 	const dispatch = useContext(DispatchContext);
+
+
+	const Add = () => 
+		(<button
+			className="text-white font-pixel text-md focus:outline-none focus:shadow-outline cursor-pointer HoverButtonStyles rounded-md px-2 "
+			onClick={() => dispatch({ type: "addSong", payload: song })}
+		>
+			Add
+		</button>)
+	
+
+	const Fill = () => (
+		<button
+			className="text-white font-pixel text-md focus:outline-none focus:shadow-outline cursor-pointer HoverButtonStyles rounded-md px-2 "
+			onClick={() => dispatch({ type: "fill", payload: song })}
+		>
+			Fill
+		</button>
+	);
+
+
 	switch (parent) {
-	case "New Show": {
-		return (
-			<>
-				<Button
-					onClick={(e) => {
-						e.preventDefault();
-						dispatch({
-							type: "addSong",
-							payload: { ...song },
-						});
-					}}
-				>
-                    Add
-				</Button>
-				<Button
-					onClick={(e) => {
-						e.preventDefault();
-						dispatch({
-							type: "fill",
-							payload: song,
-						});
-					}}
-				>
-                    Fill
-				</Button>
-			</>
-		);
-	}
-	case "Edit Song": {
-		return (
-			<Button
-				onClick={(e) => {
-					e.preventDefault();
-					dispatch({
-						type: "fill",
-						payload: song,
-					});
-				}}
-			>
-                Fill
-			</Button>
-		);
-	}
-	case "Set Planner": {
-		return (
-			<Button
-				onClick={(e) => {
-					e.preventDefault();
-					dispatch({
-						type: "addSong",
-						payload: { ...song },
-					});
-				}}
-			>
-                Add
-			</Button>
-		);
-	}
+		case "New Show": {
+			return (
+				<>
+					<Add />
+				</>
+			);
+		}
+		case "Edit Song": {
+			return (
+				<Fill />
+			);
+		}
+		case "Set Planner": {
+			return (
+				<Add />
+			);
+		}
 	// No default
 	}
 };

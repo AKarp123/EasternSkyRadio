@@ -1,0 +1,36 @@
+
+
+.Tooltip {
+	background-color: rgba(0, 0, 0, 0.3);
+	backdrop-filter: blur(5px);
+	will-change: transform, opacity;
+}
+
+.Tooltip[data-state="delayed-open"] {
+	animation: slideDownAndFade 0.2s ease-out;
+
+}
+
+.Tooltip[data-state="closed"] {
+	animation: fadeOut 0.2s ease-out;
+}
+
+@keyframes slideDownAndFade {
+	0% {
+		transform: translateY(-5px);
+		opacity: 0;
+	}
+	100% {
+		transform: translateY(0);
+		opacity: 1;
+	}
+}
+
+@keyframes fadeOut { 
+	0% {
+		opacity: 1;
+	}
+	100% {
+		opacity: 0;
+	}
+}

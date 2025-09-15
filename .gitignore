@@ -1,4 +1,10 @@
 **/node_modules/
 **/.env
+**/.env.dev
+**/.env.test
 server/src/config/serviceaccountkey.json
 **/.DS_Store
+**/dist/
+**/build/
+test_data/
+.pnpm-store/

@@ -1,16 +1,13 @@
 import { useState, useEffect, useMemo, memo } from "react";
 import Particles, { initParticlesEngine } from "@tsparticles/react";
 import { loadStarsPreset } from "@tsparticles/preset-stars";
-import { type Container } from "@tsparticles/engine";
 
 
 type properties = {
-    children?: React.ReactNode;
+	children?: React.ReactNode;
 }
 
-const particlesLoaded = async (container?: Container) => {
-	console.log(container);
-};
+
 const StarParticles = memo(({children}: properties) => {
 	const [init, setInit] = useState(false);
 
@@ -46,7 +43,6 @@ const StarParticles = memo(({children}: properties) => {
 				<Particles
 					id="tsparticles"
 					options={options}
-					particlesLoaded={particlesLoaded}
 				/>
 				{children}
 			</>
