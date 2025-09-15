@@ -346,7 +346,8 @@ const SetPlannerCard = ({ entry, state, dispatch, durationAtPoint, index }: SetP
 				/>
 				<Flex direction={"column"} className="ml-4 justify-center gap-1 my-auto">
 					<Tooltip content={entry.item.origTitle || "" }>
-						<Text size="5" className="font-pixel">{entry.item.artist} - {entry.item.title} ({entry.item.duration}min)</Text>
+						<div className="flex flex-row">{entry.item.elcroId && <a href={`https://thecore.fm/djsonly/music-album-detail.php?id=${entry.item.elcroId}`} target="_blank" className="font-pixel text-red-500 inline text-[20px] ">({entry.item.elcroId})&nbsp;</a>}
+						<Text size="5" className="font-pixel inline">{entry.item.artist} - {entry.item.title} ({entry.item.duration}min)</Text></div>
 					</Tooltip>
 					<Text size="4" className="font-pixel italic">{entry.item.album}</Text>
 				</Flex>
