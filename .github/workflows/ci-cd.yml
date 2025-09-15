@@ -126,6 +126,7 @@ jobs:
           context: .
           file: ./server/Dockerfile
           push: true
+          platforms: linux/amd64,linux/arm64
           tags: ${{ vars.DOCKER_USERNAME }}/esr-backend:dev-latest
 
   push-dev-frontend:
@@ -146,6 +147,7 @@ jobs:
           context: .
           file: ./client/Dockerfile
           push: true
+          platforms: linux/amd64,linux/arm64
           tags: ${{ vars.DOCKER_USERNAME }}/esr-frontend:dev-latest
 
   push-prod-images:
@@ -166,6 +168,7 @@ jobs:
           context: .
           file: ./server/Dockerfile
           push: true
+          platforms: linux/amd64,linux/arm64
           tags: ${{ vars.DOCKER_USERNAME }}/esr-backend:latest
       - name: Push frontend image
         uses: docker/build-push-action@v5
@@ -173,4 +176,5 @@ jobs:
           context: .
           file: ./client/Dockerfile
           push: true
+          platforms: linux/amd64,linux/arm64
           tags: ${{ vars.DOCKER_USERNAME }}/esr-frontend:latest
