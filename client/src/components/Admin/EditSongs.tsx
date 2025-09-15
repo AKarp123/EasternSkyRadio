@@ -1,12 +1,11 @@
-import { Divider, Grid, Container, Box } from "@mui/material";
-import PageBackdrop from "../PageBackdrop";
 import PageHeader from "../PageHeader";
 import { useReducer, useContext } from "react";
 import axios from "axios";
 import ErrorContext from "../../providers/ErrorContext";
 import SongForm from "./SongForm";
-import { SongSearch } from "./NewShow";
+import SongSearch from "./SongSearch";
 import { SongEntry, SongEntryForm } from "../../types/Song";
+import { Container, Separator, Grid } from "@radix-ui/themes";
 
 const reducer = (state: SongEntry, action: { type: string; payload?: any }) => {
 	switch (action.type) {
@@ -28,7 +27,7 @@ const reducer = (state: SongEntry, action: { type: string; payload?: any }) => {
 				genres: [],
 				specialNote: "",
 				songReleaseLoc: [],
-				duration: "",
+				duration: 0,
 			};
 		}
 		default: {
@@ -69,48 +68,33 @@ const EditSongs = () => {
 	};
 
 	return (
-		<PageBackdrop>
-			<PageHeader title="Edit Songs" />
-			<Divider sx={{ mb: 2 }} />
-			<Box
-				sx={{
-					flex: 1,
-					overflowY: {
-						sm: "auto",
-						md: "hidden",
-					},
-				}}
-			>
-				<Container>
-					<Grid container spacing={2}>
-						<Grid item sm={12} md={6}>
-							<Box
-								sx={{
-									flex: 1,
-									height: "80%",
-									overflowY: "auto",
-									overflowX: "hidden",
-									pr: 2,
-								}}
-							>
-								<SongForm
-									songData={editSong}
-									parentDispatch={dispatch}
-									type="edit"
-									submit={handleSubmit}
-								/>
-							</Box>
-						</Grid>
-						<Grid item sm={12} md={6}>
-							<SongSearch
-								dispatch={dispatch}
-								parent="Edit Song"
-							/>
-						</Grid>
-					</Grid>
-				</Container>
-			</Box>
-		</PageBackdrop>
+		<Container size="4" className="min-h-screen mx-auto items-center max-w-[85%]">
+			<PageHeader title="Edit Song" />
+			<Separator size='4' orientation="horizontal" className="w-full my-1"/>
+			
+
+			<Grid columns={{ xs: "1", sm: "2" }} gap="16px" className="w-full mb-4">
+							
+				<div>
+					<SongForm
+						songData={editSong}
+						parentDispatch={dispatch}
+						type="edit"
+						submit={handleSubmit}
+					/>
+				</div>
+
+				<div>
+					<SongSearch
+						dispatch={dispatch}
+						parent="Edit Song"
+					/>
+				</div>
+
+			</Grid>
+				
+
+		</Container>
 	);
 };
 

@@ -17,8 +17,7 @@ songRouter.get("/song/:id", requireLogin, async (req : Request, res : Response) 
 	} else {
 		const songData = await SongEntry.findOne(
 			{ songId: req.params.id },
-			{ __v: 0 }
-		).lean();
+		).select(songEntry_selectAllFields).lean();
 
 		if (!songData) {
 			res.status(404).json({ success: false, message: "Song not found." });
@@ -73,6 +72,8 @@ songRouter.post("/song", requireLogin, async (req : Request, res : Response) => 
 		res.status(400).json({ success: false, message: "No song data provided." });
 		return;
 	}
+
+
 
 	// Escape any special regex characters for each song field
 	const escapedTitle = escapeRegex(songData.title);

@@ -1,20 +1,40 @@
 import * as React from "react";
-import { styled } from "@mui/material/styles";
-import Button from "@mui/material/Button";
-import CloudUploadIcon from "@mui/icons-material/CloudUpload";
+import { Text } from "@radix-ui/themes";
 import { FileUploader } from "react-drag-drop-files";
 
-const VisuallyHiddenInput = styled("input")({
-	clip: "rect(0 0 0 0)",
-	clipPath: "inset(50%)",
-	height: 1,
-	overflow: "hidden",
-	position: "absolute",
-	bottom: 0,
-	left: 0,
-	whiteSpace: "nowrap",
-	width: 1,
-});
+// const VisuallyHiddenInput = styled("input")({
+// 	clip: "rect(0 0 0 0)",
+// 	clipPath: "inset(50%)",
+// 	height: 1,
+// 	overflow: "hidden",
+// 	position: "absolute",
+// 	bottom: 0,
+// 	left: 0,
+// 	whiteSpace: "nowrap",
+// 	width: 1,
+// });
+
+// const VisuallyHiddenInput = ({...props}: React.InputHTMLAttributes<HTMLInputElement>) => (
+// 	<input
+// 		style={{
+// 			clip: "rect(0 0 0 0)",
+// 			clipPath: "inset(50%)",
+// 			height: 1,
+// 			overflow: "hidden",
+// 			position: "absolute",
+// 			bottom: 0,
+// 			left: 0,
+// 			whiteSpace: "nowrap",
+// 			width: 1,
+// 		}}
+// 		onKeyDown={(e) => {
+// 			if (e.key === "Enter") {
+// 				e.preventDefault();
+// 				e.stopPropagation();
+// 			}}}
+// 		{...props}
+// 	/>
+// );
 
 
 type InputFileUploadProperties = {
@@ -28,17 +48,16 @@ export default function InputFileUpload({ uploadImage }: InputFileUploadProperti
 	return (
 		<FileUploader multiple={false} handleChange={uploadImage} name="filename" types={fileTypes}>
 			<div>
-				<Button
-					size="small"
-					component="label"
-					role={undefined}
-					variant="contained"
+				<button
+					color="gray"
+					type="button"
+					className="cursor-pointer HoverButtonStyles font-pixel border-[1px] rounded-md p-1"
 					tabIndex={-1}
-					startIcon={<CloudUploadIcon />}
 				>
-					Upload file
-					<VisuallyHiddenInput type="file" />
-				</Button>
+					<Text size="3" className="font-pixel">Upload file</Text>
+					{/* <VisuallyHiddenInput type="file" /> */}
+
+				</button>
 			</div>
 		</FileUploader>
 	);

@@ -1,24 +1,15 @@
-import {
-	Tab,
-	Tabs,
-	Container,
-	Divider,
-	Grid,
-	Stack,
-	TextField,
-	Typography,
-	Button,
-	Box,
-} from "@mui/material";
-import PageBackdrop from "../PageBackdrop";
 import PageHeader from "../PageHeader";
-import { useContext, useEffect, useReducer, useState } from "react";
+import { useContext, useEffect, useReducer} from "react";
 import axios from "axios";
 import ErrorContext from "../../providers/ErrorContext";
 import { reducer } from "../../reducers/NewShowReducer";
 import SongForm from "./SongForm";
 import SongSearch from "./SongSearch";
 import { NewShowActionType, NewShowState } from "../../types/pages/admin/NewShow";
+import Input, { InputDefaultClasses } from "../Util/Input";
+import { Flex, Separator, Text, Container, Grid } from "@radix-ui/themes";
+import { Tabs } from "radix-ui"
+
 
 const InitialState : NewShowState = {
 	showDate: new Date(Date.now()).toISOString().split("T")[0],
@@ -31,6 +22,7 @@ const NewShow = () => {
 	const setError = useContext(ErrorContext);
 	const [state, dispatch] = useReducer(reducer, InitialState);
 
+
 	useEffect(() => {
 		let showState = localStorage.getItem("showState");
 		if (showState) {
@@ -38,7 +30,7 @@ const NewShow = () => {
 		}
 	}, []);
 
-	const [tab, setTab] = useState(0);
+
 
 	const addShow = () => {
 		axios
@@ -57,117 +49,122 @@ const NewShow = () => {
 	};
 
 	return (
-		<PageBackdrop>
+
+
+		<Container size="4" className="min-h-screen mx-auto items-center max-w-[85%]">
 			<PageHeader title="New Show Log" />
-			<Divider sx={{ mb: 2 }} />
-			<Box
-				sx={{
-					flex: 1,
-					overflowY: { xs: "auto", md: "hidden" },
-				}}
-			>
-				<Container>
-					<Grid container spacing={2}>
-						<Grid item xs={12} md={6}>
-							<TextField
-								label="Show Date"
-								type="date"
-								value={state.showDate}
-								onChange={(e) =>
-									dispatch({
-										type: NewShowActionType.ShowDate,
-										payload: e.target.value,
-									})
-								}
-								fullWidth
-							/>
-						</Grid>
-						<Grid item xs={12} md={6}>
-							<TextField
-								label="Show Description"
-								value={state.showDescription}
-								onChange={(e) =>
-									dispatch({
-										type: NewShowActionType.ShowDescription,
-										payload: e.target.value,
-									})
-								}
-								fullWidth
-							/>
-						</Grid>
-						<Grid item xs={12} md={6}>
-							<Tabs
-								value={tab}
-								onChange={(e, value) => setTab(value)}
-								centered
-								sx={{ mb: 2 }}
+			<Separator size='4' orientation="horizontal" className="w-full my-1"/>
+			<Grid columns={{ sm: "1", md: "2" }} gap="16px" className="w-full mb-4">
+				<Input
+					type="date"
+					placeholder="Date"
+					label="Show Date"
+					value={state.showDate}
+					className={InputDefaultClasses + " flex-1"}
+					onChange={(e) =>
+						dispatch({
+							type: NewShowActionType.ShowDate,
+							payload: e.target.value,
+						})
+					}
+				/>
+				<Input
+					label="Show Description"
+					placeholder="Description"
+					value={state.showDescription}
+					className={InputDefaultClasses + " flex-1"}
+					onChange={(e) =>
+						dispatch({
+							type: NewShowActionType.ShowDescription,
+							payload: e.target.value,
+						})
+					}
+				/>
+				
+
+
+
+				<Tabs.Root defaultValue="newSong">
+					<Tabs.List className="flex flex-row gap-2 mb-2 justify-center">
+						<Tabs.Trigger
+							value="newSong"
+							className="HoverButtonStyles p-1 rounded-md cursor-pointer data-[state=active]:border-[1px] data-[state=inactive]:m-[1px] data-[state=active]:m-0 font-pixel"
+						>
+							New Song
+						</Tabs.Trigger>
+						<Tabs.Trigger
+							value="searchSong"
+							className="HoverButtonStyles p-1 rounded-md cursor-pointer data-[state=active]:border-[1px] data-[state=inactive]:m-[1px] data-[state=active]:m-0 font-pixel"
+						>
+							Search Songs
+						</Tabs.Trigger>
+					</Tabs.List>
+					<Separator size='4' orientation="horizontal" className="w-full"/>
+					<Tabs.Content value="newSong">
+						<SongForm
+							parentDispatch={dispatch}
+							type="add"
+						/>
+					</Tabs.Content>
+					<Tabs.Content value="searchSong">
+						<SongSearch
+							dispatch={dispatch}
+							parent="New Show"
+						/>
+					</Tabs.Content>
+				</Tabs.Root>
+				<Flex direction={"column"} >
+					<Text size="6" className="font-pixel mb-2">Songs List:</Text>
+					{state.songsList.map((song, i) => (
+						<div key={i} className="flex flex-row justify-between">
+							<Text
+								size="5"
+								className="font-pixel line-clamp-1"
 							>
-								<Tab label="New Song" />
-								<Tab label="Search Song" />
-							</Tabs>
-							{tab === 1 ? (
-								<Box
-									sx={{
-										flex: 1,
-										height: "50vh",
-										overflowY: "auto",
-										overflowX: "hidden",
+								{song.artist} - {song.title}
+							</Text>
+							<div>
+								<button className="HoverButtonStyles font-pixel rounded-md p-0.5 px-2 disabled:opacity-50 not-disabled:cursor-pointer"
+									onClick={() => {
+										dispatch({
+											type: NewShowActionType.SwapUp,
+											payload: i,
+										});
 									}}
+									disabled={i === 0}
 								>
-									<SongSearch
-										dispatch={dispatch}
-										parent="New Show"
-									/>
-								</Box>
-							) : (
-								<Box
-									sx={{
-										flex: 1,
-										overflowY: "auto",
-										overflowX: "hidden",
-										height: "50vh",
-										pr: 2,
+									Up
+								</button>
+								<button className="HoverButtonStyles font-pixel rounded-md p-0.5 px-2 disabled:opacity-50 not-disabled:cursor-pointer"
+									onClick={() => {
+										dispatch({
+											type: NewShowActionType.SwapDown,
+											payload: i,
+										});
 									}}
+									disabled={i === state.songsList.length - 1}
 								>
-									<SongForm
-										type="add"
-										parentDispatch={dispatch}
-									/>
-								</Box>
-							)}
-						</Grid>
-						<Grid item xs={12} md={6}>
-							<Typography
-								variant="h6"
-								sx={{ alignItems: "center" }}
-							>
-								Songs List
-							</Typography>
-							<Stack spacing={1}>
-								{state.songsList.map((song) => (
-									<Typography
-										onClick={(e) => {
-											e.preventDefault();
-											dispatch({
-												type: NewShowActionType.RemoveSong,
-												payload: song,
-											});
-										}}
-									>
-										{song.artist} - {song.title}
-									</Typography>
-								))}
-								<Button onClick={addShow}>Add Show</Button>
-							</Stack>
-						</Grid>
-					</Grid>
-				</Container>
-			</Box>
-		</PageBackdrop>
+									Down
+								</button>
+								<button className="HoverButtonStyles font-pixel rounded-md p-0.5 px-2 not-disabled:cursor-pointer"
+									onClick={() =>
+										dispatch({
+											type: NewShowActionType.RemoveSong,
+											payload: i,
+										})
+									}
+								>
+									Remove
+								</button>
+							</div>
+						</div>
+					))}
+					<button className="font-pixel cursor-pointer HoverButtonStyles rounded-md" onClick={addShow}>Add Show</button>
+				</Flex>
+			</Grid>
+		</Container>
 	);
 };
 
 export default NewShow;
 
-
-export {default as SongSearch} from "./SongSearch";

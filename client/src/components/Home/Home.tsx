@@ -1,150 +1,58 @@
-import React, { useContext } from "react";
-import {
-
-	Stack,
-	Container,
-	Paper,
-	Typography,
-	Divider,
-	Fade,
-
-} from "@mui/material";
-import { useState, useEffect } from "react";
-import axios from "axios";
+import React, { useContext} from "react";
+import { SiteDataContext } from "../../providers/SiteDataProvider";
 import HomeButton from "./HomeButton";
-import ErrorContext from "../../providers/ErrorContext";
-import { SiteData } from "../../types/pages/home/Home";
+
+import { showDateString } from "../Util/DateUtil";
+import { Box, Container, Flex, Grid, Link, Text } from "@radix-ui/themes";
 
 const Home = React.memo(() => {
-	const [siteData, setSiteData] = useState<SiteData | null>(null);
-	const [loading, setLoading] = useState(true);
-	const setError = useContext(ErrorContext);
-	useEffect(() => {
-		axios
-			.get<SiteData>("/api/getSiteInfo")
-			.then((res) => {
-				setSiteData(res.data);
-				setLoading(false);
-				if (res.data === undefined) {
-					setError("Failed to get site data");
-				}
-			})
-			.catch(() => {
-				setError("Failed to get site data");
-			});
-	}, []);
 
-	const nextShowDate = () => {
-		if(!siteData) {
-			return;
-		}
-
-		let now = new Date();
-		let nextShow = new Date(
-			now.getFullYear(),
-			now.getMonth(),
-			now.getDate(),
-			siteData.showHour
-		);
-		let daysUntilNextShow = (siteData.showDay - now.getDay() + 7) % 7;
-
-		if (daysUntilNextShow === 0 && now.getHours() > siteData.showHour) {
-			daysUntilNextShow = 7;
-		}
-		nextShow.setDate(now.getDate() + daysUntilNextShow);
-
-		return new Date(nextShow.toLocaleString("en-US", { timeZone: siteData.timezone }));
-        
-        
-	};
+	const { siteData, loading } = useContext(SiteDataContext);
+	
 
 	return (
-		<Container
-			sx={{
-				display: "flex",
-				justifyContent: "center",
-				height: "100vh",
-				alignItems: "center",
-				flexDirection: "column",
-			}}
+		<Container size={{
+			xs: "1",
+			sm: "2"
+		}}
+		className="px-8 sm:px-0 min-h-screen flex flex-col justify-center items-center Home-Container"
 		>
-			<Fade in={!loading} timeout={500}>
-				<Typography
-					variant="body1"
-					align="center"
-					sx={{ fontFamily: "Tiny5, Roboto" }}
-				>
-					{siteData === null ? "No Data Available" : (siteData.onBreak
-						? "On break for the semester"
-						: `Next show: ${nextShowDate()?.toDateString()} at ${nextShowDate()?.toLocaleTimeString()}`)}
-				</Typography>
-			</Fade>
-			<Paper
-				sx={{
-					height: { xs: "55%", sm: "450px" },
-					width: { xs: "90%", sm: "450px" },
-					margin: "0 auto",
-					border: "1.5px solid #495057",
-					borderRadius: "10px",
-					backgroundColor: "rgba(56, 56, 56, 0.5)",
-					WebkitBackdropFilter: "blur(3px)",
-					backdropFilter: "blur(3px)",
-				}}
-			>
-				<Typography
-					variant="h3"
-					align="center"
-					sx={{ mt: 2, fontFamily: "Tiny5, Roboto" }}
-				>
-					Eastern Sky
-				</Typography>
-				<Divider sx={{ mt: 2 }} />
-				<Container>
-					<Stack spacing={3} sx={{ mt: 2 }}>
-						<HomeButton route="/shows" text="Shows" />
-						{/* <HomeButton route="/blog" text="Blog" /> */}
-						<HomeButton route="/stats" text="Stats" />
-						<HomeButton
-							link="https://www.instagram.com/easternsky90.3/"
-							text="Instagram"
-						/>
-						<HomeButton
-							link="https://thecore.fm/public/shows/people/eastern-sky.php"
-							text="Listen live!"
-						/>
-					</Stack>
-				</Container>
-				<footer
-					style={{
-						position: "fixed",
-						bottom: 0,
-						left: 0,
-						width: "100%",
-
-						color: "#888888 ",
-						textAlign: "center",
-						fontFamily: "PixelOperator, Roboto",
-					}}
-				>
-					Created by Ashton Karp |{" "}
-					<a
-						href="https://github.com/AKarp123/EasternSkyRadio"
-						style={{ color: "#888888" }}
-						target="_blank"
-						rel="noopener noreferrer"
-					>
-						Source Code
-					</a>
-				</footer>
-			</Paper>
-			<Typography
-				variant="body1"
-				align="left"
-				sx={{ fontFamily: "Tiny5, Roboto", color: "white" }}
-			>
-				Exploring music from across the Pacific! Only on 90.3 The Core!
-			</Typography>
+			<Text size="4" className="font-pixel text-center w-full mb-4 hidden" >
+				Test Announcement
+			</Text>
+			<Grid columns={{xs: "1", sm: "2"}} gap={{xs: "0", sm: "6"}} align="center" justify="center">
+				<Box className="flex font-tiny text-6xl white flex-col text-center">
+					<p className="text-lg font-pixel align-top flex justify-center transition-all duration-300">Next Show Date: {loading ? "..." :  showDateString(siteData!)}</p>
+					<Flex className="items-center flex flex-col justify-center flex-1">
+						<p>Eastern</p>
+						<p>Sky</p>
+					</Flex>
+					<p className="text-lg hidden md:flex font-pixel align-botto">Exploring music from across the Pacific! Only on 90.3 The Core!</p>
+				</Box>
+				<Flex className="flex flex-col">
+					<HomeButton route="/shows" text="Shows" />
+					{/* <HomeButton route="/blog" text="Blog" /> */}
+					<HomeButton route="/stats" text="Stats" />
+					<HomeButton
+						link="https://www.instagram.com/easternsky90.3/"
+						text="Instagram"
+					/>
+					<HomeButton
+						link="https://thecore.fm/public/shows/people/eastern-sky.php"
+						text="Listen live!"
+					/>
+					<p className="text-sm pt-3 md:hidden font-pixel text-center">
+						Exploring music from across the Pacific! Only on 90.3 The Core!
+					</p>
+				</Flex>
+			</Grid>
+			<Text className="text-center text-sm mt-4 font-pixel w-full inline-block" size="2">
+				Created By Ashton Karp | <Link href="https://github.com/AKarp123/EasternSkyRadio" target="_blank" color="sky">Source Code</Link>
+			</Text>
+			
+			
 		</Container>
+		
 	);
 });
 

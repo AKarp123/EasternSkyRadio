@@ -32,8 +32,8 @@ const BackButton = () => {
 			<SvgIcon
 				sx={{
 					fontSize: {
-						xs: "4rem",
-						sm: "6rem",
+						xs: "2rem",
+						sm: "3rem",
 					},
 					transition: "transform 300ms ease-in-out",
 				}}
