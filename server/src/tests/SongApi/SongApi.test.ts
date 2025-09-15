@@ -379,6 +379,7 @@ describe("Song Date Tests", () => {
 		const songResObj = songResData.body.song as ISongEntry & { _id: Types.ObjectId };
 
 		await createShowSimple([songResObj], agent);
+		songResData = await agent.get(`/api/song/${songResObj.songId}`);
 		let today = new Date();
 		let songDate = new Date(songResData.body.song.lastPlayed);
 		expect(songDate.getDay()).toBe(today.getDay());
@@ -394,7 +395,7 @@ describe("Song Date Tests", () => {
 		expect(res.status).toBe(201);
 		expect(res.body.success).toBe(true);
 
-		songData = await agent.get(`/api/song/${songResObj.songId}`);
+		let songData = await agent.get(`/api/song/${songResObj.songId}`);
 		songDate = new Date(songData.body.song.lastPlayed);
 		expect(songDate.getDay()).toBe(today.getDay());
 		expect(songDate.getMonth()).toBe(today.getMonth());
