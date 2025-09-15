@@ -17,7 +17,7 @@ const Home = React.memo(() => {
 		}}
 		className="px-8 sm:px-0 min-h-screen flex flex-col justify-center items-center Home-Container"
 		>
-			<Text size="4" className="font-pixel text-center w-full inline-block mb-4">
+			<Text size="4" className="font-pixel text-center w-full mb-4 hidden" >
 				Test Announcement
 			</Text>
 			<Grid columns={{xs: "1", sm: "2"}} gap={{xs: "0", sm: "6"}} align="center" justify="center">

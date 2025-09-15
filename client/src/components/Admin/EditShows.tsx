@@ -85,7 +85,7 @@ const EditShows = () => {
 				</button>
 			</div>
                 
-			<Grid columns={{ xs: "1", sm: "2" }} gap="16px" className="w-full mb-4">
+			<Grid columns={{ sm: "1", md: "2" }} gap="16px" className="w-full mb-4">
 
 		
 				<Input
@@ -153,7 +153,7 @@ const EditShows = () => {
 							<div key={index} className="flex flex-row justify-between">
 								<Text
 									size="5"
-									className="font-pixel"
+									className="font-pixel line-clamp-1"
 								>
 									{song.artist} - {song.title}
 								</Text>

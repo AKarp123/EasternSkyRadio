@@ -54,7 +54,7 @@ const NewShow = () => {
 		<Container size="4" className="min-h-screen mx-auto items-center max-w-[85%]">
 			<PageHeader title="New Show Log" />
 			<Separator size='4' orientation="horizontal" className="w-full my-1"/>
-			<Grid columns={{ xs: "1", sm: "2" }} gap="16px" className="w-full mb-4">
+			<Grid columns={{ sm: "1", md: "2" }} gap="16px" className="w-full mb-4">
 				<Input
 					type="date"
 					placeholder="Date"
@@ -119,7 +119,7 @@ const NewShow = () => {
 						<div key={i} className="flex flex-row justify-between">
 							<Text
 								size="5"
-								className="font-pixel"
+								className="font-pixel line-clamp-1"
 							>
 								{song.artist} - {song.title}
 							</Text>

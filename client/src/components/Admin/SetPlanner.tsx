@@ -129,23 +129,25 @@ const SetPlanner = () => {
 						</Text>
 					</div>
 
-					<ScrollArea scrollbars="vertical" className="max-h-[70vh]">
-						<Flex direction={"column"} gap="16px" className="mt-2">
-							{!loading && state.songsList.map((entry, index) => (
+					<Flex direction={"column"} gap="16px" className="mt-2 max-h-[70vh]">
+						<ScrollArea scrollbars="vertical" className="max-h-[70vh]">	
+							<Flex direction={"column"} gap="10px">
+								{!loading && state.songsList.map((entry, index) => (
 								
-								<SetPlannerCard
-									entry={entry}
-									state={state}
-									dispatch={dispatch}
-									durationAtPoint={duration[index]}
-									key={index}
-									index={index}
-								/>
+									<SetPlannerCard
+										entry={entry}
+										state={state}
+										dispatch={dispatch}
+										durationAtPoint={duration[index]}
+										key={index}
+										index={index}
+									/>
 								
-							))}
-							{loading && <Spinner className="mx-auto my-4"/>}
-						</Flex>
-					</ScrollArea>
+								))}
+								{loading && <Spinner className="mx-auto my-4"/>}
+							</Flex>
+						</ScrollArea>
+					</Flex>
 
 					<button
 						onClick={() => {

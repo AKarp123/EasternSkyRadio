@@ -7,6 +7,8 @@ import ErrorContext from "../../providers/ErrorContext";
 import { Box, Container, Flex, Grid, Text } from "@radix-ui/themes";
 import { showDateString } from "../Util/DateUtil";
 import { SiteDataContext } from "../../providers/SiteDataProvider";
+import Dialog from "../Util/Dialog";
+import Input, { InputDefaultClasses } from "../Util/Input";
 
 const AdminPage = () => {
 	const { setUser } = useAuth()!;
@@ -39,6 +41,7 @@ const AdminPage = () => {
 				setError(res.data.message);
 			}
 		});
+		setChangePasswordDialog(false);
 	};
 
 	return (
@@ -47,8 +50,31 @@ const AdminPage = () => {
 			sm: "3"
 		}}
 		className="min-h-screen flex flex-col justify-center items-center pt-20 pb-8">
-			<Box className="flex font-tiny text-6xl white flex-col text-center">
-			</Box>
+			<Dialog open={changePasswordDialog} onClose={() => setChangePasswordDialog(false)} title="Change Password" buttons={<button className="HoverButtonStyles p-2 rounded-md" onClick={updatePassword}>Change Password</button>}>
+				<Flex direction="column" gap="15px" onKeyDown={(e) => {
+					if (e.key === "Enter") {
+						updatePassword();
+					}
+				}}>
+					<Input
+						type="password"
+						placeholder="New Password"
+						label="New Password"
+						value={password}
+						className={InputDefaultClasses + " flex-1"}
+						onChange={(e) => setPassword(e.target.value)}
+					/>
+					<Input
+						type="password"
+						placeholder="Confirm New Password"
+						label="Confirm New Password"
+						value={confirmPassword}
+						className={InputDefaultClasses + " flex-1"}
+						onChange={(e) => setConfirmPassword(e.target.value)}
+					/>
+				</Flex>
+			</Dialog>
+			
 			<Grid columns={{ xs: "1", sm: "2" }} gap="16px" justify="center" align="center">
 				<Flex className="items-center flex flex-col justify-center flex-1">
 					<p className="text-lg font-pixel align-top flex justify-center transition-all duration-300">Next Show Date: {loading ? "..." :  showDateString(siteData!)}</p>
