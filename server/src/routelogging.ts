@@ -7,11 +7,11 @@ const logRoute = (req: Request, res: Response, next: NextFunction) => {
 		const duration = Date.now() - start;
 		if(process.env.NODE_ENV === "test") return;
 		
-			if(res.statusCode !== 200 && res.statusCode !== 304) {
-				console.error(chalk.hex("#FF7F50")(`${req.method} ${req.originalUrl} ${res.statusCode} - ${duration}ms`));
-			} else {
-				console.log(chalk.hex("#3886b7")(`${req.method} ${req.originalUrl} ${res.statusCode} - ${duration}ms`)); //eslint-disable-line no-console
-			}
+		if(res.statusCode !== 200 && res.statusCode !== 304) {
+			console.error(chalk.hex("#FF7F50")(`${req.method} ${req.originalUrl} ${res.statusCode} - ${duration}ms`));
+		} else {
+			console.log(chalk.hex("#3886b7")(`${req.method} ${req.originalUrl} ${res.statusCode} - ${duration}ms`)); //eslint-disable-line no-console
+		}
 		
 
 	});
