@@ -67,7 +67,7 @@ const SongForm = ({
 }: AddProperties | EditProperties) => {
 	const setError = useContext(ErrorContext);
 	const [state, dispatch] = useReducer(
-	SongFormReducer,
+		SongFormReducer,
 		type === "edit" ? toSongEntryForm(songData) : InitialState
 	);
 	const [genreInput, setGenreInput] = useState("");
