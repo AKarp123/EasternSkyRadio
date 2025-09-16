@@ -1,19 +1,14 @@
-# ---- Backend Build ----
-FROM oven/bun:1.2.20-slim AS backend-build
+FROM node:24-slim
+WORKDIR /app/server
+COPY ./server/package*.json ./
+RUN npm install
 
 
-WORKDIR /usr/src/app/server
-COPY ./server/package.json ./server/bun.lock ./
-RUN bun install
-COPY ./server .
-RUN bun run build
+COPY ./server/src ./src
+COPY ./server/migrations ./migrations
+COPY ./server/tsconfig.json ./
 
-FROM node:24-slim as backend-prod
-WORKDIR /app
-COPY --from=backend-build /usr/src/app/server/dist ./dist
-COPY --from=backend-build /usr/src/app/server/package.json ./
-COPY --from=backend-build /usr/src/app/server/bun.lock ./
-COPY --from=backend-build /usr/src/app/server/node_modules ./node_modules
+RUN npx tsc
 ENV FORCE_COLOR=1
 ENV NODE_ENV=production
 

@@ -12,9 +12,7 @@ const startServer = async () => {
 		throw new Error("Database connection failed");
 	}
 	await initializeApp();
-	if(process.env.NODE_ENV === "development") {
-		await applyMigrations();
-	}
+	await applyMigrations();
 		
 	const port = process.env.PORT || 3000;
 
