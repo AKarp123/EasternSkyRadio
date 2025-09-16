@@ -153,7 +153,7 @@ const EditShows = () => {
 							<div key={index} className="flex flex-row justify-between">
 								<Text
 									size="5"
-									className="font-pixel line-clamp-1"
+									className="font-pixel line-clamp-1 flex-1 min-w-0"
 								>
 									{song.artist} - {song.title}
 								</Text>

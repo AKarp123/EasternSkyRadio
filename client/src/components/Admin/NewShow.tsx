@@ -113,13 +113,13 @@ const NewShow = () => {
 						/>
 					</Tabs.Content>
 				</Tabs.Root>
-				<Flex direction={"column"} >
+				<Flex direction={"column"}>
 					<Text size="6" className="font-pixel mb-2">Songs List:</Text>
 					{state.songsList.map((song, i) => (
 						<div key={i} className="flex flex-row justify-between">
 							<Text
 								size="5"
-								className="font-pixel line-clamp-1"
+								className="font-pixel line-clamp-1 flex-1 min-w-0"
 							>
 								{song.artist} - {song.title}
 							</Text>
