@@ -14,6 +14,7 @@ import {
 } from "@mui/material";
 import { ShowEntry } from "../../types/Shows";
 import { SongEntry } from "../../types/Song";
+import { StandardResponse } from "../../types/global";
 
 const Graphic = () => {
 	const { showId } = useParams<{ showId: string }>();
@@ -23,9 +24,9 @@ const Graphic = () => {
 
 	useEffect(() => {
 		axios
-			.get<{showData: ShowEntry}>(`/api/show/${showId}`, { params: { showId } })
+			.get<StandardResponse<"show", ShowEntry>>(`/api/show/${showId}`, { params: { showId } })
 			.then((res) => {
-				setShowData(res.data.showData);
+				setShowData(res.data.show);
 				setLoading(false);
 			})
 			.catch((error) => {

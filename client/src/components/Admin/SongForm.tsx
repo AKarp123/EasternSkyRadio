@@ -259,9 +259,17 @@ const SongForm = ({
 			)
 			.then((res) => {
 				if (res.data.searchResults.length > 0) {
+					const result = res.data.searchResults[0];
 					dispatch({
 						type: SongFormActionType.Fill,
-						payload: res.data.searchResults[0],
+						payload: {
+							elcroId: elcroId,
+							artist: result.artist,
+							album: result.album,
+							albumImageLoc: result.albumImageLoc,
+							genres: result.genres,
+							songReleaseLoc: result.songReleaseLoc
+						}
 					});
 					dispatch({
 						type: SongFormActionType.Title,
@@ -302,7 +310,7 @@ const SongForm = ({
                         album.toUpperCase()
 				) {
 					dispatch({
-						type: SongFormActionType.Fill,
+						type: SongFormActionType.ElcroId,
 						payload: res.data.searchResults[0].elcroId,
 					});
 					dispatch({
@@ -347,7 +355,6 @@ const SongForm = ({
 							fillElcroId(e.target.value);
 						}}
 						className="border border-gray-300 rounded px-2 py-1 font-pixel focus:outline-none"
-						disabled={type === "edit"}
 					/>
 				</Form.Control>
 				<Form.Message match={(value) => value.length !== 6 && value.length > 0} className="text-md font-pixel text-red-300">
