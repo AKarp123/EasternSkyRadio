@@ -81,24 +81,17 @@ const SetListItem = ({ song } : {song: SongEntry}) => {
 				maxWidth={"calc(100% - 100px)"}
 			>
 			
-				<AutoTextSize
-					mode="oneline"
-					minFontSizePx={15}
-					maxFontSizePx={20}
-					className="font-pixel text-left"
-				>
 
+				<Text className="font-pixel text-left" size='5'>
 					{song.artist} - {song.title}
-				</AutoTextSize>
-				<AutoTextSize
-					mode="box"
-					minFontSizePx={20}
-					maxFontSizePx={20}
+				</Text>
+				<Text
 					className="font-pixel text-left italic"
+					size="5"
 
 				>
 					{song.album}
-				</AutoTextSize>
+				</Text>
 			</Flex>
 		</Flex>
 	);
