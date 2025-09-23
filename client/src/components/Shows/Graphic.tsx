@@ -1,4 +1,4 @@
-import { useEffect, useState, useContext, Key } from "react";
+import { useEffect, useState, useContext } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import ErrorContext from "../../providers/ErrorContext";
@@ -88,7 +88,7 @@ const SetListItem = ({ song } : {song: SongEntry}) => {
 					className="font-pixel text-left"
 				>
 
-						{song.artist} - {song.title}
+					{song.artist} - {song.title}
 				</AutoTextSize>
 				<AutoTextSize
 					mode="box"
@@ -97,7 +97,7 @@ const SetListItem = ({ song } : {song: SongEntry}) => {
 					className="font-pixel text-left italic"
 
 				>
-						{song.album}
+					{song.album}
 				</AutoTextSize>
 			</Flex>
 		</Flex>
