@@ -47,7 +47,7 @@ export const songEntrySchema = new schema<ISongEntry>({
 					enum: [
 						"Spotify",
 						"Apple Music",
-						"Youtube",
+						"YouTube",
 						"Other",
 						"Purchase",
 						"Download",
