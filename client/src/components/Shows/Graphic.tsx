@@ -2,7 +2,6 @@ import { useEffect, useState, useContext } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import ErrorContext from "../../providers/ErrorContext";
-import { AutoTextSize } from "auto-text-size";
 import { Flex, Grid, Text } from "@radix-ui/themes";
 import { ShowEntry } from "../../types/Shows";
 import { SongEntry } from "../../types/Song";
@@ -63,7 +62,7 @@ const Graphic = () => {
 
 const SetListItem = ({ song } : {song: SongEntry}) => {
 	return (
-		<Flex gap="2" align="center">
+		<Flex gap="1" align="center">
 			<img
 				src={song.albumImageLoc}
 				alt={song.title}
