@@ -113,7 +113,9 @@ songEntrySchema.pre("save", async function (next) {
 		if (existingSong) {
 			this.albumImageLoc = existingSong.albumImageLoc;
 			this.origAlbum = existingSong.origAlbum;
-			this.songReleaseLoc = existingSong.songReleaseLoc;
+			if(this.songReleaseLoc === undefined || this.songReleaseLoc.length === 0) {
+				this.songReleaseLoc = existingSong.songReleaseLoc;
+			}
 		}
 	}
 	next();
