@@ -40,6 +40,12 @@ describe.if(process.env.TEST_MIGRATIONS === "true")("Migrations", () => {
 		expect(connection.collection("songentries").countDocuments({ searchQuery: { $exists: false } })).resolves.toBe(0);
 	});
 
+	test("Enum change", async() => {
+		await localMigrator.run("up", "enum");
+		expect(connection.collection("songentries").countDocuments({ "songReleaseLoc.service": "Youtube" })).resolves.toBe(0);
+		expect(connection.collection("songentries").countDocuments({ "songReleaseLoc.service": "YouTube" })).resolves.toBeGreaterThan(0);
+	});
+
 
 
 });

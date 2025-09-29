@@ -6,14 +6,15 @@ import { generateSearchQuery } from "../src/dbMethods.js";
 
 export async function up(connection: Connection): Promise<void> {
 	// Write migration here
-	const cursor = connection.model<ISongEntry>("SongEntry", songEntrySchema).find({}).select("+duration");
+	const cursor = connection.db?.collection("songentries").find({});
+	if(!cursor) {
+		throw new Error("Could not get cursor for songentries collection");
+	}
 	for await (const song of cursor) {
-		song.searchQuery = generateSearchQuery(song);
-		await song.save();
+		let searchQuery = generateSearchQuery(song as unknown as ISongEntry); // wtf 
+		await connection.db?.collection("songentries").updateOne({ _id: song._id }, { $set: { searchQuery: searchQuery } });
 	}
 
-	connection.model("SongEntry").ensureIndexes();
-	connection.deleteModel("SongEntry");
 }
 
 export async function down(connection: Connection): Promise<void> {
@@ -23,4 +24,6 @@ export async function down(connection: Connection): Promise<void> {
 		.model<ISongEntry>("SongEntry", songEntrySchema)
 		.updateMany({}, { $unset: { searchQuery: "" } })
 		.exec();
+	connection.model("SongEntry").ensureIndexes();
+	connection.deleteModel("SongEntry");
 }

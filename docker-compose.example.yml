@@ -1,13 +1,13 @@
 
 services:
   backend:
-    image: kawambiit/esr-backend:dev-latest
+    image: kawambiit/esr-backend:latest
     build:
       dockerfile: ./server/Dockerfile
     ports:
       - "8000:3000"
   frontend:
-    image: kawambiit/esr-frontend:dev-latest
+    image: kawambiit/esr-frontend:latest
     build:
       dockerfile: ./client/Dockerfile
     ports:
