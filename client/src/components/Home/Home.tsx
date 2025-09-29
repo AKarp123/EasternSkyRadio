@@ -22,7 +22,7 @@ const Home = React.memo(() => {
 			</Text>
 			<Grid columns={{xs: "1", sm: "2"}} gap={{xs: "0", sm: "6"}} align="center" justify="center">
 				<Box className="flex font-tiny text-6xl white flex-col text-center">
-					<p className="text-lg font-pixel align-top flex justify-center transition-all duration-300">Next Show Date: {loading ? "..." :  showDateString(siteData!)}</p>
+					<p className="text-lg font-pixel align-top flex whitespace-nowrap justify-center transition-all duration-300">Next Show Date: {loading ? "..." :  showDateString(siteData!)}</p>
 					<Flex className="items-center flex flex-col justify-center flex-1">
 						<p>Eastern</p>
 						<p>Sky</p>
