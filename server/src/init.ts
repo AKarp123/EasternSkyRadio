@@ -1,7 +1,7 @@
 import User from "./models/UserModel.js";
 import Increment from "./models/IncrementModel.js";
 import SiteData from "./models/SiteData.js";
-import { clearDatabase, connectToDatabase } from "./db.js";
+import { clearDatabase, connectToDatabase } from "./config/db.js";
 
 
 

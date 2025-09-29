@@ -3,7 +3,7 @@ import { describe, test, expect, beforeAll, afterAll } from "bun:test";
 import { initTest } from "../../init.js";
 import { withUser } from ".././helpers/withUser.js";
 import { ISongEntry, ISongEntrySubmission } from "../../types/SongEntry.js";
-import { clearDatabase } from "../../db.js";
+import { clearDatabase } from "../../config/db.js";
 import { createShow, createSong } from ".././helpers/create.js";
 import { ShowEntry, ShowEntrySubmission } from "../../types/ShowData.js";
 import { Types } from "mongoose";
