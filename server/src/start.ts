@@ -1,8 +1,8 @@
 import { app } from "./app.js";
-import { connectToDatabase } from "./db.js";
+import { connectToDatabase } from "./config/db.js";
 import { applyMigrations } from "./migrations.js";
 import initializeApp from "./init.js";
-import { pingServer } from "./subsonic.js";
+import { pingServer } from "./config/subsonic.js";
 
 
 const startServer = async () => {

@@ -2,7 +2,7 @@ import { app } from "../app.js";
 import { beforeAll, afterAll, describe, test, expect } from "bun:test";
 import request from "supertest";
 import { initTest } from "../init.js";
-import { clearDatabase } from "../db.js";
+import { clearDatabase } from "../config/db.js";
 import { SiteData } from "../types/SiteData.js";
 	
 

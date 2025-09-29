@@ -4,7 +4,7 @@ import { initTest } from "../../init.js";
 import { withUser } from ".././helpers/withUser.js";
 import { ISongEntry, ISongEntrySubmission } from "../../types/SongEntry.js";
 import { generateSearchQuery } from "../../dbMethods.js";
-import { clearDatabase } from "../../db.js";
+import { clearDatabase } from "../../config/db.js";
 import { createShow, createShowSimple, createSong } from ".././helpers/create.js";
 import { Types } from "mongoose";
 import { ShowEntrySubmission } from "../../types/ShowData.js";
