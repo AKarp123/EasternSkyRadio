@@ -25,6 +25,8 @@ export const songEntrySchema = new schema<ISongEntry>({
 			message: (props : { value: any }) => `${props.value} is not a string of length 6`,
 		},
 	},
+	subsonicSongId: { type: String, trim: true, required: false },
+	albumId: { type: String, trim: true, required: false },
 	artist: { type: String, trim: true, required: [true, "Missing artist field"] },
 	title: { type: String, trim: true, required: [true, "Missing title field"] },
 	origTitle: { type: String, trim: true, required: false },

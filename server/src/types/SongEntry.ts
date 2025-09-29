@@ -3,6 +3,8 @@ export interface ISongEntry {
     _id?: string,
     songId: number,
     elcroId? : string,
+    subsonicSongId? : string,
+    albumId?: string,
     artist: string,
     title: string,
     origTitle?: string,
