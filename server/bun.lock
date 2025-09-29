@@ -20,6 +20,7 @@
         "passport": "^0.7.0",
         "passport-local": "^1.0.0",
         "passport-local-mongoose": "^8.0.0",
+        "subsonic-api": "^3.2.0",
         "ts-migrate-mongoose": "^4.0.9",
       },
       "devDependencies": {
@@ -1208,6 +1209,8 @@
     "strnum": ["strnum@1.1.2", "", {}, "sha512-vrN+B7DBIoTTZjnPNewwhx6cBA/H+IS7rfW68n7XxC1y7uoiGQBxaKzqucGUgavX15dJgiGztLJ8vxuEzwqBdA=="],
 
     "stubs": ["stubs@3.0.0", "", {}, "sha512-PdHt7hHUJKxvTCgbKX9C1V/ftOcjJQgz8BZwNfV5c4B6dcGqlpelTbJ999jBGZ2jYiPAwcX5dP6oBwVlBlUbxw=="],
+
+    "subsonic-api": ["subsonic-api@3.2.0", "", {}, "sha512-BADBQ2hONdLb3agCiSDzNzTIFLWJAuxJTUJvC2zDFvXUVfnK3yy7r8xFu3NkrQl8p5UVI7q8Qfm62N1lFxWbww=="],
 
     "superagent": ["superagent@10.2.3", "", { "dependencies": { "component-emitter": "^1.3.1", "cookiejar": "^2.1.4", "debug": "^4.3.7", "fast-safe-stringify": "^2.1.1", "form-data": "^4.0.4", "formidable": "^3.5.4", "methods": "^1.1.2", "mime": "2.6.0", "qs": "^6.11.2" } }, "sha512-y/hkYGeXAj7wUMjxRbB21g/l6aAEituGXM9Rwl4o20+SX3e8YOSV6BxFXl+dL3Uk0mjSL3kCbNkwURm8/gEDig=="],
 
