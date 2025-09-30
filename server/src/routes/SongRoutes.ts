@@ -29,20 +29,29 @@ songRouter.get("/song/:id", requireLogin, async (req : Request, res : Response) 
 });
 
 songRouter.get("/search", requireLogin, async (req: Request, res: Response) => {
-	try {
+	
 		if (req.query.query === "" || (req.query.query === undefined && req.query.elcroId === undefined)) {
 			res.status(400).json({ success: false, message: "No search query provided." });
-		} else if (req.query.elcroId) {
-			const searchResults = await SongEntry.find({
-				elcroId: req.query.elcroId,
-			}).select(
-				(req.user ? songEntry_selectAllFields : "")
-			);
-			res.json({
-				success: true,
-				searchResults: searchResults,
-			});
-		} else {
+			return;
+		} 
+		if (req.query.elcroId) {
+			try {
+				const searchResults = await SongEntry.find({
+					elcroId: req.query.elcroId,
+				}).select(
+					(req.user ? songEntry_selectAllFields : "")
+				);
+				res.json({
+					success: true,
+					searchResults: searchResults,
+				});
+			} 
+			catch (error) {
+				res.status(500).json({ success: false, message: error instanceof Error ? error.message : "Server error." });
+			}
+			
+		} 
+		else {
 			const raw = (req.query.query as string)
 				.trim()
 				.replaceAll(/[^\p{L}\p{N}\s]/gu, "")
@@ -60,9 +69,7 @@ songRouter.get("/search", requireLogin, async (req: Request, res: Response) => {
 				.limit(20);
 			res.json({ success: true, searchResults: searchResults });
 		}
-	} catch (error) {
-		res.json({ success: false, message: error instanceof Error ? error.message : 'An unknown error occurred' });
-	}
+	
 });
 
 songRouter.post("/song", requireLogin, async (req : Request, res : Response) => {
