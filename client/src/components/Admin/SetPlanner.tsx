@@ -29,6 +29,10 @@ const SetPlanner = () => {
 	const [loading, setLoading] = useState(true);
 
 
+	const postSync = async() => {
+		
+	}
+
 	useEffect(() => {
 		axios
 			.get<Sync<SetPlannerItem[]>>("/api/sync", { params: { type: "SetPlanner" } })
@@ -427,7 +431,7 @@ const SetPlannerForm = ({ dispatch, entry, index }: SetPlannerFormProperties) =>
 	return (
 		<form>
 			<Input
-				placeholder="Duration"
+				placeholder="Duration (in seconds)"
 				value={duration}
 				onChange={(e) => setDuration(e.target.value)}
 			/>
@@ -483,7 +487,7 @@ function DurationForm({ state, dispatch }: DurationFormProperties) {
 				dispatch({ type: SetPlannerActionType.AddBreak });
 				dispatch({ type: SetPlannerActionType.ResetDurationForm });
 			}}>
-				<Input value={state.duration} placeholder="Duration (minutes)" onChange={(e) => dispatch({ type: SetPlannerActionType.SetDuration, payload: e.target.value })} />
+				<Input value={state.duration} placeholder="Duration (seconds)" onChange={(e) => dispatch({ type: SetPlannerActionType.SetDuration, payload: e.target.value })} />
 
 			</form>
 		</Dialog>
