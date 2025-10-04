@@ -14,6 +14,15 @@ import Tooltip from "../Util/Tooltip";
 import Dialog from "../Util/Dialog";
 import Input from "../Util/Input";
 
+
+const durationToString = (duration: number) => {
+
+	if(duration >= 3600) {
+		return new Date(duration * 1000).toISOString().slice(11,19);
+	}
+	return new Date(duration * 1000).toISOString().slice(14,19);
+}
+
 const SetPlanner = () => {
 	const setError = useContext(ErrorContext);
 	const [state, dispatch] = useReducer(reducer, {
@@ -29,9 +38,6 @@ const SetPlanner = () => {
 	const [loading, setLoading] = useState(true);
 
 
-	const postSync = async() => {
-		
-	}
 
 	useEffect(() => {
 		axios
@@ -112,12 +118,12 @@ const SetPlanner = () => {
 
 		return array;
 	};
-	// const duration = useMemo(
-	//     () => calculateDurationAtPoint(),
-	//     [state.songsList]
-	// );
+
 
 	const duration = calculateDurationAtPoint();
+
+
+
 
 	return (
 		<Container size="4" className="min-h-screen flex  flex-col mx-auto max-w-[85%]">
@@ -290,6 +296,8 @@ type SetPlannerCardProperties = {
 };
 const SetPlannerCard = ({ entry, state, dispatch, durationAtPoint, index }: SetPlannerCardProperties) => {
 
+	
+
 	if (entry.type === "Song" && entry.item.duration === 0) {
 		return <SetPlannerForm dispatch={dispatch} entry={entry} index={index} />;
 	}
@@ -297,7 +305,7 @@ const SetPlannerCard = ({ entry, state, dispatch, durationAtPoint, index }: SetP
 		return (
 			<Flex direction={"column"} className="p-2 border rounded-md">
 				<div className="flex flex-row justify-between">
-					<Text size="5" className="font-pixel pl-2">{entry.item.label} - {entry.item.duration}min</Text>
+					<Text size="5" className="font-pixel pl-2">{entry.item.label} - {durationToString(entry.item.duration)}min</Text>
 					
 				</div>
 				<div className="flex flex-row items-center justify-between">
@@ -335,7 +343,7 @@ const SetPlannerCard = ({ entry, state, dispatch, durationAtPoint, index }: SetP
 							Remove
 						</button>
 					</div>
-					<Text size="4" className="font-pixel">{durationAtPoint}min</Text>
+					<Text size="4" className="font-pixel">{durationToString(durationAtPoint)}</Text>
 				</div>
 			</Flex>
 		);
@@ -351,7 +359,7 @@ const SetPlannerCard = ({ entry, state, dispatch, durationAtPoint, index }: SetP
 				<Flex direction={"column"} className="ml-4 justify-center gap-1 my-auto">
 					<Tooltip content={entry.item.origTitle || "" }>
 						<div className="flex flex-row">{entry.item.elcroId && <a href={`https://thecore.fm/djsonly/music-album-detail.php?id=${entry.item.elcroId}`} target="_blank" className="font-pixel text-red-500 inline text-[20px] ">({entry.item.elcroId})&nbsp;</a>}
-							<Text size="5" className="font-pixel inline">{entry.item.artist} - {entry.item.title} ({entry.item.duration}min)</Text></div>
+							<Text size="5" className="font-pixel inline">{entry.item.artist} - {entry.item.title} ({durationToString(entry.item.duration)})</Text></div>
 					</Tooltip>
 					<Text size="4" className="font-pixel italic">{entry.item.album}</Text>
 				</Flex>
@@ -392,8 +400,7 @@ const SetPlannerCard = ({ entry, state, dispatch, durationAtPoint, index }: SetP
 					</button>
 				</div>
 				<div>
-					<Text size="4" className="font-pixel">{durationAtPoint}min</Text>
-					
+					<Text size="4" className="font-pixel">{durationToString(durationAtPoint)}</Text>
 				</div>
 			</div>
 				
