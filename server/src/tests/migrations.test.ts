@@ -48,8 +48,8 @@ describe.if(process.env.TEST_MIGRATIONS === "true")("Migrations", () => {
 
 	test("Update Duration", async() => {
 		await localMigrator.run("up", "updateDuration");
-		expect(connection.collection("songentries").countDocuments({ duration: { $gt: 60 }})).resolves.toBeGreaterThan(0);
-	})
+		expect(connection.collection("songentries").countDocuments({ duration: { $gt: 60 } })).resolves.toBeGreaterThan(0);
+	});
 
 
 
