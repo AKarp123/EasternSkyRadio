@@ -15,8 +15,12 @@ export const reducer = (state: SetPlannerState, action: SetPlannerAction) => {
 		}
 
 		case SetPlannerActionType.EditSong: {
-			let newSongsList = state.songsList;
-			newSongsList[action.payload.index] = {type: "Song", item: { ...action.payload.song }};
+			let newSongsList = state.songsList.map((song, i) => {
+				if (i === action.payload.index) {
+					return { type: "Song", item: { ...action.payload.song } };
+				}
+				return song;
+			});
 			return {
 				...state,
 				songsList: newSongsList,

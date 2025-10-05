@@ -46,6 +46,11 @@ describe.if(process.env.TEST_MIGRATIONS === "true")("Migrations", () => {
 		expect(connection.collection("songentries").countDocuments({ "songReleaseLoc.service": "YouTube" })).resolves.toBeGreaterThan(0);
 	});
 
+	test("Update Duration", async() => {
+		await localMigrator.run("up", "updateDuration");
+		expect(connection.collection("songentries").countDocuments({ duration: { $gt: 60 } })).resolves.toBeGreaterThan(0);
+	});
+
 
 
 });

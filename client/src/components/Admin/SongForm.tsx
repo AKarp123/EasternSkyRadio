@@ -620,7 +620,7 @@ const SongForm = ({
 				<Form.Control asChild>
 					<input
 						type="text"
-						placeholder="Song Duration"
+						placeholder="Song Duration (in seconds)"
 						value={durationInput}
 						onChange={(e) => {
 							setDurationInput(e.target.value);
