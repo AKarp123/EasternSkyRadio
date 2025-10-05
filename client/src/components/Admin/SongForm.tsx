@@ -305,29 +305,38 @@ const SongForm = ({
 		axios
 			.get<StandardResponse<"searchResults", SongEntry[]>>("/api/search", { params: { query: album } })
 			.then((res) => {
-				if (res.data.searchResults.length > 0 && 
-                        res.data.searchResults[0].album.toUpperCase() ===
-                        album.toUpperCase()
+				if (res.data.searchResults.some((song) => song.album.toLowerCase() === album.toLowerCase())
 				) {
+					const albumData = res.data.searchResults.filter((song) => song.album.toLowerCase() === album.toLowerCase());
+					const releaseMap : Map<string, { service: string; link: string; description?: string }> = new Map();
+					for(const song of albumData) {
+						song.songReleaseLoc.map((loc) => {
+							if (!releaseMap.has(loc.link)) {
+								releaseMap.set(loc.link, loc);
+							}
+						})
+					} // get unique release locations
+
+
 					dispatch({
 						type: SongFormActionType.ElcroId,
-						payload: res.data.searchResults[0].elcroId,
+						payload: albumData[0].elcroId,
 					});
 					dispatch({
 						type: SongFormActionType.Album,
-						payload: res.data.searchResults[0].album,
+						payload: albumData[0].album,
 					});
 					dispatch({
 						type: SongFormActionType.OrigAlbum,
-						payload: res.data.searchResults[0].origAlbum,
+						payload: albumData[0].origAlbum,
 					});
 					dispatch({
 						type: SongFormActionType.AlbumImageLoc,
-						payload: res.data.searchResults[0].albumImageLoc,
+						payload: albumData[0].albumImageLoc,
 					});
 					dispatch({
 						type: SongFormActionType.SetSongReleaseLoc,
-						payload: res.data.searchResults[0].songReleaseLoc,
+						payload: releaseMap.size > 0 ? [...releaseMap.values()] : [],
 					});
 				}
 			})
