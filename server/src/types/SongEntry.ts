@@ -23,16 +23,7 @@ export interface ISongEntrySubmission extends Omit<ISongEntry, "songId" | "searc
 }
 
 type songReleaseLocation = {
-    service: songReleaseService,
+    service: "Spotify" | "Apple Music" | "YouTube" | "Other" | "Purchase" | "Download",
     link: string,
     description?: string,
-}
-
-type songReleaseService = {
-    Spotify: "Spotify",
-    AppleMusic: "Apple Music",
-    YouTube: "YouTube",
-    Other: "Other",
-    Purchase: "Purchase",
-    Download: "Download"
 }

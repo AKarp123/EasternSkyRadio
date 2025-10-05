@@ -182,16 +182,22 @@ describe("Test Create Song API", function () {
 			duration: 180,
 			genres: ["Rock"],
 			albumImageLoc: "lalala",
+			songReleaseLoc: [{ link: "spotify", service: "Spotify", } ],
 		};
 		let res = await createSong(newSong, agent);
 		expect(res.status).toBe(200);
-		const song2 = structuredClone(newSong);
-		song2.title = "New Title";
+		let { albumImageLoc, songReleaseLoc, ...rest} = newSong;
+		const song2 = {
+			...rest,
+			title: "Hello 2",
+			albumImageLoc: "shouldnotchange",
+		}
 
 		res = await createSong(song2, agent);
 		expect(res.status).toBe(200);
 		expect(res.body).toHaveProperty("success", true);
 		expect(res.body.song.albumImageLoc).toBe("lalala");
+		expect(res.body.song.songReleaseLoc).toBeArrayOfSize(0); // service no longer links automatically
 	});
 
 });

@@ -112,7 +112,6 @@ const SongForm = ({
 
 
 	const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-		console.log("submit", e)
 		e.preventDefault();
 		if (!validate()) {
 			return;
