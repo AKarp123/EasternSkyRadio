@@ -112,6 +112,7 @@ const SongForm = ({
 
 
 	const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+		console.log("submit", e)
 		e.preventDefault();
 		if (!validate()) {
 			return;
@@ -652,7 +653,7 @@ const SongForm = ({
 					type="submit"
 					className=" text-white font-pixel text-sm border-[1px] p-1 rounded-md focus:outline-none focus:shadow-outline flex-1 cursor-pointer HoverButtonStyles"
 				>
-					Add Song
+					{type === "edit" ? "Edit Song" : "Add Song"}
 				</button>
 			</Form.Submit>
 		</Form.Root>
