@@ -55,6 +55,7 @@ songRouter.get("/search", requireLogin, async (req: Request, res: Response) => {
 			const searchResults = await SongEntry.find({
 				$and: conditions,
 			})
+				.sort({ artist: 1 })
 				.select((req.user ? songEntry_selectAllFields : ""))
 				.limit(20);
 			res.json({ success: true, searchResults: searchResults });
