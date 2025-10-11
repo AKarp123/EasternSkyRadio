@@ -186,12 +186,12 @@ describe("Test Create Song API", function () {
 		};
 		let res = await createSong(newSong, agent);
 		expect(res.status).toBe(200);
-		let { albumImageLoc, songReleaseLoc, ...rest} = newSong;
+		let { albumImageLoc, songReleaseLoc, ...rest } = newSong;
 		const song2 = {
 			...rest,
 			title: "Hello 2",
 			albumImageLoc: "shouldnotchange",
-		}
+		};
 
 		res = await createSong(song2, agent);
 		expect(res.status).toBe(200);
@@ -423,7 +423,7 @@ describe("Song Date Tests", () => {
 		expect(songDate.getDay()).toBe(nextWeek.getDay());
 		expect(songDate.getMonth()).toBe(nextWeek.getMonth());
 		expect(songDate.getFullYear()).toBe(nextWeek.getFullYear());
-
+		
 
 	});
 });
