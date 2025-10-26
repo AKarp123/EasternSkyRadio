@@ -146,7 +146,7 @@ export const updateShowTimes = async () => {
 };
 
 
-// Function param type def - must have artist, title, album, origTitle, origAlbum, rest can be optional
+// Function param type def so i can pass partial ISongEntry
 export const generateSearchQuery = ({
 	artist,
 	title,

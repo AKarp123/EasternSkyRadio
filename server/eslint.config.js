@@ -34,7 +34,6 @@ export default defineConfig([
 			parser,
             parserOptions: {
                 project: './tsconfig.json',
-                tsconfigRootDir: __dirname,
             },
 		},
 	},

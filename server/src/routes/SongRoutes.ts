@@ -3,6 +3,7 @@ import SongEntry, { songEntry_selectAllFields } from "../models/SongEntry.js";
 import { addSong, generateSearchQuery } from "../dbMethods.js";
 import requireLogin from "./requireLogin.js";
 import { ISongEntry } from "../types/SongEntry.js";
+import { searchSubsonic } from "../controllers/Subsonic.js";
 
 
 const songRouter = Router();
@@ -30,10 +31,13 @@ songRouter.get("/song/:id", requireLogin, async (req : Request, res : Response) 
 
 songRouter.get("/search", requireLogin, async (req: Request, res: Response) => {
 	
-	if (req.query.query === "" || (req.query.query === undefined && req.query.elcroId === undefined)) {
+	const hasQuery = req.query.query && req.query.query !== "";
+	const hasElcroId = req.query.elcroId !== undefined;
+	
+	if (!hasQuery && !hasElcroId) {
 		res.status(400).json({ success: false, message: "No search query provided." });
 		return;
-	} 
+	}
 	if (req.query.elcroId) {
 		try {
 			const searchResults = await SongEntry.find({
@@ -51,6 +55,14 @@ songRouter.get("/search", requireLogin, async (req: Request, res: Response) => {
 		}
 			
 	} 
+	else if (req.query.subsonic === "true") {
+		try {
+			await searchSubsonic(req.query.query as string);
+		}
+		catch (error) {
+			res.status(500).json({ success: false, message: error instanceof Error ? error.message : "Server error." });
+		}
+	}
 	else {
 		const raw = (req.query.query as string)
 			.trim()
