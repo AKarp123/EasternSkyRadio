@@ -33,6 +33,7 @@ songRouter.get("/search", requireLogin, async (req: Request, res: Response) => {
 	
 	const hasQuery = req.query.query && req.query.query !== "";
 	const hasElcroId = req.query.elcroId !== undefined;
+
 	
 	if (!hasQuery && !hasElcroId) {
 		res.status(400).json({ success: false, message: "No search query provided." });
@@ -57,7 +58,8 @@ songRouter.get("/search", requireLogin, async (req: Request, res: Response) => {
 	} 
 	else if (req.query.subsonic === "true") {
 		try {
-			await searchSubsonic(req.query.query as string);
+			const searchResults = await searchSubsonic(req.query.query as string);
+			return res.status(200).json({ success: true, searchResults });
 		}
 		catch (error) {
 			res.status(500).json({ success: false, message: error instanceof Error ? error.message : "Server error." });

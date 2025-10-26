@@ -10,6 +10,9 @@ import DisplayTooltip from "../Util/Tooltip";
 import { ScrollArea, Spinner } from "@radix-ui/themes";
 import Input from "../Util/Input";
 
+//@ts-ignore
+import naviIcon from "../../icons/navi.png" 
+
 type SongSearchProperties = {
 	dispatch: React.Dispatch<any>;
 	parent?: "New Show" | "Set Planner" | "Edit Song";
@@ -23,6 +26,7 @@ const SongSearch = ({ dispatch, parent }: SongSearchProperties) => {
 	const [searchText, setSearchText] = useState<string>("");
 	const setError = useContext(ErrorContext);
 	const searchDebounced = useDebouncedCallback((query) => {
+		setSearchResults([]);
 		setLoading(true)
 		if (query === "") {
 			setSearchResults([]);
@@ -46,9 +50,19 @@ const SongSearch = ({ dispatch, parent }: SongSearchProperties) => {
 			.catch((error) => {
 				setError(error.message);
 			})
-			.finally(() => {
-				setLoading(false);
-			});
+		axios.get("/api/search", { params: { query, subsonic: true }}).then((res) => {
+			if (res.data.success === false) {
+				if (res.data.message) {
+					setError(res.data.message);
+				}
+				return;
+			}
+			setSearchResults((prev) => [...prev, ...res.data.searchResults]);
+		})
+			.catch((error) => {
+				setError(error.message);
+			})
+			.finally(() => setLoading(false));
 	}, 100);
 
 	const heightMap: Record<string, string> = {
@@ -83,8 +97,10 @@ const SongSearch = ({ dispatch, parent }: SongSearchProperties) => {
 								/>
 							))
 						) : (
-							loading ? <Spinner className="mx-auto"/> : <Text size="4" className="font-pixel text-center mt-4">No results</Text>
+							!loading && <Text size="4" className="font-pixel text-center mt-4">No results</Text>
 						)}
+						{loading && <Spinner className="mx-auto"/>}
+
 					</Flex>
 				</ScrollArea>
 			</DispatchContext.Provider>
@@ -147,13 +163,19 @@ const SongSearchCard = ({ song, parent }: SongSearchCardProperties) => {
 				</Flex>
 			</Flex>
 			<Flex className="flex-row items-center mb-0.5 mr-2 gap-2" justify={"between"}>
-				<Buttons parent={parent} song={song} />
+				<div>
+					{song.searchQuery?.length === 0 && <DisplayTooltip content="From Navidrome">
+						<img src={naviIcon} alt="Navidrome Icon" className="w-4 h-4 inline-block ml-1"/>
+					</DisplayTooltip>}
+					<Buttons parent={parent} song={song} />
+				</div>
 				<Text size="3" className="font-pixel items-center ">
 					Last Played:{" "}
 					{Number.isNaN(lastPlayed.getTime())
 						? "Never"
 						: lastPlayed.toLocaleDateString()}
 				</Text>
+
 			</Flex>
 		</Flex>
 	);

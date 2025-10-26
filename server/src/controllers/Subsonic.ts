@@ -1,5 +1,5 @@
 import { subsonicClient } from "../config/subsonic.js";
-import { Child as SongResult } from "subsonic-api";
+import { Child } from "subsonic-api";
 import { ISongEntry } from "../types/SongEntry.js";
 
 
@@ -16,9 +16,19 @@ export const searchSubsonic = async (query: string) => {
 		return [];
 	}
 
-	for (const song of searchResults.searchResult2.song) {
-		console.log(`Found song: ${song.artist} - ${song.title}`);
-	}
+	
+	const songs = await Promise.all(
+		searchResults.searchResult2.song.map(async (song) => {
+			const songEntry = await subsonicToISongEntry(song).catch((error) => {
+				console.error("Error converting Subsonic song to ISongEntry:", error);
+				throw error;
+			});
+			return songEntry;
+		})
+	);
+
+	return songs;
+
 	
 };
 
@@ -33,11 +43,20 @@ export const getAlbumArt = async (albumId: string) => {
 	}
 };
 
+export const getArtistInfo = async (artistId: string) => {
+	try {
+		const res = await subsonicClient.getArtist({ id: artistId });
+		return res.artist;
+	} catch (error) {
+		console.error("Error fetching artist info from Subsonic:", error);
+		throw error;
+	}
+};
 
 
 
-export const subsonicToISongEntry = async (song : SongResult): Promise<Omit<ISongEntry, "songId">> =>  {
 
+export const subsonicToISongEntry = async (song : Child): Promise<Omit<ISongEntry, "songId">> =>  {
 
 	const {
 		artist,
@@ -47,13 +66,13 @@ export const subsonicToISongEntry = async (song : SongResult): Promise<Omit<ISon
 		id, // subsonic track iD
 		sortName,
 		duration,
+
 	
 
 	} = song;
 
-	const _artist = artist || "Unknown Artist";
-	const _album = album || "Unknown Album";
-	const _title = title || "Unknown Title";
+
+
 	
 	const albumImageLoc = await getAlbumArt(albumId!).catch((error) => {
 		console.error("Error fetching album art");
@@ -61,17 +80,20 @@ export const subsonicToISongEntry = async (song : SongResult): Promise<Omit<ISon
 	});
 
 
+
+
 	return {
-		artist: _artist,
-		title: _title,
-		origTitle: sortName,
-		album: _album,
+		artist: artist || "Unknown Artist",
+		title: sortName || title || "Unknown Title",
+		origTitle: title || "Unkown Title",
+		album: album || "Unknown Album",
+		albumId: albumId || "",
 		albumImageLoc : albumImageLoc || "",
 		subsonicSongId: id,
 		searchQuery: "",
 		genres: [],
 		duration: duration!
-	} ;
+	};
 
 
 
