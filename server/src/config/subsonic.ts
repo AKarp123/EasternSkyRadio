@@ -6,16 +6,17 @@ export const subsonicClient = new SubsonicAPI({
 		username: process.env.SUBSONIC_USERNAME || "",
 		password: process.env.SUBSONIC_PASSWORD || "",
 	}
-})
+});
 
 export const pingServer = async () => {
-		await subsonicClient.ping()
+	await subsonicClient.ping()
 		.then((res) => {
-			//@ts-ignore 
-			console.log("Successfully connected to subsonic server, type:", res.type); 
+			//@ts-ignore type isn't defined 
+			console.info("Successfully connected to subsonic server, type:", res.type); 
+			
 		})
-		.catch((err) => {
-			throw new Error("Failed to connect to Subsonic server: " + err.message);
-		})
+		.catch((error) => {
+			throw new Error("Failed to connect to Subsonic server: " + error.message);
+		});
 
-}
+};

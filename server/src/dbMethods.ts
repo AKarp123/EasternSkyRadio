@@ -145,6 +145,8 @@ export const updateShowTimes = async () => {
 	}
 };
 
+
+// Function param type def - must have artist, title, album, origTitle, origAlbum, rest can be optional
 export const generateSearchQuery = ({
 	artist,
 	title,
@@ -157,7 +159,7 @@ export const generateSearchQuery = ({
             ISongEntry,
             "artist" | "title" | "album" | "origTitle" | "origAlbum"
         >
-    >) => {
+    >) => { 
 	return [artist, title, album, origTitle || "", origAlbum || ""]
 		.join(" ")
 		.replaceAll(/[^\p{L}\p{N}\s]/gu, "")

@@ -30,45 +30,45 @@ songRouter.get("/song/:id", requireLogin, async (req : Request, res : Response) 
 
 songRouter.get("/search", requireLogin, async (req: Request, res: Response) => {
 	
-		if (req.query.query === "" || (req.query.query === undefined && req.query.elcroId === undefined)) {
-			res.status(400).json({ success: false, message: "No search query provided." });
-			return;
-		} 
-		if (req.query.elcroId) {
-			try {
-				const searchResults = await SongEntry.find({
-					elcroId: req.query.elcroId,
-				}).select(
-					(req.user ? songEntry_selectAllFields : "")
-				);
-				res.json({
-					success: true,
-					searchResults: searchResults,
-				});
-			} 
-			catch (error) {
-				res.status(500).json({ success: false, message: error instanceof Error ? error.message : "Server error." });
-			}
-			
-		} 
-		else {
-			const raw = (req.query.query as string)
-				.trim()
-				.replaceAll(/[^\p{L}\p{N}\s]/gu, "")
-				.toLowerCase();
-			
-			const words = raw.split(/\s+/);
-			const conditions = words.map((word) => ({
-				searchQuery: { $regex: new RegExp(word, "i") },
-			}));
+	if (req.query.query === "" || (req.query.query === undefined && req.query.elcroId === undefined)) {
+		res.status(400).json({ success: false, message: "No search query provided." });
+		return;
+	} 
+	if (req.query.elcroId) {
+		try {
 			const searchResults = await SongEntry.find({
-				$and: conditions,
-			})
-				.sort({ artist: 1 })
-				.select((req.user ? songEntry_selectAllFields : ""))
-				.limit(20);
-			res.json({ success: true, searchResults: searchResults });
+				elcroId: req.query.elcroId,
+			}).select(
+				(req.user ? songEntry_selectAllFields : "")
+			);
+			res.json({
+				success: true,
+				searchResults: searchResults,
+			});
+		} 
+		catch (error) {
+			res.status(500).json({ success: false, message: error instanceof Error ? error.message : "Server error." });
 		}
+			
+	} 
+	else {
+		const raw = (req.query.query as string)
+			.trim()
+			.replaceAll(/[^\p{L}\p{N}\s]/gu, "")
+			.toLowerCase();
+			
+		const words = raw.split(/\s+/);
+		const conditions = words.map((word) => ({
+			searchQuery: { $regex: new RegExp(word, "i") },
+		}));
+		const searchResults = await SongEntry.find({
+			$and: conditions,
+		})
+			.sort({ artist: 1 })
+			.select((req.user ? songEntry_selectAllFields : ""))
+			.limit(20);
+		res.json({ success: true, searchResults: searchResults });
+	}
 	
 });
 

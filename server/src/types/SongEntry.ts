@@ -17,8 +17,11 @@ export interface ISongEntry {
     duration: number,
     lastPlayed? : Date,
     searchQuery: string, 
-    createdAt: Date
+    createdAt?: Date,
+    updatedAt?: Date,
+
 }
+
 
 export interface ISongEntrySubmission extends Omit<ISongEntry, "songId" | "searchQuery" | "createdAt"> {
 

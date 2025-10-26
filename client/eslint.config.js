@@ -15,6 +15,7 @@ export default defineConfig([
             parser: parser,
             parserOptions: {
                 project: './tsconfig.json',
+                tsconfigRootDir: __dirname,
             },
         },
         plugins: {

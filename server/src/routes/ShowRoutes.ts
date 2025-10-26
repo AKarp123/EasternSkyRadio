@@ -21,7 +21,7 @@ showRouter.get("/show/:id", async (req: Request, res: Response) => {
 		const showData = await ShowEntry.findOne(
 			{ showId: Number.parseInt(req.params.id) },
 			{ _id: 0, __v: 0 }
-		).lean().populate<{ songsList: ISongEntry[] }>({ path: "songsList", select: "-__v " });
+		).lean().populate<{ songsList: ISongEntry[] }>({ path: "songsList", select: "-__v -_id" });
 		if (showData === null) {
 			res.status(404).json({ success: false, message: "Show not found." });
 			return;
