@@ -94,6 +94,5 @@ export const bulkCreateShows = async(count: number, agent?: Awaited<ReturnType<t
 		res = await createShow(showData, localAgent);
 		shows.push(res.body.show as ShowEntry);
 	}
-	
 	return shows;
 };

@@ -74,11 +74,15 @@ export const songEntrySchema = new schema<ISongEntry>({
 	},
 }, { versionKey: false, timestamps: true });
 
+songEntrySchema.path("createdAt").select(false);
+songEntrySchema.path("updatedAt").select(false);
+
 
 /**
  * Reselects all fields except __v
  */
-export const songEntry_selectAllFields = "+elcroId +duration +lastPlayed +searchQuery -__v";
+export const songEntry_selectAllFields = "+elcroId +duration +lastPlayed +searchQuery -__v +createdAt +updatedAt";
+
 
 songEntrySchema.pre("validate", function (next) {
 	if (this.elcroId) {
