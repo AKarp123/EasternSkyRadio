@@ -16,6 +16,7 @@ const AuthRoute = ({ component: Component, location, ...rest }: properties) => {
 		return <></>;
 	}
 
+
 	return (
 		<Route
 			{...rest}

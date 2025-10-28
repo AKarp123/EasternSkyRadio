@@ -4,6 +4,7 @@ import { addSong, generateSearchQuery } from "../dbMethods.js";
 import requireLogin from "./requireLogin.js";
 import { ISongEntry } from "../types/SongEntry.js";
 import { searchSubsonic } from "../controllers/Subsonic.js";
+import { app } from "../app.js";
 
 
 const songRouter = Router();
@@ -57,6 +58,11 @@ songRouter.get("/search", requireLogin, async (req: Request, res: Response) => {
 			
 	} 
 	else if (req.query.subsonic === "true") {
+
+		if(app.locals.subsonicEnabled === false) {
+			res.status(503).json({ success: false, message: "This feature is not enabled." });
+		}
+
 		try {
 			const searchResults = await searchSubsonic(req.query.query as string);
 			return res.status(200).json({ success: true, searchResults });

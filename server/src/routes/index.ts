@@ -12,6 +12,7 @@ import axios from "axios";
 import NodeCache from "node-cache";
 import SyncRouter from "./SyncRoutes.js";
 import UserRouter from "./UserRoutes.js";
+import { app } from "../app.js";
 
 
 const statsCache = new NodeCache({ stdTTL: 300 });
@@ -54,12 +55,23 @@ router.post("/login", passport.authenticate("local"), (req, res) => {
 
 
 
-router.get("/getUser", (req, res) => {
+router.get("/user", (req, res) => {
 	if (req.user) {
 		res.json({ user: req.user });
 	} else {
 		res.json({ user: null });
 	}
+});
+
+router.get("/config", requireLogin, async (req, res) => {
+
+
+	return res.json({
+		siteConfig: {
+			subsonicEnabled: app.locals.subsonicEnabled,
+			subsonicBaseUrl: process.env.SUBSONIC_SERVER_URL || "",
+		}
+	})
 });
 
 router.post("/logout", (req, res) => {

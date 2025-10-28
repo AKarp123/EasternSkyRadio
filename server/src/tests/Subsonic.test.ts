@@ -1,4 +1,4 @@
-import { expect, test, describe, afterAll, beforeEach } from "bun:test";
+import { expect, test, describe, afterAll, beforeEach, beforeAll } from "bun:test";
 import request from "supertest";
 import { app } from "../app.js";
 import { initTest } from "../init.js";
@@ -11,7 +11,7 @@ import { subsonicClient } from "../config/subsonic.js";
 
 describe.if(process.env.SUBSONIC_ENABLED === "true")("Subsonic Integration", function() {
 	let agent: Awaited<ReturnType<typeof withUser>>;
-	beforeEach(async () => {
+	beforeAll(async () => {
 		await initTest();
 		agent = await withUser();
 	});
@@ -23,5 +23,32 @@ describe.if(process.env.SUBSONIC_ENABLED === "true")("Subsonic Integration", fun
 		const res = await subsonicClient.ping();
 		expect(res).toBeDefined();
 	});
-});
+	test("Search subsonic", async () => {
+	});
+
+	// test("Search subsonic when not enabled", async() => {
+	// 	app.locals.subsonicEnabled = false;
+	// 	const res = await agent.get("/api/search")
+	// 		.query({ subsonic: "true", query: "test" });
+	// 	expect(res.status).toBe(503);
+	// 	expect(res.body.success).toBe(false);
+	// })
 	
+});
+
+
+describe("Subsonic Integration when not enabled", function() {
+	let agent: Awaited<ReturnType<typeof withUser>>;
+	beforeAll(async() => {
+		await initTest();
+		agent = await withUser();
+	})
+
+	test("Search subsonic when not enabled", async() => {
+		app.locals.subsonicEnabled = false;
+		const res = await agent.get("/api/search")
+			.query({ subsonic: "true", query: "test" });
+		expect(res.status).toBe(503);
+		expect(res.body.success).toBe(false);
+	});
+});

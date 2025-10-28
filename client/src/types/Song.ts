@@ -4,7 +4,7 @@ export interface SongEntry {
 	artist: string;
 	title: string;
 	subsonicSongId?: string;
-	albumId?: string;
+	subsonicAlbumId?: string;
 	album: string;
 	origTitle?: string;
 	origAlbum?: string;

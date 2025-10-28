@@ -35,24 +35,12 @@ showRouter.get("/show/:id", async (req: Request, res: Response) => {
 });
 
 showRouter.get("/shows", async (req: Request, res: Response) => {
-	if (req.query.offset) { //TODO: Delete if statement - not needed anymore
-		const offset = Number.parseInt(req.query.offset as string);
-		const shows = await ShowEntry.find({}, { _id: 0, __v: 0 })
-			.sort({ showId: "asc" })
-			.skip(offset)
-			.limit(5)
-			.select("-songsList -_id")
-			.lean();
-
-		res.json(shows);
-	} else {
 		const shows = await ShowEntry.find({}, { _id: 0, __v: 0 })
 			.sort({ showId: "asc" })
 			.select("-songsList -_id")
 			.lean();
 
 		res.json({ success: true, shows });
-	}
 });
 
 showRouter.post("/show", requireLogin, async (req : Request, res: Response) => {
