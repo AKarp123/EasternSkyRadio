@@ -85,7 +85,7 @@ export const subsonicToISongEntry = async (song : Child): Promise<Omit<ISongEntr
 
 	return {
 		artist: artist || "Unknown Artist",
-		title: sortName || title || "Unknown Title",
+		title: title || "Unknown Title",
 		origTitle: title || "Unkown Title",
 		album: album || "Unknown Album",
 		subsonicAlbumId: albumId || "",

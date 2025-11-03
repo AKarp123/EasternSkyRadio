@@ -7,6 +7,7 @@ export interface SetPlannerState {
 	label: string;
 	toggleNewSongForm: boolean;
 	toggleDurationForm: boolean;
+	toggleLinkSongForm: boolean;
 	duration: string;
 	syncStatus: string;
 	firstLoad: boolean;
@@ -18,25 +19,25 @@ export type SetPlannerItem =
   | { type: "Break"; item: { label: string; duration: number } };
 
 
-export enum SetPlannerActionType {
-	AddSong = "addSong",
-	EditSong = "editSong",
-	SwapUp = "swapUp",
-	SwapDown = "swapDown",
-	RemoveSong = "removeSong",
-	SetLabel = "setLabel",
-	AddBreak = "addBreak",
-	ResetDurationForm = "resetDurationForm",
-	SetDuration = "setDuration",
-	ToggleNewSongForm = "toggleNewSongForm",
-	ToggleDurationForm = "toggleDurationForm",
-	SetTabState = "setTabState",
-	Load = "load",
-	LoadSync = "loadSync",
-	SetSyncStatus = "setSyncStatus",
-	ClearList = "clearList",
-	Reset = "reset",
-}
+export type SetPlannerActionType =
+	| "addSong"
+	| "editSong"
+	| "swapUp"
+	| "swapDown"
+	| "removeSong"
+	| "setLabel"
+	| "addBreak"
+	| "resetDurationForm"
+	| "setDuration"
+	| "toggleNewSongForm"
+	| "toggleDurationForm"
+	| "toggleLinkSongForm"
+	| "setTabState"
+	| "load"
+	| "loadSync"
+	| "setSyncStatus"
+	| "clearList"
+	| "reset";
 
 export type SetPlannerAction = {
 	type: SetPlannerActionType;

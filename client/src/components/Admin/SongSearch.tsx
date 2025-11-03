@@ -215,7 +215,13 @@ const Buttons = ({ song, linkSong }: ButtonProperties) => {
 	const Link = () => (
 		<button
 			className="text-white font-pixel text-md focus:outline-none focus:shadow-outline cursor-pointer HoverButtonStyles rounded-md px-2 "
-			onClick={linkSong}
+			onClick={() => {
+				if(parent === "Link Song") {
+					linkSong && linkSong();
+				} else {
+					dispatch({ type: "displayLinkSongDialog"})
+				}
+			}}
 		>
 			Link
 		</button>
