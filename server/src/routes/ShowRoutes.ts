@@ -35,12 +35,12 @@ showRouter.get("/show/:id", async (req: Request, res: Response) => {
 });
 
 showRouter.get("/shows", async (req: Request, res: Response) => {
-		const shows = await ShowEntry.find({}, { _id: 0, __v: 0 })
-			.sort({ showId: "asc" })
-			.select("-songsList -_id")
-			.lean();
+	const shows = await ShowEntry.find({}, { _id: 0, __v: 0 })
+		.sort({ showId: "asc" })
+		.select("-songsList -_id")
+		.lean();
 
-		res.json({ success: true, shows });
+	res.json({ success: true, shows });
 });
 
 showRouter.post("/show", requireLogin, async (req : Request, res: Response) => {

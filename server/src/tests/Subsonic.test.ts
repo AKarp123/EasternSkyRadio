@@ -24,6 +24,11 @@ describe.if(process.env.SUBSONIC_ENABLED === "true")("Subsonic Integration", fun
 		expect(res).toBeDefined();
 	});
 	test("Search subsonic", async () => {
+		const res = await agent.get("/api/search")
+			.query({ subsonic: "true", query: "Yudachi" }); //change this test to something in your server
+		expect(res.status).toBe(200);
+		expect(res.body.success).toBe(true);
+		expect(res.body.searchResults.length).toBeGreaterThan(0);
 	});
 
 	// test("Search subsonic when not enabled", async() => {
@@ -42,7 +47,7 @@ describe("Subsonic Integration when not enabled", function() {
 	beforeAll(async() => {
 		await initTest();
 		agent = await withUser();
-	})
+	});
 
 	test("Search subsonic when not enabled", async() => {
 		app.locals.subsonicEnabled = false;

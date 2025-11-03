@@ -71,7 +71,7 @@ router.get("/config", requireLogin, async (req, res) => {
 			subsonicEnabled: app.locals.subsonicEnabled,
 			subsonicBaseUrl: process.env.SUBSONIC_SERVER_URL || "",
 		}
-	})
+	});
 });
 
 router.post("/logout", (req, res) => {

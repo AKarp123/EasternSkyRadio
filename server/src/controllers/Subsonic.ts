@@ -82,12 +82,13 @@ export const subsonicToISongEntry = async (song : Child): Promise<Omit<ISongEntr
 
 
 
+
 	return {
 		artist: artist || "Unknown Artist",
 		title: sortName || title || "Unknown Title",
 		origTitle: title || "Unkown Title",
 		album: album || "Unknown Album",
-		albumId: albumId || "",
+		subsonicAlbumId: albumId || "",
 		albumImageLoc : albumImageLoc || "",
 		subsonicSongId: id,
 		searchQuery: "",

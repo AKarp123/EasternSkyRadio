@@ -68,24 +68,24 @@ describe('Test selected fields', async() => {
 	});
 	
 	test("Get show with songslist with selected fields as admin", async() => {
-		const res = await adminAgent.get("/api/show/1")
+		const res = await adminAgent.get("/api/show/1");
 		expect(res.body.show.songsList[0]).toHaveProperty("duration");
 		expect(res.body.show.songsList[0]).toHaveProperty("_id");
 		expect(res.body.show.songsList[0]).toHaveProperty("createdAt");
 		expect(res.body.show.songsList[0]).toHaveProperty("updatedAt");
-	})
+	});
 
 	test("Get show with songslist with selected fields as non admin", async() => {
 		const nonAdminAgent = request.agent(app);
-		const res = await nonAdminAgent.get("/api/show/1")
+		const res = await nonAdminAgent.get("/api/show/1");
 		expect(res.status).toBe(200);
 		expect(res.body.show.songsList[0]).not.toHaveProperty("duration");
 		expect(res.body.show.songsList[0]).not.toHaveProperty("_id");
 		expect(res.body.show.songsList[0]).not.toHaveProperty("createdAt");
 		expect(res.body.show.songsList[0]).not.toHaveProperty("updatedAt");
-	})
+	});
 
 	
 
 
-})
+});

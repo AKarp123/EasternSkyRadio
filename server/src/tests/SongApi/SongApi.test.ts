@@ -5,7 +5,7 @@ import { withUser } from ".././helpers/withUser.js";
 import { ISongEntry, ISongEntrySubmission } from "../../types/SongEntry.js";
 import { generateSearchQuery } from "../../dbMethods.js";
 import { clearDatabase } from "../../config/db.js";
-import { createShow, createShowSimple, createSong } from ".././helpers/create.js";
+import { bulkCreateTestSongs, createShow, createShowSimple, createSong, createSongSimple } from ".././helpers/create.js";
 import { Types } from "mongoose";
 import { ShowEntrySubmission } from "../../types/ShowData.js";
 
@@ -110,6 +110,7 @@ describe("Test Create Song API", function () {
 		const res = await agent
 			.post("/api/song")
 			.send({ songData: newSong });
+		console.log(res.status)
 		expect(res.body).toHaveProperty("success", false);
 		expect(res.status).toBe(400);
 	});
@@ -314,7 +315,37 @@ describe("Test Editing song API", () => {
 		expect(res.body.song.album).toBe("Fairytale (Teto)");
 
 	});
+
+
 });
+
+describe("Link Tests", async() => {
+	let agent: Awaited<ReturnType<typeof withUser>>;
+	beforeAll(async () => {
+		await initTest();
+		agent = await withUser();
+
+	});
+	afterAll(async() => {
+		await clearDatabase();
+	});
+
+	test("Link all album ids", async() => {
+		for(let i = 1; i<=2; i++) {
+			await createSongSimple("Test Song " + i, "LinkAlbum", "LinkArtist", agent);
+		}
+		let res = await agent.patch("/api/song/1")
+		.send({ songData: { subsonicAlbumId: "test1"}})
+		expect(res.status).toBe(200);
+
+		res = await agent.get("/api/song/2");
+		expect(res.status).toBe(200);
+		expect(res.body.song.subsonicAlbumId).toBe("test1");
+
+
+		
+	})
+})
 
 describe("Song Date Tests", () => {
 	let agent: Awaited<ReturnType<typeof withUser>>;

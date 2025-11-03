@@ -15,17 +15,18 @@ import naviIcon from "../../icons/navi.png"
 
 type SongSearchProperties = {
 	dispatch: React.Dispatch<any>;
-	parent?: "New Show" | "Set Planner" | "Edit Song";
+	parent?: "New Show" | "Set Planner" | "Edit Song" | "Link Song";
 };
 
 const DispatchContext = createContext<React.Dispatch<any>>(() => {});
+const ParentContext = createContext<string>("New Show");
 const SongSearch = ({ dispatch, parent }: SongSearchProperties) => {
-	parent = parent === undefined ? "New Show" : parent;
+	parent = parent || "New Show";
 	const [searchResults, setSearchResults] = useState<SongEntry[]>([]);
 	const [loading, setLoading] = useState(false);
 	const [searchText, setSearchText] = useState<string>("");
 	const setError = useContext(ErrorContext);
-	const searchDebounced = useDebouncedCallback((query) => {
+	const searchDebounced = useDebouncedCallback(async(query) => {
 		setSearchResults([]);
 		setLoading(true)
 		if (query === "") {
@@ -33,7 +34,7 @@ const SongSearch = ({ dispatch, parent }: SongSearchProperties) => {
 			setLoading(false)
 			return;
 		}
-		axios
+		await axios
 			.get<StandardResponse<"searchResults", SongEntry[]>>(
 				"/api/search",
 				{ params: { query } }
@@ -50,7 +51,11 @@ const SongSearch = ({ dispatch, parent }: SongSearchProperties) => {
 			.catch((error) => {
 				setError(error.message);
 			})
-		axios.get("/api/search", { params: { query, subsonic: true }}).then((res) => {
+		if(parent === "Edit Song") {
+			setLoading(false)
+			return;
+		}		
+		await axios.get("/api/search", { params: { query, subsonic: true }}).then((res) => {
 			if (res.data.success === false) {
 				if (res.data.message) {
 					setError(res.data.message);
@@ -71,48 +76,49 @@ const SongSearch = ({ dispatch, parent }: SongSearchProperties) => {
 		"Edit Song": "60vh",
 	};
 	const height = heightMap[parent] || "60vh";
-
 	return (
 		<>
-			<DispatchContext.Provider value={dispatch}>
-				<Input
-					placeholder="Search"
-					value={searchText}
-					onChange={(e) =>{
+			<ParentContext.Provider value={parent}>
+				<DispatchContext.Provider value={dispatch}>
+					<Input
+						placeholder="Search"
+						value={searchText}
+						onChange={(e) =>{
 
-						setSearchText(e.target.value)
-						searchDebounced(e.target.value.trim())
-					}
-					}
-					className="border border-gray-300 rounded px-2 py-1 font-pixel focus:outline-none w-full"
-				/>
-				<ScrollArea type="scroll" scrollbars="vertical" style={{ height }} >
-					<Flex className="w-full h-full flex-col gap-3 mt-1">
-						{searchResults.length > 0 ? (
-							searchResults.map((song) => (
-								<SongSearchCard
-									song={song}
-									parent={parent}
-									key={song._id as Key}
-								/>
-							))
-						) : (
-							!loading && <Text size="4" className="font-pixel text-center mt-4">No results</Text>
-						)}
-						{loading && <Spinner className="mx-auto"/>}
+							setSearchText(e.target.value)
+							searchDebounced(e.target.value.trim())
+						}
+						}
+						className="border border-gray-300 rounded px-2 py-1 font-pixel focus:outline-none w-full"
+					/>
+					<ScrollArea type="scroll" scrollbars="vertical" style={{ height }} >
+						<Flex className="w-full h-full flex-col gap-3 mt-1">
+							{searchResults.length > 0 ? (
+								searchResults.map((song) => (
+									<SongSearchCard
+										song={song}
+										key={song._id as Key}
+									/>
+								))
+							) : (
+								!loading && <Text size="4" className="font-pixel text-center mt-4">No results</Text>
+							)}
+							{loading && <Spinner className="mx-auto"/>}
 
-					</Flex>
-				</ScrollArea>
-			</DispatchContext.Provider>
+						</Flex>
+					</ScrollArea>
+
+				</DispatchContext.Provider>
+			</ParentContext.Provider>
 		</>
 	);
 };
 
 type SongSearchCardProperties = {
 	song: SongEntry;
-	parent: string;
+
 };
-const SongSearchCard = ({ song, parent }: SongSearchCardProperties) => {
+const SongSearchCard = ({ song }: SongSearchCardProperties) => {
 
 	const titleRef = useRef<HTMLDivElement>(null);
 	const albumRef = useRef<HTMLDivElement>(null);
@@ -167,7 +173,7 @@ const SongSearchCard = ({ song, parent }: SongSearchCardProperties) => {
 					{song.searchQuery?.length === 0 && <DisplayTooltip content="From Navidrome">
 						<img src={naviIcon} alt="Navidrome Icon" className="w-4 h-4 inline-block ml-1"/>
 					</DisplayTooltip>}
-					<Buttons parent={parent} song={song} />
+					<Buttons song={song} />
 				</div>
 				<Text size="3" className="font-pixel items-center ">
 					Last Played:{" "}
@@ -182,13 +188,13 @@ const SongSearchCard = ({ song, parent }: SongSearchCardProperties) => {
 };
 
 type ButtonProperties = {
-	parent: string;
 	song: SongEntry;
+	linkSong?: () => void;
 };
-const Buttons = ({ parent, song }: ButtonProperties) => {
+const Buttons = ({ song, linkSong }: ButtonProperties) => {
 	const dispatch = useContext(DispatchContext);
 
-
+	const parent = useContext(ParentContext);
 	const Add = () => 
 		(<button
 			className="text-white font-pixel text-md focus:outline-none focus:shadow-outline cursor-pointer HoverButtonStyles rounded-md px-2 "
@@ -206,13 +212,37 @@ const Buttons = ({ parent, song }: ButtonProperties) => {
 			Fill
 		</button>
 	);
+	const Link = () => (
+		<button
+			className="text-white font-pixel text-md focus:outline-none focus:shadow-outline cursor-pointer HoverButtonStyles rounded-md px-2 "
+			onClick={linkSong}
+		>
+			Link
+		</button>
+	);
+
+	const AddNew = () => 
+		(<button
+			className="text-white font-pixel text-md focus:outline-none focus:shadow-outline cursor-pointer HoverButtonStyles rounded-md px-2 "
+			onClick={() => dispatch({ type: "addSong", payload: song })}
+		>
+			Add New
+		</button>)
+	
+
+
+	
+
+	
 
 
 	switch (parent) {
 		case "New Show": {
 			return (
 				<>
-					<Add />
+					{song.searchQuery && song.searchQuery?.length > 0 && <Add />}
+					{song.searchQuery?.length === 0 && <AddNew/>}
+					{song.searchQuery?.length === 0 && <Link />}
 				</>
 			);
 		}
@@ -223,8 +253,20 @@ const Buttons = ({ parent, song }: ButtonProperties) => {
 		}
 		case "Set Planner": {
 			return (
-				<Add />
+				<>
+					{song.searchQuery && song.searchQuery?.length > 0 && <Add />}
+					{song.searchQuery?.length === 0 && <AddNew/>}
+					{song.searchQuery?.length === 0 && <Link />}
+				</>
 			);
+		}
+		case "Link Song": {
+			return (
+				<Link />
+			);
+		}
+		default: {
+			return null;
 		}
 	// No default
 	}

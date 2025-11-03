@@ -17,7 +17,7 @@ export async function down (connection: Connection): Promise<void> {
   connection.db?.collection('songentries').updateMany({}, [
     {
       $set: {
-        duration: { $ceil: { $divide: [ "$duration", 60 ] } }
+        duration: {  $divide: [ "$duration", 60 ] }
       }
     }
   ])

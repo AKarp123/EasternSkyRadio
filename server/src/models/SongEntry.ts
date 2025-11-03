@@ -81,7 +81,7 @@ songEntrySchema.path("updatedAt").select(false);
 /**
  * Reselects all fields except __v
  */
-export const songEntry_selectAllFields = "+elcroId +duration +lastPlayed +searchQuery -__v +createdAt +updatedAt +specialNote";
+export const songEntry_selectAllFields = "+elcroId +duration +lastPlayed +searchQuery -__v +createdAt +updatedAt +specialNote +subsonicSongId +subsonicAlbumId";
 
 
 songEntrySchema.pre("validate", function (next) {

@@ -5,6 +5,7 @@ import requireLogin from "./requireLogin.js";
 import { ISongEntry } from "../types/SongEntry.js";
 import { searchSubsonic } from "../controllers/Subsonic.js";
 import { app } from "../app.js";
+import { updateAlbumIds } from "../controllers/Song.js";
 
 
 const songRouter = Router();
@@ -101,6 +102,20 @@ songRouter.post("/song", requireLogin, async (req : Request, res : Response) => 
 		return;
 	}
 
+	if(songData.subsonicSongId) {
+		const song = await SongEntry.findOne({
+			subsonicSongId: songData.subsonicSongId
+		});
+		if(song) {
+			res.json({
+				success: false,
+				message: "Song with this Subsonic ID already exists.",
+				song: song,
+			});
+			return;
+		}
+	}
+
 
 
 	// Escape any special regex characters for each song field
@@ -128,6 +143,10 @@ songRouter.post("/song", requireLogin, async (req : Request, res : Response) => 
 	}
 	addSong(songData)
 		.then((newSong) => {
+			if (songData.subsonicAlbumId) {
+				updateAlbumIds(newSong.album, songData.subsonicAlbumId);
+			}
+
 			res.json({
 				success: true,
 				message: "Song added successfully.",
@@ -135,7 +154,10 @@ songRouter.post("/song", requireLogin, async (req : Request, res : Response) => 
 			});
 		})
 		.catch((error) => {
-			res.status(400).json({ success: false, message: error.message });
+			res.status(400).json({
+				success: false,
+				message: error instanceof Error ? error.message : String(error),
+			});
 		});
 });
 
@@ -169,7 +191,7 @@ songRouter.patch("/song/:id", requireLogin, async (req: Request, res: Response) 
 	}
 	const id = Number.parseInt(req.params.id);
 	const searchQuery = generateSearchQuery(songData);
-	SongEntry.findOneAndUpdate({ songId: id }, { ...songData, searchQuery }, {
+	const result = await SongEntry.findOneAndUpdate({ songId: id }, { ...songData, searchQuery }, {
 		new: true,
 		runValidators: true,
 	}).select(songEntry_selectAllFields)
@@ -178,16 +200,22 @@ songRouter.patch("/song/:id", requireLogin, async (req: Request, res: Response) 
 				res.status(404).json({ success: false, message: "Song not found." });
 				return;
 			}
-			res.json({
-				success: true,
-				message: "Song updated successfully.",
-				song: updatedSong,
-			});
+			return updatedSong;
 		})
 		.catch((error) => {
 			res.status(400).json({ success: false, message: error.message });
 		});
 	;
+	if (result && songData.subsonicAlbumId) {
+		try {
+			updateAlbumIds(result.album, songData.subsonicAlbumId);
+		}
+		catch (error) {
+			console.error("Error updating album IDs:", error);
+		}
+	}
+
+	return res.json({ success: true, message: "Song updated successfully.", song: result });
 	
 });
 
