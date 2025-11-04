@@ -185,27 +185,51 @@ songRouter.delete("/song/:songId", requireLogin, async (req: Request, res: Respo
 
 songRouter.patch("/song/:id", requireLogin, async (req: Request, res: Response) => {
 	const { _id, songId, ...songData } : { _id: string, songId: number } & ISongEntry = req.body.songData;
+
+
+
 	if (!songData || Number.isNaN(Number.parseInt(req.params.id))) {
 		res.status(400).json({ success: false, message: "No Song Data or incorrect id" });
 		return;
 	}
+
+
+
 	const id = Number.parseInt(req.params.id);
-	const searchQuery = generateSearchQuery(songData);
-	const result = await SongEntry.findOneAndUpdate({ songId: id }, { ...songData, searchQuery }, {
+
+	const shouldUpdateSearchQuery =
+  "artist" in songData &&
+  "title" in songData &&
+  "album" in songData ||
+  "origTitle" in songData ||
+  "origAlbum" in songData;
+
+if (shouldUpdateSearchQuery) {
+  songData.searchQuery = generateSearchQuery({
+    artist: songData.artist ?? "",
+    title: songData.title ?? "",
+    album: songData.album ?? "",
+    origTitle: songData.origTitle ?? "",
+    origAlbum: songData.origAlbum ?? "",
+  });
+}
+	const result = await SongEntry.findOneAndUpdate({ songId: id }, {$set: { ...songData}}, {
 		new: true,
 		runValidators: true,
 	}).select(songEntry_selectAllFields)
-		.then((updatedSong) => {
-			if(!updatedSong) {
-				res.status(404).json({ success: false, message: "Song not found." });
-				return;
-			}
-			return updatedSong;
-		})
-		.catch((error) => {
-			res.status(400).json({ success: false, message: error.message });
-		});
-	;
+	.lean()
+	.catch((error) => {
+		res.status(400).json({ success: false, message: error.message });
+	});
+
+	if(!result) {
+		res.status(404).json({ success: false, message: "Song not found." });
+		return;
+	}
+	// await updateSearchQuery(id)
+	// .catch((error) => {
+	// 	console.error("Error updating search query after song update:", error);
+	// });
 	if (result && songData.subsonicAlbumId) {
 		try {
 			updateAlbumIds(result.album, songData.subsonicAlbumId);
@@ -214,8 +238,8 @@ songRouter.patch("/song/:id", requireLogin, async (req: Request, res: Response) 
 			console.error("Error updating album IDs:", error);
 		}
 	}
-
-	return res.json({ success: true, message: "Song updated successfully.", song: result });
+	// console.log(result)
+	return res.json({ success: true, message: "Song updated successfully.", song: {...result} });
 	
 });
 

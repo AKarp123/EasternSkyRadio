@@ -6,13 +6,14 @@ import axios from "axios";
 import ErrorContext from "../../providers/ErrorContext";
 import SongForm from "./SongForm";
 import { reducer } from "../../reducers/SetPlannerReducer";
-import { SetPlannerActionType, SetPlannerItem, SetPlannerAction, SetPlannerState } from "../../types/pages/admin/SetPlanner";
+import {  SetPlannerItem, SetPlannerAction, SetPlannerState } from "../../types/pages/admin/SetPlanner";
 import { Sync } from "../../types/global";
 import { Flex, Separator, Text, ScrollArea, Container, Grid, Spinner} from "@radix-ui/themes";
 import { Tabs } from "radix-ui";
 import Tooltip from "../Util/Tooltip";
 import Dialog from "../Util/Dialog";
 import Input from "../Util/Input";
+import LinkSong from "./LinkSong";
 
 
 const durationToString = (duration: number) => {
@@ -31,9 +32,11 @@ const SetPlanner = () => {
 		label: "",
 		toggleNewSongForm: false,
 		toggleDurationForm: false,
-		toggleLinkSongForm: false,
+		toggleSongLinkForm: false,
 		duration: "",
 		syncStatus: "",
+		subsonicSongId: "",
+		subsonicAlbumId: "",
 		firstLoad: true,
 	});
 	const [loading, setLoading] = useState(true);
@@ -234,6 +237,15 @@ const SetPlanner = () => {
 			</Grid>
 			<Grid>
 			</Grid>
+			
+
+			<Dialog open={state.toggleSongLinkForm} close onClose={() => dispatch({ type: "toggleSongLinkForm" })} title="Link Song">
+				<LinkSong
+					dispatch={dispatch}
+					subsonicAlbumId={state.subsonicAlbumId}
+					subsonicSongId={state.subsonicSongId}
+				/>
+			</Dialog>
 
 		</Container>
 

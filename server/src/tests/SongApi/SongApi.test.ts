@@ -4,7 +4,7 @@ import { initTest } from "../../init.js";
 import { withUser } from ".././helpers/withUser.js";
 import { ISongEntry, ISongEntrySubmission } from "../../types/SongEntry.js";
 import { generateSearchQuery } from "../../dbMethods.js";
-import { clearDatabase } from "../../config/db.js";
+import { clearDatabase, db } from "../../config/db.js";
 import { bulkCreateTestSongs, createShow, createShowSimple, createSong, createSongSimple } from ".././helpers/create.js";
 import { Types } from "mongoose";
 import { ShowEntrySubmission } from "../../types/ShowData.js";
@@ -110,7 +110,7 @@ describe("Test Create Song API", function () {
 		const res = await agent
 			.post("/api/song")
 			.send({ songData: newSong });
-		console.log(res.status)
+		console.log(res.status);
 		expect(res.body).toHaveProperty("success", false);
 		expect(res.status).toBe(400);
 	});
@@ -256,17 +256,16 @@ describe("Test Editing song API", () => {
 		let res = await createSong(newSong, agent);
 		expect(res.status).toBe(200);
 		let { searchQuery, ...rest } = res.body.song;
-		const editedSong: ISongEntrySubmission = {
-			...rest,
-			title: "Edited Title",
-		};
 
-		res = await agent.patch(`/api/song/${rest.songId}`).send({ songData: editedSong });
+		res = await agent.patch(`/api/song/${rest.songId}`).send({ songData: {...rest, title: "Edited Title" } });
 		expect(res.status).toBe(200);
 		expect(res.body).toHaveProperty("success", true);
-        
+        console.log(res.body)
 		expect(res.body.song.title).toBe("Edited Title");
-		expect(res.body.song.searchQuery).toContain("Edited Title".toLowerCase());
+		expect(res.body.song.artist).toBe(newSong.artist);
+		db.collections.songentries.findOne({ songId: rest.songId }).then((song) => {
+			expect(song?.searchQuery).toContain("Edited Title".toLowerCase());
+		});
 	});
 
 	test("edit validator", async() => {
@@ -316,6 +315,42 @@ describe("Test Editing song API", () => {
 
 	});
 
+	test("Edit song with missing params doesn't break query", async() => {
+
+
+		let res = await createSongSimple("Test1", "Album1", "Artist1", agent);
+		expect(res.status).toBe(200);
+		const songId = res.body.song.songId;
+		const query = res.body.song.searchQuery;
+
+		res = await agent.patch(`/api/song/${songId}`).send({ songData: { duration: 355 } });
+		expect(res.status).toBe(200);
+
+		res = await agent.get(`/api/song/${songId}`);
+		expect(res.status).toBe(200);
+		expect(res.body).toHaveProperty("success", true);
+		console.log(res.body)
+		expect(res.body.song.duration).toBe(355);
+		expect(res.body.song.searchQuery).toBe(query);
+
+
+	})
+
+	test("Partial Song Modify query update", async() => {
+		let res = await createSongSimple("Test2", "Album2", "Artist2", agent);
+		expect(res.status).toBe(200);
+		const songId = res.body.song.songId;
+
+		res = await agent.patch(`/api/song/${songId}`).send({ songData: { artist: "NewArtist2", title: "Title3", album: "Album3" } });
+		expect(res.status).toBe(200);
+		
+
+		res = await agent.get(`/api/song/${songId}`)
+		expect(res.body.song.searchQuery).toContain("newartist2");
+		expect(res.body.song.searchQuery).toContain("title3");
+		expect(res.body.song.searchQuery).toContain("album3");
+	})
+
 
 });
 
@@ -335,7 +370,7 @@ describe("Link Tests", async() => {
 			await createSongSimple("Test Song " + i, "LinkAlbum", "LinkArtist", agent);
 		}
 		let res = await agent.patch("/api/song/1")
-		.send({ songData: { subsonicAlbumId: "test1"}})
+			.send({ songData: { subsonicAlbumId: "test1" } });
 		expect(res.status).toBe(200);
 
 		res = await agent.get("/api/song/2");
@@ -344,9 +379,10 @@ describe("Link Tests", async() => {
 
 
 		
-	})
-})
+	});
 
+
+});
 describe("Song Date Tests", () => {
 	let agent: Awaited<ReturnType<typeof withUser>>;
 	beforeEach(async() => {

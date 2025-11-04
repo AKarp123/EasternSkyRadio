@@ -5,6 +5,7 @@ import initializeApp from "./init.js";
 import { pingServer } from "./config/subsonic.js";
 
 
+
 const startServer = async () => {
 	app.locals.subsonicEnabled = process.env.SUBSONIC_ENABLED || false;
 
@@ -25,6 +26,7 @@ const startServer = async () => {
 		console.error("Failed to connect to Subsonic server:", error);
 		app.locals.subsonicEnabled = false;
 	}
+
 	await initializeApp();
 	await applyMigrations();
 	

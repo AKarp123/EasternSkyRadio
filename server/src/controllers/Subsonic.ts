@@ -64,11 +64,7 @@ export const subsonicToISongEntry = async (song : Child): Promise<Omit<ISongEntr
 		album,
 		albumId,
 		id, // subsonic track iD
-		sortName,
 		duration,
-
-	
-
 	} = song;
 
 

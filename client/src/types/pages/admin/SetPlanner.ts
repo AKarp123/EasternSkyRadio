@@ -7,10 +7,12 @@ export interface SetPlannerState {
 	label: string;
 	toggleNewSongForm: boolean;
 	toggleDurationForm: boolean;
-	toggleLinkSongForm: boolean;
+	toggleSongLinkForm: boolean;
 	duration: string;
 	syncStatus: string;
 	firstLoad: boolean;
+	subsonicSongId: string;
+	subsonicAlbumId: string;
 }
 
 
@@ -29,9 +31,10 @@ export type SetPlannerActionType =
 	| "addBreak"
 	| "resetDurationForm"
 	| "setDuration"
+	| "setSubsonicIds"
 	| "toggleNewSongForm"
 	| "toggleDurationForm"
-	| "toggleLinkSongForm"
+	| "toggleSongLinkForm"
 	| "setTabState"
 	| "load"
 	| "loadSync"
