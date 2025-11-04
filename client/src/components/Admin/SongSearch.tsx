@@ -27,7 +27,6 @@ const SongSearch = ({ dispatch, parent }: SongSearchProperties) => {
 	const [searchText, setSearchText] = useState<string>("");
 	const setError = useContext(ErrorContext);
 	const searchDebounced = useDebouncedCallback(async(query) => {
-		setSearchResults([]);
 		setLoading(true)
 		if (query === "") {
 			setSearchResults([]);

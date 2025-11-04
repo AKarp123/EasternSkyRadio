@@ -34,7 +34,6 @@ const LinkSong = ({ dispatch, subsonicSongId, subsonicAlbumId}: SongSearchProper
 	const [searchText, setSearchText] = useState<string>("");
 	const setError = useContext(ErrorContext);
 	const searchDebounced = useDebouncedCallback(async(query) => {
-		setSearchResults([]);
 		setLoading(true)
 		if (query === "") {
 			setSearchResults([]);
@@ -58,7 +57,7 @@ const LinkSong = ({ dispatch, subsonicSongId, subsonicAlbumId}: SongSearchProper
 			.catch((error) => {
 				setError(error.message);
 			})
-			setLoading(false)
+		setLoading(false)
 
 	}, 100);
 
@@ -195,13 +194,13 @@ const Buttons = ({ song }: ButtonProperties) => {
 					subsonicSongId,
 					subsonicAlbumId,
 				})
-				.then(() => {
-					setError("Song linked successfully", "success");
-					dispatch({ type: "toggleSongLinkForm" });
-				})
-				.catch((error) => {
-					setError(`Error linking song: ${error.message}`);
-				});
+					.then(() => {
+						setError("Song linked successfully", "success");
+						dispatch({ type: "toggleSongLinkForm" });
+					})
+					.catch((error) => {
+						setError(`Error linking song: ${error.message}`);
+					});
 			}}
 		>
 			Link

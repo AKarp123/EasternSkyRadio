@@ -110,7 +110,7 @@ describe("Test Create Song API", function () {
 		const res = await agent
 			.post("/api/song")
 			.send({ songData: newSong });
-		console.log(res.status);
+
 		expect(res.body).toHaveProperty("success", false);
 		expect(res.status).toBe(400);
 	});
@@ -260,7 +260,7 @@ describe("Test Editing song API", () => {
 		res = await agent.patch(`/api/song/${rest.songId}`).send({ songData: {...rest, title: "Edited Title" } });
 		expect(res.status).toBe(200);
 		expect(res.body).toHaveProperty("success", true);
-        console.log(res.body)
+
 		expect(res.body.song.title).toBe("Edited Title");
 		expect(res.body.song.artist).toBe(newSong.artist);
 		db.collections.songentries.findOne({ songId: rest.songId }).then((song) => {
@@ -329,7 +329,7 @@ describe("Test Editing song API", () => {
 		res = await agent.get(`/api/song/${songId}`);
 		expect(res.status).toBe(200);
 		expect(res.body).toHaveProperty("success", true);
-		console.log(res.body)
+
 		expect(res.body.song.duration).toBe(355);
 		expect(res.body.song.searchQuery).toBe(query);
 
@@ -341,14 +341,14 @@ describe("Test Editing song API", () => {
 		expect(res.status).toBe(200);
 		const songId = res.body.song.songId;
 
-		res = await agent.patch(`/api/song/${songId}`).send({ songData: { artist: "NewArtist2", title: "Title3", album: "Album3" } });
+		res = await agent.patch(`/api/song/${songId}`).send({ songData: { artist: "NewArtist2",  } });
 		expect(res.status).toBe(200);
 		
 
 		res = await agent.get(`/api/song/${songId}`)
 		expect(res.body.song.searchQuery).toContain("newartist2");
-		expect(res.body.song.searchQuery).toContain("title3");
-		expect(res.body.song.searchQuery).toContain("album3");
+		expect(res.body.song.searchQuery).toContain("album2");
+
 	})
 
 

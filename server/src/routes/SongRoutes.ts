@@ -1,11 +1,11 @@
 import { Router, Request, Response } from "express";
 import SongEntry, { songEntry_selectAllFields } from "../models/SongEntry.js";
-import { addSong, generateSearchQuery } from "../dbMethods.js";
+import { addSong } from "../dbMethods.js";
 import requireLogin from "./requireLogin.js";
 import { ISongEntry } from "../types/SongEntry.js";
 import { searchSubsonic } from "../controllers/Subsonic.js";
 import { app } from "../app.js";
-import { updateAlbumIds } from "../controllers/Song.js";
+import { updateAlbumIds, updateSong } from "../controllers/Song.js";
 
 
 const songRouter = Router();
@@ -196,36 +196,18 @@ songRouter.patch("/song/:id", requireLogin, async (req: Request, res: Response) 
 
 
 	const id = Number.parseInt(req.params.id);
-
-	const shouldUpdateSearchQuery =
-  "artist" in songData &&
-  "title" in songData &&
-  "album" in songData ||
-  "origTitle" in songData ||
-  "origAlbum" in songData;
-
-if (shouldUpdateSearchQuery) {
-  songData.searchQuery = generateSearchQuery({
-    artist: songData.artist ?? "",
-    title: songData.title ?? "",
-    album: songData.album ?? "",
-    origTitle: songData.origTitle ?? "",
-    origAlbum: songData.origAlbum ?? "",
-  });
-}
-	const result = await SongEntry.findOneAndUpdate({ songId: id }, {$set: { ...songData}}, {
-		new: true,
-		runValidators: true,
-	}).select(songEntry_selectAllFields)
-	.lean()
-	.catch((error) => {
-		res.status(400).json({ success: false, message: error.message });
+	const result =  await updateSong(id, songData).catch((error) => {
+		if (error.message === "Song not found.") {
+			res.status(404).json({ success: false, message: "Song not found." });
+		} else {
+			if (error.name === "ValidationError") {
+				res.status(400).json({ success: false, message: `Validation Error: ${error.message}` });
+			} else {
+				res.status(500).json({ success: false, message: `Failed to update song: ${error.message}` });
+			}
+		}
+		return null;
 	});
-
-	if(!result) {
-		res.status(404).json({ success: false, message: "Song not found." });
-		return;
-	}
 	// await updateSearchQuery(id)
 	// .catch((error) => {
 	// 	console.error("Error updating search query after song update:", error);
@@ -238,8 +220,7 @@ if (shouldUpdateSearchQuery) {
 			console.error("Error updating album IDs:", error);
 		}
 	}
-	// console.log(result)
-	return res.json({ success: true, message: "Song updated successfully.", song: {...result} });
+	return res.json({ success: true, message: "Song updated successfully.", song: { ...result } });
 	
 });
 
