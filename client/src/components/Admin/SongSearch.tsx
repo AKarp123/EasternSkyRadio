@@ -1,5 +1,5 @@
 import React, { useState, useContext, Key, useRef, useEffect} from "react";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { useDebouncedCallback } from "use-debounce";
 import ErrorContext from "../../providers/ErrorContext";
 import { SongEntry } from "../../types/Song";
@@ -63,8 +63,10 @@ const SongSearch = ({ dispatch, parent }: SongSearchProperties) => {
 			}
 			setSearchResults((prev) => [...prev, ...res.data.searchResults]);
 		})
-			.catch((error) => {
-				setError(error.message);
+			.catch((error : AxiosError) => {
+				if(error.response?.status !== 503) {
+					setError(error.message);
+				}
 			})
 			.finally(() => setLoading(false));
 	}, 100);
@@ -226,10 +228,14 @@ const Buttons = ({ song }: ButtonProperties) => {
 	const AddNew = () => 
 		(<button
 			className="text-white font-pixel text-md focus:outline-none focus:shadow-outline cursor-pointer HoverButtonStyles rounded-md px-2 "
-			onClick={() => dispatch({ type: "addSong", payload: song })}
+			onClick={() => {
+				dispatch({ type: "subNewSong", payload: song });
+
+			}}
 		>
 			Add New
-		</button>)
+		</button>);
+		
 	
 
 

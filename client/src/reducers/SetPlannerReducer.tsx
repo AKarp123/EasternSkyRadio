@@ -144,6 +144,14 @@ export const reducer = (state: SetPlannerState, action: SetPlannerAction) => {
 				tabState: action.payload,
 			};
 		}
+		case "subNewSong": {
+
+			return {
+				...state,
+				toggleNewSongForm: !state.toggleNewSongForm,
+				newSong: {songId: -1, ...action.payload},
+			};
+		}
 		case "load": {
 			return action.payload;
 		}

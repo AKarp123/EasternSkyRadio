@@ -1,4 +1,4 @@
-import { SongEntry } from "../../Song"
+import { SongEntry, SongEntryForm } from "../../Song"
 
 
 export interface SetPlannerState {
@@ -13,6 +13,7 @@ export interface SetPlannerState {
 	firstLoad: boolean;
 	subsonicSongId: string;
 	subsonicAlbumId: string;
+	newSong: SongEntryForm | null;
 }
 
 
@@ -35,6 +36,7 @@ export type SetPlannerActionType =
 	| "toggleNewSongForm"
 	| "toggleDurationForm"
 	| "toggleSongLinkForm"
+	| "subNewSong"
 	| "setTabState"
 	| "load"
 	| "loadSync"

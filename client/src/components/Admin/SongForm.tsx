@@ -46,6 +46,12 @@ type EditProperties = SongFormProperties & {
 	submit: (e: React.FormEvent<HTMLFormElement>, songData: SongEntryForm) => void;
 };
 
+type SubsonicAddProperties = SongFormProperties & {
+	songData: SongEntryForm;
+	type: "subsonicAdd";
+	submit?: never;
+};
+
 type SongFormProperties = {
 	parentDispatch: React.Dispatch<any>;
 };
@@ -59,16 +65,33 @@ const toSongEntryForm: (song: SongEntry) => SongEntryForm = (song) => {
 	};
 }
 
+const fillMissingFields = (songData: Partial<SongEntryForm>) : SongEntryForm => {
+	return {
+		songId: -1,
+		elcroId: songData.elcroId || "",
+		artist: songData.artist || "",
+		title: songData.title || "",
+		origTitle: songData.origTitle || "",
+		album: songData.album || "",
+		origAlbum: songData.origAlbum || "",
+		albumImageLoc: songData.albumImageLoc || "",
+		genres: songData.genres || [],
+		specialNote: songData.specialNote || "",
+		songReleaseLoc: songData.songReleaseLoc || [],
+		duration: songData.duration || 0,
+	};
+};
+
 const SongForm = ({
 	songData,
 	type,
 	submit,
 	parentDispatch,
-}: AddProperties | EditProperties) => {
+}: AddProperties | EditProperties | SubsonicAddProperties) => {
 	const setError = useContext(ErrorContext);
 	const [state, dispatch] = useReducer(
 		SongFormReducer,
-		type === "edit" ? toSongEntryForm(songData) : InitialState
+		type === "edit" ? toSongEntryForm(songData) : (type === "subsonicAdd" ? fillMissingFields(songData) : InitialState)
 	);
 	const [genreInput, setGenreInput] = useState("");
 	const [songReleaseInput, setSongReleaseInput] = useState("");

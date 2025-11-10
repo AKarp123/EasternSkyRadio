@@ -38,6 +38,7 @@ const SetPlanner = () => {
 		subsonicSongId: "",
 		subsonicAlbumId: "",
 		firstLoad: true,
+		newSong: null,
 	});
 	const [loading, setLoading] = useState(true);
 
@@ -127,7 +128,7 @@ const SetPlanner = () => {
 	const duration = calculateDurationAtPoint();
 
 
-
+	console.log(state.toggleNewSongForm, state.newSong)
 
 	return (
 		<Container size="4" className="min-h-screen flex  flex-col mx-auto max-w-[85%]">
@@ -215,13 +216,7 @@ const SetPlanner = () => {
 								/>
 							)}
 
-							<Dialog open={state.toggleNewSongForm} close onClose={() => dispatch({ type: "toggleNewSongForm" })} title="Add New Song">
-								<SongForm
-									parentDispatch={dispatch}
-									type="add"
-
-								/>
-							</Dialog>
+							
 								
 							<SetPlannerButtons dispatch={dispatch} />
 
@@ -245,6 +240,20 @@ const SetPlanner = () => {
 					subsonicAlbumId={state.subsonicAlbumId}
 					subsonicSongId={state.subsonicSongId}
 				/>
+			</Dialog>
+			<Dialog open={state.toggleNewSongForm} close onClose={() => dispatch({ type: "toggleNewSongForm" })} title="Add New Song">
+				{state.newSong === null ? (
+					<SongForm
+						type="add"
+						parentDispatch={dispatch}
+					/>
+				) : (
+					<SongForm
+						type="subsonicAdd"
+						songData={state.newSong}
+						parentDispatch={dispatch}
+					/>
+				)}
 			</Dialog>
 
 		</Container>
