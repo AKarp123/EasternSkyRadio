@@ -208,10 +208,6 @@ songRouter.patch("/song/:id", requireLogin, async (req: Request, res: Response) 
 		}
 		return null;
 	});
-	// await updateSearchQuery(id)
-	// .catch((error) => {
-	// 	console.error("Error updating search query after song update:", error);
-	// });
 	if (result && songData.subsonicAlbumId) {
 		try {
 			updateAlbumIds(result.album, songData.subsonicAlbumId);

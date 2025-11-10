@@ -152,6 +152,12 @@ export const reducer = (state: SetPlannerState, action: SetPlannerAction) => {
 				newSong: {songId: -1, ...action.payload},
 			};
 		}
+		case "clearNewSong": {
+			return {
+				...state,
+				newSong: null,
+			};
+		}
 		case "load": {
 			return action.payload;
 		}

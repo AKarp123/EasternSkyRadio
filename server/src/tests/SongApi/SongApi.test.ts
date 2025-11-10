@@ -66,6 +66,41 @@ describe("Test Create Song API", function () {
 		expect(res.body.song.songId).toBe(songId);
 	});
 
+	test("duplicate subsonicSongId", async () => {
+		const newSong: Omit<ISongEntry, "songId" | "searchQuery" | "createdAt"> = {
+			title: "unique title",
+			artist: "unique artist",
+			album: "unique album",
+			duration: 180,
+			genres: ["Rock"],
+			albumImageLoc: "",
+			subsonicSongId: "subsonic123",
+		};
+		let res = await agent
+			.post("/api/song")
+			.send({ songData: newSong });
+		expect(res.body).toHaveProperty("success", true);
+		expect(res.status).toBe(200);
+
+
+		const newSong2: Omit<ISongEntry, "songId" | "searchQuery" | "createdAt"> = {
+			title: "another unique title",
+			artist: "another unique artist",
+			album: "another unique album",
+			duration: 200,
+			genres: ["Pop"],
+			albumImageLoc: "",
+			subsonicSongId: "subsonic123",
+		};
+		res = await agent
+			.post("/api/song")
+			.send({ songData: newSong2 });
+		console.log(res.status, res.body);
+		expect(res.body).toHaveProperty("success", false);
+		expect(res.body.message).toBe("Song Already exists");
+		expect(res.body.song.album).toBe(newSong.album);
+	});
+
 	test("create song with missing params", async () => {
 		const newSong: Partial<ISongEntry> = {
 			duration: 180,
@@ -356,16 +391,16 @@ describe("Test Editing song API", () => {
 
 describe("Link Tests", async() => {
 	let agent: Awaited<ReturnType<typeof withUser>>;
-	beforeAll(async () => {
+	beforeEach(async () => {
 		await initTest();
 		agent = await withUser();
 
 	});
-	afterAll(async() => {
+	afterEach(async() => {
 		await clearDatabase();
 	});
 
-	test("Link all album ids", async() => {
+	test("Link all album ids when editing", async() => {
 		for(let i = 1; i<=2; i++) {
 			await createSongSimple("Test Song " + i, "LinkAlbum", "LinkArtist", agent);
 		}
@@ -380,6 +415,37 @@ describe("Link Tests", async() => {
 
 		
 	});
+
+	test("Link album ids when creating song", async() => {
+		let res = await createSong({
+			title: "Link Song 1",
+			artist: "Link Artist",
+			album: "Link Album 2",
+			duration: 200,
+			genres: ["Rock"],
+			albumImageLoc: "",
+			subsonicAlbumId: ""
+		}, agent);
+		expect(res.status).toBe(200);
+
+		res = await createSong({
+			title: "Link Song 2",
+			artist: "Link Artist",
+			album: "Link Album 2",
+			duration: 250,
+			genres: ["Rock"],
+			albumImageLoc: "",
+			subsonicAlbumId: "albumLinkTest"
+		}, agent);
+		expect(res.status).toBe(200);
+
+		res = await agent.get("/api/song/1");
+		expect(res.status).toBe(200);
+		expect(res.body.song.subsonicAlbumId).toBe("albumLinkTest");
+
+	});
+
+
 
 
 });

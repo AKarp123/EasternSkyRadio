@@ -42,6 +42,7 @@ export type SetPlannerActionType =
 	| "loadSync"
 	| "setSyncStatus"
 	| "clearList"
+	| "clearNewSong"
 	| "reset";
 
 export type SetPlannerAction = {

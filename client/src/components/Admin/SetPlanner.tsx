@@ -174,21 +174,6 @@ const SetPlanner = () => {
 					>
 						Clear List
 					</button>
-					{/* {state.songsList.length > 0 && (
-                            <Box
-                                sx={{
-                                    my: 1,
-                                }}
-                            >
-                                <Button onClick={save}>Save</Button>
-                                <Button
-                                    onClick={() => dispatch({ type: "reset" })}
-                                >
-                                    {" "}
-                                    Reset
-                                </Button>
-                            </Box>
-                        )} */}
 				</div>
 				<div>
 
@@ -241,7 +226,9 @@ const SetPlanner = () => {
 					subsonicSongId={state.subsonicSongId}
 				/>
 			</Dialog>
-			<Dialog open={state.toggleNewSongForm} close onClose={() => dispatch({ type: "toggleNewSongForm" })} title="Add New Song">
+			<Dialog open={state.toggleNewSongForm} close onClose={() => {dispatch({ type: "toggleNewSongForm" });
+				dispatch({ type: "clearNewSong" });
+			}} title="Add New Song">
 				{state.newSong === null ? (
 					<SongForm
 						type="add"

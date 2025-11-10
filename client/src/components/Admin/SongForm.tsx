@@ -65,22 +65,21 @@ const toSongEntryForm: (song: SongEntry) => SongEntryForm = (song) => {
 	};
 }
 
-const fillMissingFields = (songData: Partial<SongEntryForm>) : SongEntryForm => {
-	return {
-		songId: -1,
-		elcroId: songData.elcroId || "",
-		artist: songData.artist || "",
-		title: songData.title || "",
-		origTitle: songData.origTitle || "",
-		album: songData.album || "",
-		origAlbum: songData.origAlbum || "",
-		albumImageLoc: songData.albumImageLoc || "",
-		genres: songData.genres || [],
-		specialNote: songData.specialNote || "",
-		songReleaseLoc: songData.songReleaseLoc || [],
-		duration: songData.duration || 0,
-	};
-};
+const fillMissingFields = (songData: Partial<SongEntryForm>): SongEntryForm => ({
+	songId: -1,
+	elcroId: "",
+	artist: "",
+	title: "",
+	origTitle: "",
+	album: "",
+	origAlbum: "",
+	albumImageLoc: "",
+	genres: [],
+	specialNote: "",
+	songReleaseLoc: [],
+	duration: 0,
+	...songData,
+});
 
 const SongForm = ({
 	songData,
