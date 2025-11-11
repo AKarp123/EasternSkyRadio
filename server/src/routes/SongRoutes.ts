@@ -216,15 +216,20 @@ songRouter.patch("/song/:id", requireLogin, async (req: Request, res: Response) 
 	const result =  await updateSong(id, songData).catch((error) => {
 		if (error.message === "Song not found.") {
 			res.status(404).json({ success: false, message: "Song not found." });
+			return;
 		} else {
 			if (error.name === "ValidationError") {
 				res.status(400).json({ success: false, message: `Validation Error: ${error.message}` });
+				return;
 			} else {
 				res.status(500).json({ success: false, message: `Failed to update song: ${error.message}` });
+				return;
 			}
 		}
-		return null;
 	});
+	if(!result) {
+		return;
+	}
 	if (result && songData.subsonicAlbumId) {
 		try {
 			updateAlbumIds(result.album, songData.subsonicAlbumId);

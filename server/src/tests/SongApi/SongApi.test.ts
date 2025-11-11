@@ -1,14 +1,14 @@
-import { describe, test, expect, beforeAll, beforeEach, afterAll, afterEach, mock } from "bun:test";
+import { describe, test, expect, beforeAll, beforeEach, afterAll, afterEach} from "bun:test";
 
 import { initTest } from "../../init.js";
 import { withUser } from ".././helpers/withUser.js";
 import { ISongEntry, ISongEntrySubmission } from "../../types/SongEntry.js";
 import { generateSearchQuery } from "../../dbMethods.js";
 import { clearDatabase, db } from "../../config/db.js";
-import { bulkCreateTestSongs, createShow, createShowSimple, createSong, createSongSimple } from ".././helpers/create.js";
+import { createShow, createShowSimple, createSong, createSongSimple } from ".././helpers/create.js";
 import { Types } from "mongoose";
 import { ShowEntrySubmission } from "../../types/ShowData.js";
-import { uploadImageFromURL } from "../../controllers/upload.js";
+
 
 
 afterAll(async() => {

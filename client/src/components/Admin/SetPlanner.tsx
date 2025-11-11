@@ -314,7 +314,7 @@ const SetPlannerCard = ({ entry, state, dispatch, durationAtPoint, index }: SetP
 		return (
 			<Flex direction={"column"} className="p-2 border rounded-md">
 				<div className="flex flex-row justify-between">
-					<Text size="5" className="font-pixel pl-2">{entry.item.label} - {durationToString(entry.item.duration)}min</Text>
+					<Text size="5" className="font-pixel pl-2">{entry.item.label} - {durationToString(entry.item.duration)}</Text>
 					
 				</div>
 				<div className="flex flex-row items-center justify-between">

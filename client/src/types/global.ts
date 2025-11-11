@@ -15,9 +15,7 @@ export interface User {
 	__v: number;
 }
 
-export type UserState = "Loading" | {
-	user: User,
-} | null;
+export type UserState = "Loading" | User | null;
 
 export type SiteConfig = {
 	subsonicBaseUrl: string;
