@@ -1,8 +1,11 @@
 import { Router, Request, Response } from "express";
 import SongEntry, { songEntry_selectAllFields } from "../models/SongEntry.js";
-import { addSong, generateSearchQuery } from "../dbMethods.js";
+import { addSong } from "../dbMethods.js";
 import requireLogin from "./requireLogin.js";
 import { ISongEntry } from "../types/SongEntry.js";
+import { searchSubsonic } from "../controllers/Subsonic.js";
+import { app } from "../app.js";
+import { updateAlbumIds, updateSong } from "../controllers/Song.js";
 
 
 const songRouter = Router();
@@ -29,10 +32,18 @@ songRouter.get("/song/:id", requireLogin, async (req : Request, res : Response) 
 });
 
 songRouter.get("/search", requireLogin, async (req: Request, res: Response) => {
-	try {
-		if (req.query.query === "" || (req.query.query === undefined && req.query.elcroId === undefined)) {
-			res.status(400).json({ success: false, message: "No search query provided." });
-		} else if (req.query.elcroId) {
+	
+	const hasQuery = req.query.query && req.query.query !== "";
+	const hasElcroId = req.query.elcroId !== undefined;
+	const hasAlbumId = req.query.albumId !== undefined;
+
+	
+	if (!hasQuery && !hasElcroId && !hasAlbumId) {
+		res.status(400).json({ success: false, message: "No search query provided." });
+		return;
+	}
+	if (req.query.elcroId) {
+		try {
 			const searchResults = await SongEntry.find({
 				elcroId: req.query.elcroId,
 			}).select(
@@ -42,26 +53,61 @@ songRouter.get("/search", requireLogin, async (req: Request, res: Response) => {
 				success: true,
 				searchResults: searchResults,
 			});
-		} else {
-			const raw = (req.query.query as string)
-				.trim()
-				.replaceAll(/[^\p{L}\p{N}\s]/gu, "")
-				.toLowerCase();
-			
-			const words = raw.split(/\s+/);
-			const conditions = words.map((word) => ({
-				searchQuery: { $regex: new RegExp(word, "i") },
-			}));
-			const searchResults = await SongEntry.find({
-				$and: conditions,
-			})
-				.select((req.user ? songEntry_selectAllFields : ""))
-				.limit(20);
-			res.json({ success: true, searchResults: searchResults });
+		} 
+		catch (error) {
+			res.status(500).json({ success: false, message: error instanceof Error ? error.message : "Server error." });
 		}
-	} catch (error) {
-		res.json({ success: false, message: error instanceof Error ? error.message : 'An unknown error occurred' });
+			
+	} 
+	else if (req.query.albumId) {
+		try {
+			const searchResults = await SongEntry.find({
+				subsonicAlbumId: req.query.albumId,
+			}).select(songEntry_selectAllFields);
+			return res.json({
+				success: true,
+				searchResults: searchResults,
+			});
+			
+		} 
+		catch (error) {
+			return res.status(500).json({ success: false, message: error instanceof Error ? error.message : "Server error." });
+		}
 	}
+	else if (req.query.subsonic === "true") {
+
+		if(app.locals.subsonicEnabled === false) {
+			return res.status(503).json({ success: false, message: "This feature is not enabled." });
+		}
+
+		try {
+			const searchResults = await searchSubsonic(req.query.query as string);
+			return res.status(200).json({ success: true, searchResults });
+		}
+		catch (error) {
+			res.status(500).json({ success: false, message: error instanceof Error ? error.message : "Server error." });
+			return;
+		}
+	}
+	else {
+		const raw = (req.query.query as string)
+			.trim()
+			.replaceAll(/[^\p{L}\p{N}\s]/gu, "")
+			.toLowerCase();
+			
+		const words = raw.split(/\s+/);
+		const conditions = words.map((word) => ({
+			searchQuery: { $regex: new RegExp(word, "i") },
+		}));
+		const searchResults = await SongEntry.find({
+			$and: conditions,
+		})
+			.sort({ artist: 1 })
+			.select((req.user ? songEntry_selectAllFields : ""))
+			.limit(20);
+		res.json({ success: true, searchResults: searchResults });
+	}
+	
 });
 
 songRouter.post("/song", requireLogin, async (req : Request, res : Response) => {
@@ -71,6 +117,20 @@ songRouter.post("/song", requireLogin, async (req : Request, res : Response) => 
 	if (!songData || !songData.title || !songData.artist || !songData.album) {
 		res.status(400).json({ success: false, message: "No song data provided." });
 		return;
+	}
+
+	if(songData.subsonicSongId) {
+		const song = await SongEntry.findOne({
+			subsonicSongId: songData.subsonicSongId
+		}).select(songEntry_selectAllFields);
+		if(song) {
+			res.json({
+				success: false,
+				message: "Song with this Subsonic ID already exists.",
+				song: song,
+			});
+			return;
+		}
 	}
 
 
@@ -100,6 +160,10 @@ songRouter.post("/song", requireLogin, async (req : Request, res : Response) => 
 	}
 	addSong(songData)
 		.then((newSong) => {
+			if (songData.subsonicAlbumId) {
+				updateAlbumIds(newSong.album, songData.subsonicAlbumId);
+			}
+
 			res.json({
 				success: true,
 				message: "Song added successfully.",
@@ -107,7 +171,10 @@ songRouter.post("/song", requireLogin, async (req : Request, res : Response) => 
 			});
 		})
 		.catch((error) => {
-			res.status(400).json({ success: false, message: error.message });
+			res.status(400).json({
+				success: false,
+				message: error instanceof Error ? error.message : String(error),
+			});
 		});
 });
 
@@ -135,31 +202,43 @@ songRouter.delete("/song/:songId", requireLogin, async (req: Request, res: Respo
 
 songRouter.patch("/song/:id", requireLogin, async (req: Request, res: Response) => {
 	const { _id, songId, ...songData } : { _id: string, songId: number } & ISongEntry = req.body.songData;
+
+
+
 	if (!songData || Number.isNaN(Number.parseInt(req.params.id))) {
 		res.status(400).json({ success: false, message: "No Song Data or incorrect id" });
 		return;
 	}
+
+
+
 	const id = Number.parseInt(req.params.id);
-	const searchQuery = generateSearchQuery(songData);
-	SongEntry.findOneAndUpdate({ songId: id }, { ...songData, searchQuery }, {
-		new: true,
-		runValidators: true,
-	}).select(songEntry_selectAllFields)
-		.then((updatedSong) => {
-			if(!updatedSong) {
-				res.status(404).json({ success: false, message: "Song not found." });
+	const result =  await updateSong(id, songData).catch((error) => {
+		if (error.message === "Song not found.") {
+			res.status(404).json({ success: false, message: "Song not found." });
+			return;
+		} else {
+			if (error.name === "ValidationError") {
+				res.status(400).json({ success: false, message: `Validation Error: ${error.message}` });
+				return;
+			} else {
+				res.status(500).json({ success: false, message: `Failed to update song: ${error.message}` });
 				return;
 			}
-			res.json({
-				success: true,
-				message: "Song updated successfully.",
-				song: updatedSong,
-			});
-		})
-		.catch((error) => {
-			res.status(400).json({ success: false, message: error.message });
-		});
-	;
+		}
+	});
+	if(!result) {
+		return;
+	}
+	if (result && songData.subsonicAlbumId) {
+		try {
+			updateAlbumIds(result.album, songData.subsonicAlbumId);
+		}
+		catch (error) {
+			console.error("Error updating album IDs:", error);
+		}
+	}
+	return res.json({ success: true, message: "Song updated successfully.", song: { ...result } });
 	
 });
 

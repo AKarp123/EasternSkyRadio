@@ -19,11 +19,5 @@ export async function up(connection: Connection): Promise<void> {
 
 export async function down(connection: Connection): Promise<void> {
 	// Write migration here
-
-	connection
-		.model<ISongEntry>("SongEntry", songEntrySchema)
-		.updateMany({}, { $unset: { searchQuery: "" } })
-		.exec();
-	connection.model("SongEntry").ensureIndexes();
-	connection.deleteModel("SongEntry");
+	await connection.db?.collection("songentries").updateMany({}, { $unset: { searchQuery: "" } });
 }

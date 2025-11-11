@@ -14,7 +14,7 @@ const Chip = ({ label, onDelete, removeLabel }: ChipProps) => {
 			<span>{label}</span>
 			{onDelete && (
 				<DisplayTooltip content={removeLabel || "Delete"}>
-					<button onClick={onDelete} className="cursor-pointer">
+					<button onClick={onDelete} type="button" className="cursor-pointer">
 						<DeleteIcon size={16} color="" strokeWidth={5} radius={0} />
 					</button>
 				</DisplayTooltip>

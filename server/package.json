@@ -10,7 +10,7 @@
     "build": "bun build src/start.ts migrations/*.ts --outdir dist --target node --external passport --external passport-local --external passport-local-mongoose --minify --sourcemap=linked",
     "lint": "bunx eslint src/**/*.ts src/*.ts",
     "lint:fix": "bunx eslint src/** migrations/** --fix",
-    "migrate-server" : "bun run --env-file .env src/migrations.ts"
+    "migrate-server": "bun run --env-file .env src/migrations.ts"
   },
   "keywords": [],
   "author": "",
@@ -32,6 +32,7 @@
     "passport": "^0.7.0",
     "passport-local": "^1.0.0",
     "passport-local-mongoose": "^8.0.0",
+    "subsonic-api": "^3.2.0",
     "ts-migrate-mongoose": "^4.0.9"
   },
   "type": "module",

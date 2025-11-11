@@ -1,4 +1,4 @@
-import { SongEntry } from "../../Song"
+import { SongEntry, SongEntryForm } from "../../Song"
 
 
 export interface SetPlannerState {
@@ -7,9 +7,13 @@ export interface SetPlannerState {
 	label: string;
 	toggleNewSongForm: boolean;
 	toggleDurationForm: boolean;
+	toggleSongLinkForm: boolean;
 	duration: string;
 	syncStatus: string;
 	firstLoad: boolean;
+	subsonicSongId: string;
+	subsonicAlbumId: string;
+	newSong: SongEntryForm | null;
 }
 
 
@@ -18,25 +22,28 @@ export type SetPlannerItem =
   | { type: "Break"; item: { label: string; duration: number } };
 
 
-export enum SetPlannerActionType {
-	AddSong = "addSong",
-	EditSong = "editSong",
-	SwapUp = "swapUp",
-	SwapDown = "swapDown",
-	RemoveSong = "removeSong",
-	SetLabel = "setLabel",
-	AddBreak = "addBreak",
-	ResetDurationForm = "resetDurationForm",
-	SetDuration = "setDuration",
-	ToggleNewSongForm = "toggleNewSongForm",
-	ToggleDurationForm = "toggleDurationForm",
-	SetTabState = "setTabState",
-	Load = "load",
-	LoadSync = "loadSync",
-	SetSyncStatus = "setSyncStatus",
-	ClearList = "clearList",
-	Reset = "reset",
-}
+export type SetPlannerActionType =
+	| "addSong"
+	| "editSong"
+	| "swapUp"
+	| "swapDown"
+	| "removeSong"
+	| "setLabel"
+	| "addBreak"
+	| "resetDurationForm"
+	| "setDuration"
+	| "setSubsonicIds"
+	| "toggleNewSongForm"
+	| "toggleDurationForm"
+	| "toggleSongLinkForm"
+	| "subNewSong"
+	| "setTabState"
+	| "load"
+	| "loadSync"
+	| "setSyncStatus"
+	| "clearList"
+	| "clearNewSong"
+	| "reset";
 
 export type SetPlannerAction = {
 	type: SetPlannerActionType;

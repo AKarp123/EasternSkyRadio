@@ -3,6 +3,8 @@ export interface ISongEntry {
     _id?: string,
     songId: number,
     elcroId? : string,
+    subsonicSongId? : string,
+    subsonicAlbumId?: string,
     artist: string,
     title: string,
     origTitle?: string,
@@ -15,24 +17,18 @@ export interface ISongEntry {
     duration: number,
     lastPlayed? : Date,
     searchQuery: string, 
-    createdAt: Date
+    createdAt?: Date,
+    updatedAt?: Date,
+
 }
+
 
 export interface ISongEntrySubmission extends Omit<ISongEntry, "songId" | "searchQuery" | "createdAt"> {
 
 }
 
 type songReleaseLocation = {
-    service: songReleaseService,
+    service: "Spotify" | "Apple Music" | "YouTube" | "Other" | "Purchase" | "Download",
     link: string,
     description?: string,
-}
-
-type songReleaseService = {
-    Spotify: "Spotify",
-    AppleMusic: "Apple Music",
-    YouTube: "YouTube",
-    Other: "Other",
-    Purchase: "Purchase",
-    Download: "Download"
 }

@@ -17,8 +17,14 @@ export interface User {
 
 export type UserState = "Loading" | User | null;
 
+export type SiteConfig = {
+	subsonicBaseUrl: string;
+	subsonicEnabled: boolean;
+}
+
 export type UserContextType = {
 	user: UserState,
+	siteConfig?: SiteConfig | null;
 	setUser: (user: UserState) => void
 }
 

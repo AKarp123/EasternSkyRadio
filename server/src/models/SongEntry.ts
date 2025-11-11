@@ -25,6 +25,8 @@ export const songEntrySchema = new schema<ISongEntry>({
 			message: (props : { value: any }) => `${props.value} is not a string of length 6`,
 		},
 	},
+	subsonicSongId: { type: String, trim: true, required: false, unique: true, select: false, sparse: true },
+	subsonicAlbumId: { type: String, trim: true, required: false, select: false },
 	artist: { type: String, trim: true, required: [true, "Missing artist field"] },
 	title: { type: String, trim: true, required: [true, "Missing title field"] },
 	origTitle: { type: String, trim: true, required: false },
@@ -36,7 +38,7 @@ export const songEntrySchema = new schema<ISongEntry>({
 		default: "placeholder",
 	},
 	genres: { type: [String], validate: (v: any) => Array.isArray(v) && v.length > 0, required: [true, "Missing genres field"] },
-	specialNote: { type: String, trim: true, required: false },
+	specialNote: { type: String, trim: true, required: false, select: false },
 	songReleaseLoc: {
 		type: [
 			{
@@ -72,11 +74,15 @@ export const songEntrySchema = new schema<ISongEntry>({
 	},
 }, { versionKey: false, timestamps: true });
 
+songEntrySchema.path("createdAt").select(false);
+songEntrySchema.path("updatedAt").select(false);
+
 
 /**
  * Reselects all fields except __v
  */
-export const songEntry_selectAllFields = "+elcroId +duration +lastPlayed +searchQuery -__v";
+export const songEntry_selectAllFields = "+elcroId +duration +lastPlayed +searchQuery -__v +createdAt +updatedAt +specialNote +subsonicSongId +subsonicAlbumId";
+
 
 songEntrySchema.pre("validate", function (next) {
 	if (this.elcroId) {
@@ -111,7 +117,6 @@ songEntrySchema.pre("save", async function (next) {
 		if (existingSong) {
 			this.albumImageLoc = existingSong.albumImageLoc;
 			this.origAlbum = existingSong.origAlbum;
-			this.songReleaseLoc = existingSong.songReleaseLoc;
 		}
 	}
 	next();
@@ -124,6 +129,7 @@ songEntrySchema.pre("save", function (next) {
 	this.searchQuery = generateSearchQuery(this);
 	next();
 });
+
 
 
 const SongEntry = model<ISongEntry>("SongEntry", songEntrySchema);

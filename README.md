@@ -26,5 +26,9 @@ run `docker compose -f docker-compose.test.yml up`
 `docker exec -it easternskyradio-server-1 bun migrate create <migration_name>`
 
 
+###### Icon Credits
+- [Sub Icom](https://www.flaticon.com/free-icon/submarine_620826)
+
+
 
 

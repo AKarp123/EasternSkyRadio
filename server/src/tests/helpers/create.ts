@@ -17,6 +17,20 @@ export const createSong = async (songData: ISongEntrySubmission, agent?: Awaited
 	return res;
 };
 
+export const createSongSimple = async(title: string, album: string, artist: string, agent?: Awaited<ReturnType<typeof withUser>>) => {
+	const localAgent = agent || await withUser();
+	const songData: ISongEntrySubmission = {
+		title: title,
+		artist: artist,
+		album: album,
+		duration: 180,
+		genres: ["Rock"],
+		albumImageLoc: "",
+	};
+
+	const res = await createSong(songData, localAgent);
+	return res;
+};
 
 /**
  * Creates a new show.
@@ -94,6 +108,5 @@ export const bulkCreateShows = async(count: number, agent?: Awaited<ReturnType<t
 		res = await createShow(showData, localAgent);
 		shows.push(res.body.show as ShowEntry);
 	}
-	
 	return shows;
 };

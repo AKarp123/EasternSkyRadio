@@ -1,6 +1,6 @@
 import { $ } from "bun";
 import { describe, beforeAll,afterAll, expect, test } from "bun:test";
-import { clearDatabase, connectToDatabase, db } from "../db.js";
+import { clearDatabase, connectToDatabase, db } from "../config/db.js";
 import initializeApp from "../init.js";
 import { Connection } from "mongoose";
 import { migrator } from "../migrations.js";
@@ -44,6 +44,11 @@ describe.if(process.env.TEST_MIGRATIONS === "true")("Migrations", () => {
 		await localMigrator.run("up", "enum");
 		expect(connection.collection("songentries").countDocuments({ "songReleaseLoc.service": "Youtube" })).resolves.toBe(0);
 		expect(connection.collection("songentries").countDocuments({ "songReleaseLoc.service": "YouTube" })).resolves.toBeGreaterThan(0);
+	});
+
+	test("Update Duration", async() => {
+		await localMigrator.run("up", "updateDuration");
+		expect(connection.collection("songentries").countDocuments({ duration: { $gt: 60 } })).resolves.toBeGreaterThan(0);
 	});
 
 

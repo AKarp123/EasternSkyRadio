@@ -5,19 +5,20 @@ import SongRouter from "./SongRoutes.js";
 import passport from "passport";
 import multer from "multer";
 import { getStorage } from "firebase-admin/storage"; //eslint-disable-line import/extensions
-import initializeAdmin from "../config/admin.js";
 import requireLogin from "./requireLogin.js";
 import { generateStats } from "../dbMethods.js";
-import axios from "axios";
+
 import NodeCache from "node-cache";
 import SyncRouter from "./SyncRoutes.js";
 import UserRouter from "./UserRoutes.js";
+import { app } from "../app.js";
+import { uploadImageFromURL } from "../controllers/upload.js";
 
 
 const statsCache = new NodeCache({ stdTTL: 300 });
 
 const router = Router();
-initializeAdmin();
+
 const storage = getStorage();
 const upload = multer({ storage: multer.memoryStorage() });
 
@@ -54,12 +55,23 @@ router.post("/login", passport.authenticate("local"), (req, res) => {
 
 
 
-router.get("/getUser", (req, res) => {
+router.get("/user", (req, res) => {
 	if (req.user) {
 		res.json({ user: req.user });
 	} else {
 		res.json({ user: null });
 	}
+});
+
+router.get("/config", requireLogin, async (req, res) => {
+
+
+	return res.json({
+		siteConfig: {
+			subsonicEnabled: app.locals.subsonicEnabled,
+			subsonicBaseUrl: process.env.SUBSONIC_SERVER_URL || "",
+		}
+	});
 });
 
 router.post("/logout", (req, res) => {
@@ -129,31 +141,13 @@ router.post("/uploadURL", requireLogin, async (req: Request, res: Response) => {
 		return;
 	}
 
-	const response = await axios.get(url, { responseType: "arraybuffer" });
+	const publicUrl =  await uploadImageFromURL(url, artist, album).catch((error) => {
+		console.error(error);
+		res.status(500).json({ success: false, message: "Error uploading file from URL" });
+		return null;
+	});
 
-	const contentType = response.headers["content-type"];
-
-	const storageRef = storage
-		.bucket()
-		.file(`albumCovers/${artist} + ${album}.jpg`);
-    
-	const metadata = {
-		contentType: contentType,
-	};
-
-	storageRef
-		.save(response.data, { metadata })
-		.then(() => {
-			res.json({
-				success: true,
-				message: "File uploaded",
-				url: storageRef.publicUrl(),
-			});
-		})
-		.catch((error) => {
-			console.error(error);
-			res.status(500).json({ success: false, message: "Error uploading file" });
-		});
+	res.json({ success: true, message: "File uploaded", url: publicUrl });
 });
 
 router.use("/", showRouter);

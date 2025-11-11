@@ -1,4 +1,5 @@
 import admin from "firebase-admin";
+import { getStorage } from "firebase-admin/storage"; //eslint-disable-line import/extensions
 
 
 const { credential } = admin;
@@ -17,14 +18,16 @@ const serviceAccountKey = {
 	client_x509_cert_url: process.env.FIREBASE_CLIENT_X509_CERT_URL,
 	universe_domain: "googleapis.com",
 };
-const initializeAdmin = () => {
-	admin.initializeApp({
-		credential: credential.cert(serviceAccountKey as admin.ServiceAccount),
-		storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
-	});
-	console.log("Connected to Firebase"); //eslint-disable-line no-console
-};
 
-export default initializeAdmin;
+admin.initializeApp({
+	credential: credential.cert(serviceAccountKey as admin.ServiceAccount),
+	storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
+});
+console.log("Connected to Firebase"); //eslint-disable-line no-console
+
+
+export const storage = getStorage();
+
+
 
 
