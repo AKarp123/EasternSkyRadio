@@ -1,5 +1,5 @@
 import React, { useState, useContext, Key, useRef, useEffect} from "react";
-import axios, { AxiosError } from "axios";
+import axios from "axios";
 import { useDebouncedCallback } from "use-debounce";
 import ErrorContext from "../../providers/ErrorContext";
 import { SongEntry } from "../../types/Song";
@@ -12,16 +12,23 @@ import Input from "../Util/Input";
 
 //@ts-ignore
 import naviIcon from "../../icons/navi.png" 
+import { updateSong } from "../../api/SongApi";
 
 type SongSearchProperties = {
 	dispatch: React.Dispatch<any>;
-	parent?: "New Show" | "Set Planner" | "Edit Song" | "Link Song";
+	subsonicSongId: string;
+	subsonicAlbumId: string;
 };
 
+type SongContextType = {
+	subsonicSongId: string;
+	subsonicAlbumId: string;
+}
+
 const DispatchContext = createContext<React.Dispatch<any>>(() => {});
-const ParentContext = createContext<string>("New Show");
-const SongSearch = ({ dispatch, parent }: SongSearchProperties) => {
-	parent = parent || "New Show";
+const SongContext = createContext<SongContextType>({ subsonicSongId: "", subsonicAlbumId: "" });
+const LinkSong = ({ dispatch, subsonicSongId, subsonicAlbumId}: SongSearchProperties) => {
+
 	const [searchResults, setSearchResults] = useState<SongEntry[]>([]);
 	const [loading, setLoading] = useState(false);
 	const [searchText, setSearchText] = useState<string>("");
@@ -50,36 +57,16 @@ const SongSearch = ({ dispatch, parent }: SongSearchProperties) => {
 			.catch((error) => {
 				setError(error.message);
 			})
-		if(parent !== "Set Planner") {
-			setLoading(false)
-			return;
-		}		
-		await axios.get("/api/search", { params: { query, subsonic: true }}).then((res) => {
-			if (res.data.success === false) {
-				if (res.data.message) {
-					setError(res.data.message);
-				}
-				return;
-			}
-			setSearchResults((prev) => [...prev, ...res.data.searchResults]);
-		})
-			.catch((error : AxiosError) => {
-				if(error.response?.status !== 503) {
-					setError(error.message);
-				}
-			})
-			.finally(() => setLoading(false));
+		setLoading(false)
+
 	}, 100);
 
-	const heightMap: Record<string, string> = {
-		"New Show": "50vh",
-		"Set Planner": "70vh",
-		"Edit Song": "60vh",
-	};
-	const height = heightMap[parent] || "60vh";
+
+
 	return (
 		<>
-			<ParentContext.Provider value={parent}>
+			<SongContext.Provider value={{ subsonicSongId, subsonicAlbumId }}>
+
 				<DispatchContext.Provider value={dispatch}>
 					<Input
 						placeholder="Search"
@@ -92,7 +79,7 @@ const SongSearch = ({ dispatch, parent }: SongSearchProperties) => {
 						}
 						className="border border-gray-300 rounded px-2 py-1 font-pixel focus:outline-none w-full"
 					/>
-					<ScrollArea type="scroll" scrollbars="vertical" style={{ height }} >
+					<ScrollArea type="scroll" scrollbars="vertical" style={{ height: "60vh" }} >
 						<Flex className="w-full h-full flex-col gap-3 mt-1">
 							{searchResults.length > 0 ? (
 								searchResults.map((song) => (
@@ -110,7 +97,7 @@ const SongSearch = ({ dispatch, parent }: SongSearchProperties) => {
 					</ScrollArea>
 
 				</DispatchContext.Provider>
-			</ParentContext.Provider>
+			</SongContext.Provider>
 		</>
 	);
 };
@@ -194,90 +181,32 @@ type ButtonProperties = {
 };
 const Buttons = ({ song }: ButtonProperties) => {
 	const dispatch = useContext(DispatchContext);
+	const setError = useContext(ErrorContext)
 
-	const parent = useContext(ParentContext);
-	const Add = () => 
-		(<button
-			className="text-white font-pixel text-md focus:outline-none focus:shadow-outline cursor-pointer HoverButtonStyles rounded-md px-2 "
-			onClick={() => dispatch({ type: "addSong", payload: song })}
-		>
-			Add
-		</button>)
+	const { subsonicSongId, subsonicAlbumId } = useContext(SongContext);
+
 	
-
-	const Fill = () => (
-		<button
-			className="text-white font-pixel text-md focus:outline-none focus:shadow-outline cursor-pointer HoverButtonStyles rounded-md px-2 "
-			onClick={() => dispatch({ type: "fill", payload: song })}
-		>
-			Fill
-		</button>
-	);
-	const Link = () => (
+	return (
 		<button
 			className="text-white font-pixel text-md focus:outline-none focus:shadow-outline cursor-pointer HoverButtonStyles rounded-md px-2 "
 			onClick={() => {
-				dispatch({ type: "setSubsonicIds", payload: { subsonicSongId: song.subsonicSongId || "", subsonicAlbumId: song.subsonicAlbumId || "" }})
-				dispatch({ type: "toggleSongLinkForm" })
+				updateSong(song.songId, {
+					subsonicSongId,
+					subsonicAlbumId,
+				})
+					.then(() => {
+						setError("Song linked successfully", "success");
+						dispatch({ type: "addSong", payload: song });
+						dispatch({ type: "toggleSongLinkForm" });
+					})
+					.catch((error) => {
+						setError(`Error linking song: ${error.message}`);
+					});
 			}}
 		>
 			Link
 		</button>
 	);
-
-	const AddNew = () => 
-		(<button
-			className="text-white font-pixel text-md focus:outline-none focus:shadow-outline cursor-pointer HoverButtonStyles rounded-md px-2 "
-			onClick={() => {
-				dispatch({ type: "subNewSong", payload: song });
-
-			}}
-		>
-			Add New
-		</button>);
-		
-	
-
-
-	
-
-	
-
-
-	switch (parent) {
-		case "New Show": {
-			return (
-				<>
-					{song.searchQuery && song.searchQuery?.length > 0 && <Add />}
-					{song.searchQuery?.length === 0 && <AddNew/>}
-					{song.searchQuery?.length === 0 && <Link />}
-				</>
-			);
-		}
-		case "Edit Song": {
-			return (
-				<Fill />
-			);
-		}
-		case "Set Planner": {
-			return (
-				<>
-					{song.searchQuery && song.searchQuery?.length > 0 && <Add />}
-					{song.searchQuery?.length === 0 && <AddNew/>}
-					{song.searchQuery?.length === 0 && <Link />}
-				</>
-			);
-		}
-		case "Link Song": {
-			return (
-				<Link />
-			);
-		}
-		default: {
-			return null;
-		}
-	// No default
-	}
 };
 
-export default SongSearch;
+export default LinkSong;

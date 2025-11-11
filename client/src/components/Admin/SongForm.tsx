@@ -46,6 +46,12 @@ type EditProperties = SongFormProperties & {
 	submit: (e: React.FormEvent<HTMLFormElement>, songData: SongEntryForm) => void;
 };
 
+type SubsonicAddProperties = SongFormProperties & {
+	songData: SongEntryForm;
+	type: "subsonicAdd";
+	submit?: never;
+};
+
 type SongFormProperties = {
 	parentDispatch: React.Dispatch<any>;
 };
@@ -59,16 +65,32 @@ const toSongEntryForm: (song: SongEntry) => SongEntryForm = (song) => {
 	};
 }
 
+const fillMissingFields = (songData: Partial<SongEntryForm>): SongEntryForm => ({
+	songId: -1,
+	elcroId: "",
+	artist: "",
+	title: "",
+	origTitle: "",
+	album: "",
+	origAlbum: "",
+	albumImageLoc: "",
+	genres: [],
+	specialNote: "",
+	songReleaseLoc: [],
+	duration: 0,
+	...songData,
+});
+
 const SongForm = ({
 	songData,
 	type,
 	submit,
 	parentDispatch,
-}: AddProperties | EditProperties) => {
+}: AddProperties | EditProperties | SubsonicAddProperties) => {
 	const setError = useContext(ErrorContext);
 	const [state, dispatch] = useReducer(
 		SongFormReducer,
-		type === "edit" ? toSongEntryForm(songData) : InitialState
+		type === "edit" ? toSongEntryForm(songData) : (type === "subsonicAdd" ? fillMissingFields(songData) : InitialState)
 	);
 	const [genreInput, setGenreInput] = useState("");
 	const [songReleaseInput, setSongReleaseInput] = useState("");
@@ -76,6 +98,7 @@ const SongForm = ({
 	const [songReleaseType, setSongReleaseType] = useState(""); 
 	const [songReleaseDesc, setSongReleaseDesc] = useState("");
 	const [displayGenreWarning, setDisplayGenreWarning] = useState(false);
+
 
 	const songReleaseTypes = [
 		"Spotify",
@@ -90,12 +113,31 @@ const SongForm = ({
 		if (type === "edit") {
 			dispatch({
 				type: SongFormActionType.Fill,
-				payload: songData,
+				payload: toSongEntryForm(songData),
 			});
 			setDurationInput(songData.duration.toString());
 		}
 
 	}, [type, songData]);
+
+	useEffect(() => {
+		if (type === "subsonicAdd") {
+			axios.get<StandardResponse<"searchResults", SongEntry[]>>("/api/search", { params: { albumId: songData.subsonicAlbumId }}).then((res) => {
+				if (res.data.success) {
+					const firstSong = res.data.searchResults[0];
+					if (firstSong) {
+						dispatch({
+							type: SongFormActionType.Fill,
+							payload: toSongEntryForm(firstSong),
+						});
+					}
+
+				}
+			});
+		}
+	}, []);
+
+
 
 
 	const validate = () => {
@@ -134,7 +176,7 @@ const SongForm = ({
 						payload: res.data.song,
 					});
 				} else {
-					if (res.data.message === "Song already exists.") {
+					if (res.data.message === "Song already exists." || res.data.message === "Song with this Subsonic ID already exists.") {
 						parentDispatch({
 							type: "addSong",
 							payload: res.data.song,
@@ -180,12 +222,18 @@ const SongForm = ({
 		e.preventDefault();
 		const textData = e.dataTransfer.getData("text/plain");
 
+		await uploadImageURL(textData);
+
+		
+	};
+
+	const uploadImageURL = async ( url: string) => {
 		setError("Uploading Image...", "info");
 		axios
 			.post<StandardResponse<"url", string>>("/api/uploadURL", {
 				artist: state.artist,
 				album: state.album,
-				url: textData,
+				url: url,
 			})
 			.then((res) => {
 				if (res.data.success === false) {
@@ -201,7 +249,7 @@ const SongForm = ({
 			.catch((error : AxiosError<{ message: string }>) => {
 				setError("Error Uploading Image: " + (error.response?.data?.message || error.message));
 			});
-	};
+	}
 
 	const uploadImage = (file: File) => {
 		// e.preventDefault();
@@ -484,6 +532,15 @@ const SongForm = ({
 				/>
 
 				<InputFileUpload uploadImage={uploadImage} />
+				<button className="text-white font-pixel  border-[1px] p-1 rounded-md focus:outline-none focus:shadow-outline flex-1 cursor-pointer HoverButtonStyles" onClick={(e) => {
+					e.preventDefault();
+					if(state.albumImageLoc) {
+
+						uploadImageURL(state.albumImageLoc);
+					}
+				}}>
+					Refresh
+				</button>
 			</Flex>
 			<Form.Field className="flex flex-col gap-1 flex-grow" name="genreInput">
 				<Form.Control asChild>

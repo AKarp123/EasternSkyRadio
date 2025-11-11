@@ -6,13 +6,14 @@ import axios from "axios";
 import ErrorContext from "../../providers/ErrorContext";
 import SongForm from "./SongForm";
 import { reducer } from "../../reducers/SetPlannerReducer";
-import { SetPlannerActionType, SetPlannerItem, SetPlannerAction, SetPlannerState } from "../../types/pages/admin/SetPlanner";
+import {  SetPlannerItem, SetPlannerAction, SetPlannerState } from "../../types/pages/admin/SetPlanner";
 import { Sync } from "../../types/global";
 import { Flex, Separator, Text, ScrollArea, Container, Grid, Spinner} from "@radix-ui/themes";
 import { Tabs } from "radix-ui";
 import Tooltip from "../Util/Tooltip";
 import Dialog from "../Util/Dialog";
 import Input from "../Util/Input";
+import LinkSong from "./LinkSong";
 
 
 const durationToString = (duration: number) => {
@@ -31,9 +32,13 @@ const SetPlanner = () => {
 		label: "",
 		toggleNewSongForm: false,
 		toggleDurationForm: false,
+		toggleSongLinkForm: false,
 		duration: "",
 		syncStatus: "",
+		subsonicSongId: "",
+		subsonicAlbumId: "",
 		firstLoad: true,
+		newSong: null,
 	});
 	const [loading, setLoading] = useState(true);
 
@@ -54,7 +59,7 @@ const SetPlanner = () => {
 
 					return;
 				} else {
-					dispatch({ type: SetPlannerActionType.LoadSync, payload: data.data });
+					dispatch({ type: "loadSync", payload: data.data });
 					const timeString = new Date(res.data.lastSynced)
 						.toLocaleTimeString("en-US", {
 							hour: "numeric",
@@ -64,7 +69,7 @@ const SetPlanner = () => {
 						.replaceAll(/\s/g, "");
 					setLoading(false);
 					dispatch({
-						type: SetPlannerActionType.SetSyncStatus,
+						type: "setSyncStatus",
 						payload: `Last synced at ${timeString}`,
 					});
 				}
@@ -75,7 +80,7 @@ const SetPlanner = () => {
 		if (state.firstLoad) {
 			return;
 		}
-		dispatch({ type: SetPlannerActionType.SetSyncStatus, payload: "Syncing..." });
+		dispatch({ type: "setSyncStatus", payload: "Syncing..." });
 		axios
 			.post("/api/sync", { type: "SetPlanner", data: state.songsList })
 			.then((res) => {
@@ -83,7 +88,7 @@ const SetPlanner = () => {
 
 
 					dispatch({
-						type: SetPlannerActionType.SetSyncStatus,
+						type: "setSyncStatus",
 						payload: "Error syncing",
 					});
 				}
@@ -95,7 +100,7 @@ const SetPlanner = () => {
 					.toLowerCase()
 					.replaceAll(/\s/g, "");
 				dispatch({
-					type: SetPlannerActionType.SetSyncStatus,
+					type: "setSyncStatus",
 					payload: `Last synced at ${timeString}`,
 				});
 			});
@@ -162,28 +167,13 @@ const SetPlanner = () => {
 					<button
 						onClick={() => {
 							dispatch({
-								type: SetPlannerActionType.ClearList,
+								type: "clearList",
 							});
 						}}
 						className="flex font-pixel HoverButtonStyles rounded-md p-2 mt-1 cursor-pointer mx-auto"
 					>
 						Clear List
 					</button>
-					{/* {state.songsList.length > 0 && (
-                            <Box
-                                sx={{
-                                    my: 1,
-                                }}
-                            >
-                                <Button onClick={save}>Save</Button>
-                                <Button
-                                    onClick={() => dispatch({ type: "reset" })}
-                                >
-                                    {" "}
-                                    Reset
-                                </Button>
-                            </Box>
-                        )} */}
 				</div>
 				<div>
 
@@ -211,13 +201,7 @@ const SetPlanner = () => {
 								/>
 							)}
 
-							<Dialog open={state.toggleNewSongForm} close onClose={() => dispatch({ type: SetPlannerActionType.ToggleNewSongForm })} title="Add New Song">
-								<SongForm
-									parentDispatch={dispatch}
-									type="add"
-
-								/>
-							</Dialog>
+							
 								
 							<SetPlannerButtons dispatch={dispatch} />
 
@@ -233,6 +217,31 @@ const SetPlanner = () => {
 			</Grid>
 			<Grid>
 			</Grid>
+			
+
+			<Dialog open={state.toggleSongLinkForm} close onClose={() => dispatch({ type: "toggleSongLinkForm" })} title="Link Song">
+				<LinkSong
+					dispatch={dispatch}
+					subsonicAlbumId={state.subsonicAlbumId}
+					subsonicSongId={state.subsonicSongId}
+				/>
+			</Dialog>
+			<Dialog open={state.toggleNewSongForm} close onClose={() => {dispatch({ type: "toggleNewSongForm" });
+				dispatch({ type: "clearNewSong" });
+			}} title="Add New Song">
+				{state.newSong === null ? (
+					<SongForm
+						type="add"
+						parentDispatch={dispatch}
+					/>
+				) : (
+					<SongForm
+						type="subsonicAdd"
+						songData={state.newSong}
+						parentDispatch={dispatch}
+					/>
+				)}
+			</Dialog>
 
 		</Container>
 
@@ -246,7 +255,7 @@ const SetPlannerButtons = ({ dispatch } : { dispatch: React.Dispatch<SetPlannerA
 				className="font-pixel cursor-pointer HoverButtonStyles rounded-md text-xl p-2"
 				onClick={() =>
 					dispatch({
-						type: SetPlannerActionType.ToggleNewSongForm,
+						type: "toggleNewSongForm",
 					})
 				}
 			>
@@ -256,11 +265,11 @@ const SetPlannerButtons = ({ dispatch } : { dispatch: React.Dispatch<SetPlannerA
 				className="font-pixel cursor-pointer HoverButtonStyles rounded-md text-xl p-2"
 				onClick={() =>{
 					dispatch({
-						type: SetPlannerActionType.SetLabel,
+						type: "setLabel",
 						payload: "Mic Break",
 					})
 					dispatch({
-						type: SetPlannerActionType.ToggleDurationForm,
+						type: "toggleDurationForm",
 					})
 				}
 				}
@@ -271,11 +280,11 @@ const SetPlannerButtons = ({ dispatch } : { dispatch: React.Dispatch<SetPlannerA
 				className="font-pixel cursor-pointer HoverButtonStyles rounded-md text-xl p-2"
 				onClick={() =>{
 					dispatch({
-						type: SetPlannerActionType.SetLabel,
+						type: "setLabel",
 						payload: "Announcement",
 					})
 					dispatch({
-						type: SetPlannerActionType.ToggleDurationForm,
+						type: "toggleDurationForm",
 					})
 				}
 				}
@@ -313,7 +322,7 @@ const SetPlannerCard = ({ entry, state, dispatch, durationAtPoint, index }: SetP
 						<button className="HoverButtonStyles font-pixel rounded-md p-0.5 px-2 disabled:opacity-50 not-disabled:cursor-pointer"
 							onClick={() => {
 								dispatch({
-									type: SetPlannerActionType.SwapUp,
+									type: "swapUp",
 									payload: index,
 								});
 							}}
@@ -324,7 +333,7 @@ const SetPlannerCard = ({ entry, state, dispatch, durationAtPoint, index }: SetP
 						<button className="HoverButtonStyles font-pixel rounded-md p-0.5 px-2 disabled:opacity-50 not-disabled:cursor-pointer"
 							onClick={() => {
 								dispatch({
-									type: SetPlannerActionType.SwapDown,
+									type: "swapDown",
 									payload: index,
 								});
 							}}
@@ -335,7 +344,7 @@ const SetPlannerCard = ({ entry, state, dispatch, durationAtPoint, index }: SetP
 						<button className="HoverButtonStyles font-pixel rounded-md p-0.5 px-2 not-disabled:cursor-pointer"
 							onClick={() =>
 								dispatch({
-									type: SetPlannerActionType.RemoveSong,
+									type: "removeSong",
 									payload: index,
 								})
 							}
@@ -369,7 +378,7 @@ const SetPlannerCard = ({ entry, state, dispatch, durationAtPoint, index }: SetP
 					<button className="HoverButtonStyles font-pixel rounded-md p-0.5 px-2 disabled:opacity-50 not-disabled:cursor-pointer"
 						onClick={() => {
 							dispatch({
-								type: SetPlannerActionType.SwapUp,
+								type: "swapUp",
 								payload: index,
 							});
 						}}
@@ -380,7 +389,7 @@ const SetPlannerCard = ({ entry, state, dispatch, durationAtPoint, index }: SetP
 					<button className="HoverButtonStyles font-pixel rounded-md p-0.5 px-2 disabled:opacity-50 not-disabled:cursor-pointer"
 						onClick={() => {
 							dispatch({
-								type: SetPlannerActionType.SwapDown,
+								type: "swapDown",
 								payload: index,
 							});
 						}}
@@ -391,7 +400,7 @@ const SetPlannerCard = ({ entry, state, dispatch, durationAtPoint, index }: SetP
 					<button className="HoverButtonStyles font-pixel rounded-md p-0.5 px-2 not-disabled:cursor-pointer"
 						onClick={() =>
 							dispatch({
-								type: SetPlannerActionType.RemoveSong,
+								type: "removeSong",
 								payload: index,
 							})
 						}
@@ -431,7 +440,7 @@ const SetPlannerForm = ({ dispatch, entry, index }: SetPlannerFormProperties) =>
 				}
 			});
 		dispatch({
-			type: SetPlannerActionType.EditSong,
+			type: "editSong",
 			payload: { song: { ...entry.item, duration: Number.isNaN(Number(duration)) ? 0 : Number(duration) }, index },
 		});
 	};
@@ -455,7 +464,7 @@ const SetPlannerForm = ({ dispatch, entry, index }: SetPlannerFormProperties) =>
 			<button
 				onClick={() =>
 					dispatch({
-						type: SetPlannerActionType.RemoveSong,
+						type: "removeSong",
 						payload: index,
 					})
 				}
@@ -476,11 +485,11 @@ function DurationForm({ state, dispatch }: DurationFormProperties) {
 	const Buttons = () => {
 		return (
 			<>
-				<button className="font-pixel HoverButtonStyles rounded-md p-2" onClick={() => dispatch({ type: SetPlannerActionType.ToggleDurationForm })}>Close</button>
+				<button className="font-pixel HoverButtonStyles rounded-md p-2" onClick={() => dispatch({ type: "toggleDurationForm" })}>Close</button>
 				<button className="font-pixel HoverButtonStyles rounded-md p-2" type="submit" onClick={(e) => {
 					e.preventDefault();
-					dispatch({ type: SetPlannerActionType.AddBreak });
-					dispatch({ type: SetPlannerActionType.ResetDurationForm });
+					dispatch({ type: "addBreak" });
+					dispatch({ type: "resetDurationForm" });
 				}}>Add</button>
 			</>
 		);
@@ -491,10 +500,10 @@ function DurationForm({ state, dispatch }: DurationFormProperties) {
 			<Text  className="font-pixel text-2xl mb-2">Adding: {state.label}</Text>
 			<form onSubmit={(e) => {
 				e.preventDefault();
-				dispatch({ type: SetPlannerActionType.AddBreak });
-				dispatch({ type: SetPlannerActionType.ResetDurationForm });
+				dispatch({ type: "addBreak" });
+				dispatch({ type: "resetDurationForm" });
 			}}>
-				<Input value={state.duration} placeholder="Duration (seconds)" onChange={(e) => dispatch({ type: SetPlannerActionType.SetDuration, payload: e.target.value })} />
+				<Input value={state.duration} placeholder="Duration (seconds)" onChange={(e) => dispatch({ type: "setDuration", payload: e.target.value })} />
 
 			</form>
 		</Dialog>

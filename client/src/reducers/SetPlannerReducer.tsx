@@ -1,8 +1,8 @@
-import { SetPlannerActionType, SetPlannerState, SetPlannerAction } from "../types/pages/admin/SetPlanner";
+import { SetPlannerState, SetPlannerAction } from "../types/pages/admin/SetPlanner";
 
 export const reducer = (state: SetPlannerState, action: SetPlannerAction) => {
 	switch (action.type) {
-		case SetPlannerActionType.AddSong: {
+		case "addSong": {
 			return {
 				...state,
 				songsList: [
@@ -11,10 +11,11 @@ export const reducer = (state: SetPlannerState, action: SetPlannerAction) => {
 				],
 				toggleNewSongForm: false,
 				firstLoad: false,
+				newSong: null,
 			};
 		}
 
-		case SetPlannerActionType.EditSong: {
+		case "editSong": {
 			let newSongsList = state.songsList.map((song, i) => {
 				if (i === action.payload.index) {
 					return { type: "Song", item: { ...action.payload.song } };
@@ -27,7 +28,7 @@ export const reducer = (state: SetPlannerState, action: SetPlannerAction) => {
 				firstLoad: false,
 			};
 		}
-		case SetPlannerActionType.SwapUp: {
+		case "swapUp": {
 			if (action.payload === 0) {
 				return state;
 			}
@@ -41,7 +42,7 @@ export const reducer = (state: SetPlannerState, action: SetPlannerAction) => {
 				firstLoad: false,
 			};
 		}
-		case SetPlannerActionType.SwapDown: {
+		case "swapDown": {
 			if (action.payload === state.songsList.length - 1) {
 				return state;
 			}
@@ -56,7 +57,7 @@ export const reducer = (state: SetPlannerState, action: SetPlannerAction) => {
 			};
 		}
 
-		case SetPlannerActionType.RemoveSong: {
+		case "removeSong": {
 			if (action.payload === state.songsList.length - 1) {
 				return {
 					...state,
@@ -73,13 +74,13 @@ export const reducer = (state: SetPlannerState, action: SetPlannerAction) => {
 				firstLoad: false,
 			};
 		}
-		case SetPlannerActionType.SetLabel: {
+		case "setLabel": {
 			return {
 				...state,
 				label: action.payload,
 			};
 		}
-		case SetPlannerActionType.AddBreak: {
+		case "addBreak": {
 			return {
 				...state,
 				songsList: [
@@ -96,7 +97,7 @@ export const reducer = (state: SetPlannerState, action: SetPlannerAction) => {
                 
 			};
 		}
-		case SetPlannerActionType.ResetDurationForm: {
+		case "resetDurationForm": {
 			return {
 				...state,
 				duration: "",
@@ -104,52 +105,82 @@ export const reducer = (state: SetPlannerState, action: SetPlannerAction) => {
 			};
 		}
 
-		case SetPlannerActionType.SetDuration: {
+		case "setDuration": {
 			return {
 				...state,
 				duration: action.payload,
 			};
 		}
-		case SetPlannerActionType.ToggleNewSongForm: {
+
+		case "setSubsonicIds": {
+			return {
+				...state,
+				subsonicSongId: action.payload.subsonicSongId,
+				subsonicAlbumId: action.payload.subsonicAlbumId,
+			};
+		}
+
+		case "toggleNewSongForm": {
 			return {
 				...state,
 				toggleNewSongForm: !state.toggleNewSongForm,
 			};
 		}
-		case SetPlannerActionType.ToggleDurationForm: {
+		case "toggleDurationForm": {
 			return {
 				...state,
 				toggleDurationForm: !state.toggleDurationForm,
 			};
 		}
-		case SetPlannerActionType.SetTabState: {
+		case "toggleSongLinkForm": {
+
+			return {
+				...state,
+				toggleSongLinkForm: !state.toggleSongLinkForm,
+			};
+		}
+		case "setTabState": {
 			return {
 				...state,
 				tabState: action.payload,
 			};
 		}
-		case SetPlannerActionType.Load: {
+		case "subNewSong": {
+
+			return {
+				...state,
+				toggleNewSongForm: !state.toggleNewSongForm,
+				newSong: {songId: -1, ...action.payload},
+			};
+		}
+		case "clearNewSong": {
+			return {
+				...state,
+				newSong: null,
+			};
+		}
+		case "load": {
 			return action.payload;
 		}
-		case SetPlannerActionType.LoadSync: { 
+		case "loadSync": { 
 			return {
 				...state,
 				songsList: action.payload,
 			}
 		}
-		case SetPlannerActionType.SetSyncStatus: {
+		case "setSyncStatus": {
 			return {
 				...state,
 				syncStatus: action.payload,
 			}
 		}
-		case SetPlannerActionType.ClearList: {
+		case "clearList": {
 			return {
 				...state,
 				songsList: [],
 			};
 		}
-		case SetPlannerActionType.Reset: {
+		case "reset": {
 			localStorage.removeItem("savedState");
 			return {
 				songsList: [], //includes events such as mic breaks, announcements, etc. (too lazy to rename everything lol)
@@ -158,6 +189,7 @@ export const reducer = (state: SetPlannerState, action: SetPlannerAction) => {
 				toggleNewSongForm: false,
 				toggleDurationForm: false,
 				duration: "",
+				newSong: null,
 			};
 		}
 		default: {

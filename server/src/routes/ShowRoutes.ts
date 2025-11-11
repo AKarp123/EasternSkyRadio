@@ -6,6 +6,7 @@ import { updateShowIds, updateLastPlayed } from "../dbMethods.js";
 import { ISongEntry } from "../types/SongEntry.js";
 import {  ShowEntrySubmission } from "../types/ShowData.js";
 import mongoose from "mongoose";
+import { songEntry_selectAllFields } from "../models/SongEntry.js";
 
 
 
@@ -21,7 +22,7 @@ showRouter.get("/show/:id", async (req: Request, res: Response) => {
 		const showData = await ShowEntry.findOne(
 			{ showId: Number.parseInt(req.params.id) },
 			{ _id: 0, __v: 0 }
-		).lean().populate<{ songsList: ISongEntry[] }>({ path: "songsList", select: "-__v " });
+		).lean().populate<{ songsList: ISongEntry[] }>({ path: "songsList", select: req.user ? songEntry_selectAllFields : "-_id" });
 		if (showData === null) {
 			res.status(404).json({ success: false, message: "Show not found." });
 			return;
@@ -34,24 +35,12 @@ showRouter.get("/show/:id", async (req: Request, res: Response) => {
 });
 
 showRouter.get("/shows", async (req: Request, res: Response) => {
-	if (req.query.offset) { //TODO: Delete if statement - not needed anymore
-		const offset = Number.parseInt(req.query.offset as string);
-		const shows = await ShowEntry.find({}, { _id: 0, __v: 0 })
-			.sort({ showId: "asc" })
-			.skip(offset)
-			.limit(5)
-			.select("-songsList -_id")
-			.lean();
+	const shows = await ShowEntry.find({}, { _id: 0, __v: 0 })
+		.sort({ showId: "asc" })
+		.select("-songsList -_id")
+		.lean();
 
-		res.json(shows);
-	} else {
-		const shows = await ShowEntry.find({}, { _id: 0, __v: 0 })
-			.sort({ showId: "asc" })
-			.select("-songsList -_id")
-			.lean();
-
-		res.json({ success: true, shows });
-	}
+	res.json({ success: true, shows });
 });
 
 showRouter.post("/show", requireLogin, async (req : Request, res: Response) => {

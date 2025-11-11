@@ -1,6 +1,6 @@
 import { $ } from "bun";
 import { describe, beforeAll,afterAll, expect, test } from "bun:test";
-import { clearDatabase, connectToDatabase, db } from "../db.js";
+import { clearDatabase, connectToDatabase, db } from "../config/db.js";
 import initializeApp from "../init.js";
 import { Connection } from "mongoose";
 import { migrator } from "../migrations.js";
