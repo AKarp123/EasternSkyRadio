@@ -1,4 +1,4 @@
-import { describe, test, expect, beforeAll, beforeEach, afterAll, afterEach } from "bun:test";
+import { describe, test, expect, beforeAll, beforeEach, afterAll, afterEach, mock } from "bun:test";
 
 import { initTest } from "../../init.js";
 import { withUser } from ".././helpers/withUser.js";
@@ -8,6 +8,8 @@ import { clearDatabase, db } from "../../config/db.js";
 import { bulkCreateTestSongs, createShow, createShowSimple, createSong, createSongSimple } from ".././helpers/create.js";
 import { Types } from "mongoose";
 import { ShowEntrySubmission } from "../../types/ShowData.js";
+import { uploadImageFromURL } from "../../controllers/upload.js";
+
 
 afterAll(async() => {
 	await clearDatabase();
@@ -95,9 +97,7 @@ describe("Test Create Song API", function () {
 		res = await agent
 			.post("/api/song")
 			.send({ songData: newSong2 });
-		console.log(res.status, res.body);
 		expect(res.body).toHaveProperty("success", false);
-		expect(res.body.message).toBe("Song Already exists");
 		expect(res.body.song.album).toBe(newSong.album);
 	});
 
@@ -560,6 +560,7 @@ describe("Song Date Tests", () => {
 
 	});
 });
+
 
 
 

@@ -9,7 +9,7 @@ import { SongFormReducer } from "../../reducers/SongFormReducer";
 import { SongEntry, SongEntryForm } from "../../types/Song";
 import { StandardResponse } from "../../types/global";
 import { SongFormActionType } from "../../types/Song";
-import { Box, Flex, ScrollArea} from "@radix-ui/themes";
+import { Box, Button, Flex, ScrollArea} from "@radix-ui/themes";
 import Chip from "../Util/Chip";
 import Tooltip from "../Util/Tooltip";
 
@@ -202,12 +202,18 @@ const SongForm = ({
 		e.preventDefault();
 		const textData = e.dataTransfer.getData("text/plain");
 
+		await uploadImageURL(textData);
+
+		
+	};
+
+	const uploadImageURL = async ( url: string) => {
 		setError("Uploading Image...", "info");
 		axios
 			.post<StandardResponse<"url", string>>("/api/uploadURL", {
 				artist: state.artist,
 				album: state.album,
-				url: textData,
+				url: url,
 			})
 			.then((res) => {
 				if (res.data.success === false) {
@@ -223,7 +229,7 @@ const SongForm = ({
 			.catch((error : AxiosError<{ message: string }>) => {
 				setError("Error Uploading Image: " + (error.response?.data?.message || error.message));
 			});
-	};
+	}
 
 	const uploadImage = (file: File) => {
 		// e.preventDefault();
@@ -506,6 +512,15 @@ const SongForm = ({
 				/>
 
 				<InputFileUpload uploadImage={uploadImage} />
+				<button className="text-white font-pixel  border-[1px] p-1 rounded-md focus:outline-none focus:shadow-outline flex-1 cursor-pointer HoverButtonStyles" onClick={(e) => {
+					e.preventDefault();
+					if(state.albumImageLoc) {
+
+						uploadImageURL(state.albumImageLoc);
+					}
+				}}>
+					Refresh
+				</button>
 			</Flex>
 			<Form.Field className="flex flex-col gap-1 flex-grow" name="genreInput">
 				<Form.Control asChild>

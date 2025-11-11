@@ -1,3 +1,4 @@
+import axios from "axios";
 import { storage } from "../config/admin.js";
 
 
@@ -16,3 +17,16 @@ export const uploadImageBuffer = async (imageBuffer: Buffer, metadata: any, arti
 		
 
 }; 
+
+
+export const uploadImageFromURL = async (imageUrl: string, artist: string, album: string) => {
+	const response = await axios.get(imageUrl, { responseType: "arraybuffer" });
+
+	const contentType = response.headers["content-type"];
+
+	const metadata = {
+		contentType: contentType,
+	};
+
+	return await uploadImageBuffer(Buffer.from(response.data), metadata, artist, album);
+}

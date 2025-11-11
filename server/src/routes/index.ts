@@ -12,7 +12,7 @@ import NodeCache from "node-cache";
 import SyncRouter from "./SyncRoutes.js";
 import UserRouter from "./UserRoutes.js";
 import { app } from "../app.js";
-import { uploadImageBuffer } from "../controllers/upload.js";
+import { uploadImageFromURL } from "../controllers/upload.js";
 
 
 const statsCache = new NodeCache({ stdTTL: 300 });
@@ -141,20 +141,11 @@ router.post("/uploadURL", requireLogin, async (req: Request, res: Response) => {
 		return;
 	}
 
-	const response = await axios.get(url, { responseType: "arraybuffer" });
-
-	const contentType = response.headers["content-type"];
-
-
-	const metadata = {
-		contentType: contentType,
-	};
-
-	const publicUrl = await uploadImageBuffer(Buffer.from(response.data), metadata, artist, album)
-		.catch((error) => {
-			console.error(error);
-			res.status(500).json({ success: false, message: "Error uploading file" });
-		});
+	const publicUrl =  await uploadImageFromURL(url, artist, album).catch((error) => {
+		console.error(error);
+		res.status(500).json({ success: false, message: "Error uploading file from URL" });
+		return null;
+	});
 
 	res.json({ success: true, message: "File uploaded", url: publicUrl });
 });
