@@ -50,7 +50,7 @@ const SongSearch = ({ dispatch, parent }: SongSearchProperties) => {
 			.catch((error) => {
 				setError(error.message);
 			})
-		if(parent === "Edit Song") {
+		if(parent !== "Set Planner") {
 			setLoading(false)
 			return;
 		}		

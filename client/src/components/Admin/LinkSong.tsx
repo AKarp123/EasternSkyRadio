@@ -196,6 +196,7 @@ const Buttons = ({ song }: ButtonProperties) => {
 				})
 					.then(() => {
 						setError("Song linked successfully", "success");
+						dispatch({ type: "addSong", payload: song });
 						dispatch({ type: "toggleSongLinkForm" });
 					})
 					.catch((error) => {

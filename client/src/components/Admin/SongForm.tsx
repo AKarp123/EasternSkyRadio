@@ -99,6 +99,7 @@ const SongForm = ({
 	const [songReleaseDesc, setSongReleaseDesc] = useState("");
 	const [displayGenreWarning, setDisplayGenreWarning] = useState(false);
 
+
 	const songReleaseTypes = [
 		"Spotify",
 		"Apple Music",
@@ -112,12 +113,31 @@ const SongForm = ({
 		if (type === "edit") {
 			dispatch({
 				type: SongFormActionType.Fill,
-				payload: songData,
+				payload: toSongEntryForm(songData),
 			});
 			setDurationInput(songData.duration.toString());
 		}
 
 	}, [type, songData]);
+
+	useEffect(() => {
+		if (type === "subsonicAdd") {
+			axios.get<StandardResponse<"searchResults", SongEntry[]>>("/api/search", { params: { albumId: songData.subsonicAlbumId }}).then((res) => {
+				if (res.data.success) {
+					const firstSong = res.data.searchResults[0];
+					if (firstSong) {
+						dispatch({
+							type: SongFormActionType.Fill,
+							payload: toSongEntryForm(firstSong),
+						});
+					}
+
+				}
+			});
+		}
+	}, []);
+
+
 
 
 	const validate = () => {
@@ -156,7 +176,7 @@ const SongForm = ({
 						payload: res.data.song,
 					});
 				} else {
-					if (res.data.message === "Song already exists.") {
+					if (res.data.message === "Song already exists." || res.data.message === "Song with this Subsonic ID already exists.") {
 						parentDispatch({
 							type: "addSong",
 							payload: res.data.song,

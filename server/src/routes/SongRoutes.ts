@@ -35,9 +35,10 @@ songRouter.get("/search", requireLogin, async (req: Request, res: Response) => {
 	
 	const hasQuery = req.query.query && req.query.query !== "";
 	const hasElcroId = req.query.elcroId !== undefined;
+	const hasAlbumId = req.query.albumId !== undefined;
 
 	
-	if (!hasQuery && !hasElcroId) {
+	if (!hasQuery && !hasElcroId && !hasAlbumId) {
 		res.status(400).json({ success: false, message: "No search query provided." });
 		return;
 	}
@@ -58,6 +59,20 @@ songRouter.get("/search", requireLogin, async (req: Request, res: Response) => {
 		}
 			
 	} 
+	else if (req.query.albumId) {
+		try {
+			const searchResults = await SongEntry.find({
+				subsonicAlbumId: req.query.albumId,
+			}).select(songEntry_selectAllFields);
+			res.json({
+				success: true,
+				searchResults: searchResults,
+			});
+		} 
+		catch (error) {
+			res.status(500).json({ success: false, message: error instanceof Error ? error.message : "Server error." });
+		}
+	}
 	else if (req.query.subsonic === "true") {
 
 		if(app.locals.subsonicEnabled === false) {
@@ -105,7 +120,7 @@ songRouter.post("/song", requireLogin, async (req : Request, res : Response) => 
 	if(songData.subsonicSongId) {
 		const song = await SongEntry.findOne({
 			subsonicSongId: songData.subsonicSongId
-		});
+		}).select(songEntry_selectAllFields);
 		if(song) {
 			res.json({
 				success: false,

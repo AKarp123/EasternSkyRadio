@@ -11,6 +11,7 @@ export const reducer = (state: SetPlannerState, action: SetPlannerAction) => {
 				],
 				toggleNewSongForm: false,
 				firstLoad: false,
+				newSong: null,
 			};
 		}
 
@@ -188,6 +189,7 @@ export const reducer = (state: SetPlannerState, action: SetPlannerAction) => {
 				toggleNewSongForm: false,
 				toggleDurationForm: false,
 				duration: "",
+				newSong: null,
 			};
 		}
 		default: {
