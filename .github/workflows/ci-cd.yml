@@ -63,6 +63,11 @@ jobs:
       FIREBASE_CLIENT_ID: ${{ secrets.FIREBASE_CLIENT_ID }}
       FIREBASE_CLIENT_X509_CERT_URL: ${{ secrets.FIREBASE_CLIENT_X509_CERT_URL }}
       FIREBASE_STORAGE_BUCKET: ${{ secrets.FIREBASE_STORAGE_BUCKET }}
+      SUBSONIC_ENABLED: true
+      SUBSONIC_SERVER_URL: ${{ vars.SUBSONIC_SERVER_URL }}
+      SUBSONIC_USERNAME: ${{ secrets.SUBSONIC_USERNAME }}
+      SUBSONIC_PASSWORD: ${{ secrets.SUBSONIC_PASSWORD }}
+      
     services:
       mongo:
         image: mongo:latest
