@@ -123,17 +123,44 @@ const SongForm = ({
 	useEffect(() => {
 		if (type === "subsonicAdd") {
 			axios.get<StandardResponse<"searchResults", SongEntry[]>>("/api/search", { params: { albumId: songData.subsonicAlbumId }}).then((res) => {
-				if (res.data.success) {
-					const firstSong = res.data.searchResults[0];
-					if (firstSong) {
-						dispatch({
-							type: SongFormActionType.Fill,
-							payload: toSongEntryForm(firstSong),
-						});
-					}
-
+				if (res.data.searchResults.length === 0) {
+					return;
 				}
-			});
+				const albumData = res.data.searchResults
+				const releaseMap : Map<string, { service: string; link: string; description?: string }> = new Map();
+				for(const song of res.data.searchResults) {
+					song.songReleaseLoc.map((loc) => {
+						if (!releaseMap.has(loc.link)) {
+							releaseMap.set(loc.link, loc);
+						}
+					})
+				} // get unique release locations
+
+
+				dispatch({
+					type: SongFormActionType.ElcroId,
+					payload: albumData[0].elcroId,
+				});
+				dispatch({
+					type: SongFormActionType.Album,
+					payload: albumData[0].album,
+				});
+				dispatch({
+					type: SongFormActionType.OrigAlbum,
+					payload: albumData[0].origAlbum,
+				});
+				dispatch({
+					type: SongFormActionType.AlbumImageLoc,
+					payload: albumData[0].albumImageLoc,
+				});
+				dispatch({
+					type: SongFormActionType.SetSongReleaseLoc,
+					payload: releaseMap.size > 0 ? [...releaseMap.values()] : [],
+				});
+			})
+				.catch((error) => {
+					setError(error.message);
+				});
 		}
 	}, []);
 
