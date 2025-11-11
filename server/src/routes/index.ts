@@ -7,7 +7,7 @@ import multer from "multer";
 import { getStorage } from "firebase-admin/storage"; //eslint-disable-line import/extensions
 import requireLogin from "./requireLogin.js";
 import { generateStats } from "../dbMethods.js";
-import axios from "axios";
+
 import NodeCache from "node-cache";
 import SyncRouter from "./SyncRoutes.js";
 import UserRouter from "./UserRoutes.js";

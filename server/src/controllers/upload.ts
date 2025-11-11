@@ -29,4 +29,4 @@ export const uploadImageFromURL = async (imageUrl: string, artist: string, album
 	};
 
 	return await uploadImageBuffer(Buffer.from(response.data), metadata, artist, album);
-}
+};

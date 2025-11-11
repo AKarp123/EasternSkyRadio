@@ -4,7 +4,7 @@ import { app } from '../app.js';
 import { initTest } from '../init.js';
 import { clearDatabase } from '../config/db.js';
 import { withUser } from "./helpers/withUser.js";
-import { bulkCreateShows, bulkCreateTestSongs } from "./helpers/create.js";
+import { bulkCreateShows } from "./helpers/create.js";
 
 
 
@@ -60,7 +60,7 @@ describe('Test selected fields', async() => {
 	beforeAll(async() => {
 		await initTest();
 		adminAgent = await withUser();
-		const shows = await bulkCreateShows(10);
+		await bulkCreateShows(10);
 		
 	});
 	afterAll(async() => {

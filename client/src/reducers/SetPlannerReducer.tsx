@@ -1,4 +1,4 @@
-import { SetPlannerActionType, SetPlannerState, SetPlannerAction } from "../types/pages/admin/SetPlanner";
+import { SetPlannerState, SetPlannerAction } from "../types/pages/admin/SetPlanner";
 
 export const reducer = (state: SetPlannerState, action: SetPlannerAction) => {
 	switch (action.type) {
@@ -133,7 +133,7 @@ export const reducer = (state: SetPlannerState, action: SetPlannerAction) => {
 			};
 		}
 		case "toggleSongLinkForm": {
-			console.log()
+
 			return {
 				...state,
 				toggleSongLinkForm: !state.toggleSongLinkForm,

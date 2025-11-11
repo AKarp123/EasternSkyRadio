@@ -1,5 +1,5 @@
-import { expect, test, describe, afterAll, beforeEach, beforeAll } from "bun:test";
-import request from "supertest";
+import { expect, test, describe, afterAll,  beforeAll } from "bun:test";
+
 import { app } from "../app.js";
 import { initTest } from "../init.js";
 import { withUser } from "./helpers/withUser.js";

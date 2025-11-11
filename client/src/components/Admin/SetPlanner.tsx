@@ -128,7 +128,7 @@ const SetPlanner = () => {
 	const duration = calculateDurationAtPoint();
 
 
-	console.log(state.toggleNewSongForm, state.newSong)
+
 
 	return (
 		<Container size="4" className="min-h-screen flex  flex-col mx-auto max-w-[85%]">
