@@ -139,4 +139,48 @@ describe("Test Search API", () => {
 		expect(res.body.searchResults[0]).toMatchObject(newSong);
 
 	});
-});
+
+	test("Album ID Search", async() => {
+		const newSong: ISongEntrySubmission = {
+			subsonicAlbumId: "album123",
+			title: "Blue Sky",
+			artist: "Kamome Sano",
+			album: "Beta Restored AM",
+			albumImageLoc: "",
+			duration: 180,
+			genres: ["Electronic"]
+		};
+		const newSong2: ISongEntrySubmission = {
+			title: "Sparkler",
+			artist: "Kamome Sano",
+			album: "Beta Restored AM",
+			albumImageLoc: "",
+			duration: 180,
+			genres: ["Electronic"],
+			subsonicAlbumId: "album123",
+
+		};
+		const newSong3: ISongEntrySubmission = {
+			subsonicAlbumId: "album124",
+			title: "Evening Glow",
+			artist: "Kamome Sano",
+			album: "Beta Restored PM",
+			albumImageLoc: "",
+			duration: 180,
+			genres: ["Electronic"]
+		};
+
+		let res = await createSong(newSong, agent);
+		await createSong(newSong2, agent);
+		await createSong(newSong3, agent);
+		expect(res.status).toBe(200);
+		res = await agent.get("/api/search").query({
+			albumId: "album123",
+		});
+		expect(res.status).toBe(200);
+		expect(res.body).toHaveProperty("success", true);
+		expect(res.body.searchResults).toBeArrayOfSize(2);
+	});
+
+
+	});
