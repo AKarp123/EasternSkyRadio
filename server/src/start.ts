@@ -7,7 +7,7 @@ import { pingServer } from "./config/subsonic.js";
 
 
 const startServer = async () => {
-	app.locals.subsonicEnabled = process.env.SUBSONIC_ENABLED || false;
+	app.locals.subsonicEnabled = process.env.SUBSONIC_ENABLED === "true" || false;
 
 
 	try {
@@ -17,7 +17,7 @@ const startServer = async () => {
 		throw new Error("Database connection failed");
 	}
 	try {
-		if(process.env.SUBSONIC_ENABLED) {
+		if(process.env.SUBSONIC_ENABLED === "true") {
 			await pingServer();
 			app.locals.subsonicEnabled = true;
 		}

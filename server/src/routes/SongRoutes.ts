@@ -64,19 +64,20 @@ songRouter.get("/search", requireLogin, async (req: Request, res: Response) => {
 			const searchResults = await SongEntry.find({
 				subsonicAlbumId: req.query.albumId,
 			}).select(songEntry_selectAllFields);
-			res.json({
+			return res.json({
 				success: true,
 				searchResults: searchResults,
 			});
+			
 		} 
 		catch (error) {
-			res.status(500).json({ success: false, message: error instanceof Error ? error.message : "Server error." });
+			return res.status(500).json({ success: false, message: error instanceof Error ? error.message : "Server error." });
 		}
 	}
 	else if (req.query.subsonic === "true") {
 
 		if(app.locals.subsonicEnabled === false) {
-			res.status(503).json({ success: false, message: "This feature is not enabled." });
+			return res.status(503).json({ success: false, message: "This feature is not enabled." });
 		}
 
 		try {
@@ -85,6 +86,7 @@ songRouter.get("/search", requireLogin, async (req: Request, res: Response) => {
 		}
 		catch (error) {
 			res.status(500).json({ success: false, message: error instanceof Error ? error.message : "Server error." });
+			return;
 		}
 	}
 	else {
