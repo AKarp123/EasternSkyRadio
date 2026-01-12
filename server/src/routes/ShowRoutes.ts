@@ -11,16 +11,19 @@ import { songEntry_selectAllFields } from "../models/SongEntry.js";
 
 
 const showRouter = Router();
+const getIdParam = (value: string | string[] | undefined) => (Array.isArray(value) ? value[0] : value);
 
 showRouter.get<{id: string}>("/show/:id", async (req: Request, res: Response) => {
-	if (req.params.id === undefined || req.params.id === "" || Number.isNaN(Number.parseInt(req.params.id))) {
+	const idParam = getIdParam(req.params.id);
+	const showId = Number.parseInt(idParam ?? "", 10);
+	if (!idParam || Number.isNaN(showId)) {
 		res.status(400).json({ success: false, message: "No Show ID provided." });
 		return;
 	}
 	else {
 
 		const showData = await ShowEntry.findOne(
-			{ showId: Number.parseInt(req.params.id) },
+			{ showId },
 			{ _id: 0, __v: 0 }
 		).lean().populate<{ songsList: ISongEntry[] }>({ path: "songsList", select: req.user ? songEntry_selectAllFields : "-_id" });
 		if (showData === null) {
@@ -79,13 +82,15 @@ showRouter.post("/show", requireLogin, async (req : Request, res: Response) => {
 
 showRouter.patch<{id: string}>("/show/:id", requireLogin, async (req: Request, res: Response) => {
 	const { _id, showId, ...showData } : { _id: string, showId: number} & Omit<ShowEntry & { songsList: ISongEntry[] }, "songListCount">  = req.body.showData;
-	if(Number.parseInt(req.params.id) === undefined || Number.isNaN(Number.parseInt(req.params.id))) {
+	const idParam = getIdParam(req.params.id);
+	const parsedShowId = Number.parseInt(idParam ?? "", 10);
+	if (!idParam || Number.isNaN(parsedShowId)) {
 		res.status(400).json({ success: false, message: "No Show ID provided." });
 		return;
 	}
 	try{
 
-		const show = await ShowEntry.findOne({ showId: Number.parseInt(req.params.id) });
+		const show = await ShowEntry.findOne({ showId: parsedShowId });
 		if (show === null) {
 			res.status(404).json({ success: false, message: "Show not found." });
 			return;
@@ -117,8 +122,9 @@ showRouter.patch<{id: string}>("/show/:id", requireLogin, async (req: Request, r
 });
 
 showRouter.delete<{id: string}>("/show/:id", requireLogin, async (req: Request, res: Response) => {
-	const showId = Number.parseInt(req.params.id);
-	if (Number.isNaN(showId)) {
+	const idParam = getIdParam(req.params.id);
+	const showId = Number.parseInt(idParam ?? "", 10);
+	if (!idParam || Number.isNaN(showId)) {
 		res.status(400).json({ success: false, message: "No Show ID provided." });
 	} else {
 		try {

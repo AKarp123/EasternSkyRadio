@@ -9,6 +9,7 @@ import { updateAlbumIds, updateSong } from "../controllers/Song.js";
 
 
 const songRouter = Router();
+const getIdParam = (value: string | string[] | undefined) => (Array.isArray(value) ? value[0] : value);
 
 const escapeRegex = (string : string) => {
 	return string.replaceAll(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`);
@@ -203,16 +204,14 @@ songRouter.delete("/song/:id", requireLogin, async (req: Request, res: Response)
 songRouter.patch<{id: string}>("/song/:id", requireLogin, async (req: Request, res: Response) => {
 	const { _id, songId, ...songData } : { _id: string, songId: number } & ISongEntry = req.body.songData;
 
-
-
-	if (!songData || Number.isNaN(Number.parseInt(req.params.id))) {
+	const idParam = getIdParam(req.params.id);
+	const id = Number.parseInt(idParam ?? "", 10);
+	if (!songData || !idParam || Number.isNaN(id)) {
 		res.status(400).json({ success: false, message: "No Song Data or incorrect id" });
 		return;
 	}
 
 
-
-	const id = Number.parseInt(req.params.id);
 	const result =  await updateSong(id, songData).catch((error) => {
 		if (error.message === "Song not found.") {
 			res.status(404).json({ success: false, message: "Song not found." });
