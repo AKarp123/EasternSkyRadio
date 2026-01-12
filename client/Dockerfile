@@ -1,4 +1,4 @@
-FROM node:20-slim AS frontend
+FROM node:25-alpine AS frontend
 
 WORKDIR /usr/src/app/client
 COPY ./client/package*.json ./client/pnpm-lock.yaml ./
