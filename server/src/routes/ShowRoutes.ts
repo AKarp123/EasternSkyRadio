@@ -12,7 +12,7 @@ import { songEntry_selectAllFields } from "../models/SongEntry.js";
 
 const showRouter = Router();
 
-showRouter.get("/show/:id", async (req: Request, res: Response) => {
+showRouter.get<{id: string}>("/show/:id", async (req: Request, res: Response) => {
 	if (req.params.id === undefined || req.params.id === "" || Number.isNaN(Number.parseInt(req.params.id))) {
 		res.status(400).json({ success: false, message: "No Show ID provided." });
 		return;
@@ -77,7 +77,7 @@ showRouter.post("/show", requireLogin, async (req : Request, res: Response) => {
 	}
 });
 
-showRouter.patch("/show/:id", requireLogin, async (req: Request, res: Response) => {
+showRouter.patch<{id: string}>("/show/:id", requireLogin, async (req: Request, res: Response) => {
 	const { _id, showId, ...showData } : { _id: string, showId: number} & Omit<ShowEntry & { songsList: ISongEntry[] }, "songListCount">  = req.body.showData;
 	if(Number.parseInt(req.params.id) === undefined || Number.isNaN(Number.parseInt(req.params.id))) {
 		res.status(400).json({ success: false, message: "No Show ID provided." });
@@ -116,7 +116,7 @@ showRouter.patch("/show/:id", requireLogin, async (req: Request, res: Response) 
     
 });
 
-showRouter.delete("/show/:id", requireLogin, async (req: Request, res: Response) => {
+showRouter.delete<{id: string}>("/show/:id", requireLogin, async (req: Request, res: Response) => {
 	const showId = Number.parseInt(req.params.id);
 	if (Number.isNaN(showId)) {
 		res.status(400).json({ success: false, message: "No Show ID provided." });

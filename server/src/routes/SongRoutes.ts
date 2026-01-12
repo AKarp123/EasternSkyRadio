@@ -178,15 +178,15 @@ songRouter.post("/song", requireLogin, async (req : Request, res : Response) => 
 		});
 });
 
-songRouter.delete("/song/:songId", requireLogin, async (req: Request, res: Response) => {
-	const { songId } = req.params;
+songRouter.delete("/song/:id", requireLogin, async (req: Request, res: Response) => {
+	const { id } = req.params;
 
-	if (!songId || Number.isNaN(Number(songId))) {
+	if (!id || Number.isNaN(Number(id))) {
 		res.status(400).json({ success: false, message: "No song ID provided." });
 		return;
 	}
 
-	SongEntry.deleteOne({ songId: songId })
+	SongEntry.deleteOne({ songId: Number(id) })
 		.then(async (result) => {
 			if(result.deletedCount === 0) {
 				res.status(404).json({ success: false, message: "Song not found." });
@@ -200,7 +200,7 @@ songRouter.delete("/song/:songId", requireLogin, async (req: Request, res: Respo
 		});
 });
 
-songRouter.patch("/song/:id", requireLogin, async (req: Request, res: Response) => {
+songRouter.patch<{id: string}>("/song/:id", requireLogin, async (req: Request, res: Response) => {
 	const { _id, songId, ...songData } : { _id: string, songId: number } & ISongEntry = req.body.songData;
 
 
