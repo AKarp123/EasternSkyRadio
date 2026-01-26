@@ -22,9 +22,29 @@ const router = Router();
 const storage = getStorage();
 const upload = multer({ storage: multer.memoryStorage() });
 
-router.get("/getSiteInfo", async (req, res) => {
+router.get("/siteInfo", async (req, res) => {
 	const data = await SiteData.findOne({}, { _id: 0, __v: 0 });
-	res.json(data);
+
+	if(data?.onBreak) {
+		res.json({ onBreak: true, messageOfTheDay: data.messageOfTheDay });
+		return;
+	}
+	else {
+
+		res.json(data);
+	}
+});
+
+router.patch("/siteInfo", requireLogin, async(req: Request, res: Response) => {
+
+	//TODO: Validate req.body fields with zod
+	SiteData.findOneAndUpdate({}, req.body, { new: true })
+		.then((updatedData) => {
+			res.json({ success: true, data: updatedData });
+		})
+		.catch((error) => {
+			res.status(500).json({ success: false, message: "Error updating site info", error });
+		});
 });
 
 router.get("/getStats", async (req, res) => {
@@ -149,6 +169,7 @@ router.post("/uploadURL", requireLogin, async (req: Request, res: Response) => {
 
 	res.json({ success: true, message: "File uploaded", url: publicUrl });
 });
+
 
 router.use("/", showRouter);
 router.use("/", SongRouter);

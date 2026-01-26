@@ -1,3 +1,5 @@
+import React from 'react';
+
 
 
 
@@ -12,22 +14,20 @@ type InputProps = {
 }
 
 export const InputDefaultClasses = "border border-gray-300 rounded px-2 py-1 font-pixel focus:outline-none w-full"
-const Input = ({ type="text", label, placeholder, value, onChange, className, disabled = false }: InputProps) => (
+
+const Input = React.forwardRef<HTMLInputElement, InputProps>(({ type="text", label, placeholder, value, onChange, className, disabled = false }, ref) => (
 	<div className="flex flex-col">
-		{label && <label className="mb-0.5 font-pixel">{label}</label>}
+		{label && <label className=" font-pixel">{label}</label>}
 		<input
+			ref={ref}
 			type={type}
 			placeholder={placeholder}
 			onChange={onChange}
 			value={value}
 			disabled={disabled}
 			className={className || InputDefaultClasses}
-
 		/>
 	</div>
-
-
-				
-);
+));
 
 export default Input;
