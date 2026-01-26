@@ -24,15 +24,7 @@ const upload = multer({ storage: multer.memoryStorage() });
 
 router.get("/siteInfo", async (req, res) => {
 	const data = await SiteData.findOne({}, { _id: 0, __v: 0 });
-
-	if(data?.onBreak) {
-		res.json({ onBreak: true, messageOfTheDay: data.messageOfTheDay });
-		return;
-	}
-	else {
-
-		res.json(data);
-	}
+	res.json(data);
 });
 
 router.patch("/siteInfo", requireLogin, async(req: Request, res: Response) => {
