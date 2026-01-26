@@ -11,7 +11,7 @@ const SiteDataProvider = ({ children}: { children: React.ReactNode}) => {
 	const [loading, setLoading] = useState(true);
 
 	useEffect(() => {
-		axios.get<SiteData>("/api/getSiteInfo")
+		axios.get<SiteData>("/api/siteInfo")
 			.then((response) => {
 				setSiteData(response.data);
 				setLoading(false);
