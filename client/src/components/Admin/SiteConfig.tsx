@@ -11,7 +11,7 @@ import Input from "../Util/Input";
 
 
 
-type ReducerAction = "setShowDay" | "setShowHour" | "setShowLength" | "toggleOnBreak";
+type ReducerAction = "setShowDay" | "setShowHour" | "setShowLength" | "setOnBreak" | "toggleOnBreak";
 
 
 const reducer = (state: SiteData, action: { type: ReducerAction; payload?: any }) => {
@@ -25,6 +25,9 @@ const reducer = (state: SiteData, action: { type: ReducerAction; payload?: any }
 		}
 		case "setShowLength": {
 			return { ...state, showLength: action.payload };
+		}
+		case "setOnBreak": {
+			return { ...state, onBreak: action.payload };
 		}
 		case "toggleOnBreak": {
 			return { ...state, onBreak: !state.onBreak };
@@ -48,9 +51,7 @@ const SiteConfig = () => {
 				dispatch({ type: "setShowDay", payload: res.data.showDay });
 				dispatch({ type: "setShowHour", payload: res.data.showHour });
 				dispatch({ type: "setShowLength", payload: res.data.showLength });
-				if (res.data.onBreak !== undefined && res.data.onBreak !== state.onBreak) {
-					dispatch({ type: "toggleOnBreak" });
-				}
+				dispatch({ type: "setOnBreak", payload: res.data.onBreak });
 				setLoading(false);
 			})
 			.catch((error) => {
