@@ -27,6 +27,7 @@ import { Theme} from "@radix-ui/themes"
 import DisplayToast from "./components/Util/Toast";
 import SiteDataProvider from "./providers/SiteDataProvider";
 import NotFound from "./components/404";
+import SiteConfig from "./components/Admin/SiteConfig";
 
 let darkTheme = createTheme({
 	palette: {
@@ -104,9 +105,14 @@ function App() {
 									/>
 									<AuthRoute
 										exact
+										path="/admin/siteconfig"
+										component={SiteConfig} />
+									<AuthRoute
+										exact
 										path="/admin/*"
 										component={<NotFound auth={true} />}
 									/>
+									
 									<Route path="*">
 										<NotFound auth={false} />
 									</Route>

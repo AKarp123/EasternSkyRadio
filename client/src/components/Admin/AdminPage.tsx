@@ -81,6 +81,7 @@ const AdminPage = () => {
 					<Text size="9" className="font-tiny text-center w-full inline-block mb-4">Admin</Text>
 				</Flex>
 				<Flex className="items-center flex flex-col justify-center flex-1">
+					<HomeButton text="Site Configuration" route="/admin/siteconfig" />
 					<HomeButton text="New Show Log" route="/admin/newshow" />
 					<HomeButton text="Set Planner" route="/admin/setplanner" />
 					<HomeButton text="Edit Log" route="/admin/editshow" />
