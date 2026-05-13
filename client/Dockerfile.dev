@@ -4,8 +4,9 @@ WORKDIR /app
 
 
 RUN npm install -g pnpm
+RUN pnpm approve-builds esbuild @tsparticles/engine
 
-COPY package*.json ./
+COPY package*.json pnpm-lock.yaml pnpm-workspace.yaml ./
 RUN pnpm install
 
 COPY . .
