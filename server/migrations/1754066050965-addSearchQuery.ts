@@ -1,7 +1,6 @@
 // Import your schemas here
 import type { Connection } from "mongoose";
 import { ISongEntry } from "../src/types/SongEntry.js";
-import { songEntrySchema } from "../src/models/SongEntry.js";
 import { generateSearchQuery } from "../src/dbMethods.js";
 
 export async function up(connection: Connection): Promise<void> {

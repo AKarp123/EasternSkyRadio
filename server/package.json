@@ -8,7 +8,7 @@
     "start": "node app.js",
     "dev": "bun --watch src/start.ts",
     "build": "bun build src/start.ts migrations/*.ts --outdir dist --target node --external passport --external passport-local --external passport-local-mongoose --minify --sourcemap=linked",
-    "lint": "bunx eslint src/**/*.ts src/*.ts",
+    "lint": "bunx eslint src/** migrations/**",
     "lint:fix": "bunx eslint src/** migrations/** --fix",
     "migrate-server": "bun run --env-file .env src/migrations.ts"
   },

@@ -1,4 +1,4 @@
-import { describe, test, expect, beforeAll, beforeEach, afterAll, afterEach} from "bun:test";
+import { describe, test, expect, beforeAll, beforeEach, afterAll, afterEach } from "bun:test";
 
 import { initTest } from "../../init.js";
 import { withUser } from ".././helpers/withUser.js";
@@ -292,7 +292,7 @@ describe("Test Editing song API", () => {
 		expect(res.status).toBe(200);
 		let { searchQuery, ...rest } = res.body.song;
 
-		res = await agent.patch(`/api/song/${rest.songId}`).send({ songData: {...rest, title: "Edited Title" } });
+		res = await agent.patch(`/api/song/${rest.songId}`).send({ songData: { ...rest, title: "Edited Title" } });
 		expect(res.status).toBe(200);
 		expect(res.body).toHaveProperty("success", true);
 
@@ -369,7 +369,7 @@ describe("Test Editing song API", () => {
 		expect(res.body.song.searchQuery).toBe(query);
 
 
-	})
+	});
 
 	test("Partial Song Modify query update", async() => {
 		let res = await createSongSimple("Test2", "Album2", "Artist2", agent);
@@ -380,11 +380,11 @@ describe("Test Editing song API", () => {
 		expect(res.status).toBe(200);
 		
 
-		res = await agent.get(`/api/song/${songId}`)
+		res = await agent.get(`/api/song/${songId}`);
 		expect(res.body.song.searchQuery).toContain("newartist2");
 		expect(res.body.song.searchQuery).toContain("album2");
 
-	})
+	});
 
 
 });

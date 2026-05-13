@@ -1,7 +1,7 @@
 FROM node:25-alpine AS frontend
 
 WORKDIR /usr/src/app/client
-COPY ./client/package*.json ./client/pnpm-lock.yaml ./
+COPY ./client/package*.json ./client/pnpm-lock.yaml ./client/pnpm-workspace.yaml ./
 RUN npm install -g pnpm
 RUN pnpm install
 COPY ./client .
