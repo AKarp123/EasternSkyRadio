@@ -65,7 +65,7 @@ showRouter.post("/show", requireLogin, async (req : Request, res: Response) => {
 			showId: nextShowId.counter,
 		});
 		await newShow.save();
-		await updateLastPlayed(songsList, newShow.showDate);
+		await updateLastPlayed(songsList.map(song => song._id), newShow.showDate);
 		res.status(201).json({ success: true, message: "Show added successfully." });
 	} catch (error) {
 		await Increment.findOneAndUpdate(

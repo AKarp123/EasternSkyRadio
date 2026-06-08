@@ -84,7 +84,7 @@ songEntrySchema.path("updatedAt").select(false);
 export const songEntry_selectAllFields = "+elcroId +duration +lastPlayed +searchQuery -__v +createdAt +updatedAt +specialNote +subsonicSongId +subsonicAlbumId";
 
 
-songEntrySchema.pre("validate", function (next) {
+songEntrySchema.pre("validate", function () {
 	if (this.elcroId) {
 		this.set("elcroId", this.elcroId.trim());
 	}
@@ -93,12 +93,11 @@ songEntrySchema.pre("validate", function (next) {
 		this.duration = 0;
 	}
 
-	next();
 });
 
-songEntrySchema.pre("save", async function (next) {
+songEntrySchema.pre("save", async function () {
 	if (!this.isModified("albumImageLoc") && !this.isNew) {
-		return next();
+		return;
 	}
 
 	this.songReleaseLoc?.sort((a, b) => {
@@ -119,15 +118,13 @@ songEntrySchema.pre("save", async function (next) {
 			this.origAlbum = existingSong.origAlbum;
 		}
 	}
-	next();
 });
 
-songEntrySchema.pre("save", function (next) { 
+songEntrySchema.pre("save", function () { 
 	if(!this.isModified(["artist", "title", "album", "origTitle", "origAlbum"])) {
-		return next();
+		return;
 	}
 	this.searchQuery = generateSearchQuery(this);
-	next();
 });
 
 

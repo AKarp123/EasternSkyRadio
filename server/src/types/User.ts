@@ -1,7 +1,7 @@
 
-import { PassportLocalDocument } from 'mongoose';
+import type { PassportLocalMongooseDocument } from 'passport-local-mongoose';
 
-interface UserDocument extends PassportLocalDocument {
+interface UserDocument extends PassportLocalMongooseDocument {
     username: string;
     migrated: boolean;
 }

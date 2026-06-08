@@ -17,19 +17,20 @@ const escapeRegex = (string : string) => {
 
 songRouter.get("/song/:id", requireLogin, async (req : Request, res : Response) => {
 	if (req.params.id === undefined || Number.isNaN(Number(req.params.id))) {
-		res.status(400).json({ success: false, message: "No Song ID provided." });
-	} else {
-		const songData = await SongEntry.findOne(
-			{ songId: req.params.id },
-		).select(songEntry_selectAllFields).lean();
-
-		if (!songData) {
-			res.status(404).json({ success: false, message: "Song not found." });
-			return;
-		}
-
-		res.json({ success: true, song: songData });
+		return res.status(400).json({ success: false, message: "No Song ID provided." });
 	}
+	const songId = Number(req.params.id);
+	const songData = await SongEntry.findOne(
+		{ songId: songId },
+	).select(songEntry_selectAllFields).lean();
+
+	if (!songData) {
+		res.status(404).json({ success: false, message: "Song not found." });
+		return;
+	}
+
+	res.json({ success: true, song: songData });
+	
 });
 
 songRouter.get("/search", requireLogin, async (req: Request, res: Response) => {
@@ -44,9 +45,10 @@ songRouter.get("/search", requireLogin, async (req: Request, res: Response) => {
 		return;
 	}
 	if (req.query.elcroId) {
+		const elcroId = req.query.elcroId as string;
 		try {
 			const searchResults = await SongEntry.find({
-				elcroId: req.query.elcroId,
+				elcroId: elcroId,
 			}).select(
 				(req.user ? songEntry_selectAllFields : "")
 			);
@@ -61,9 +63,10 @@ songRouter.get("/search", requireLogin, async (req: Request, res: Response) => {
 			
 	} 
 	else if (req.query.albumId) {
+		const albumId = req.query.albumId as string;
 		try {
 			const searchResults = await SongEntry.find({
-				subsonicAlbumId: req.query.albumId,
+				subsonicAlbumId: albumId,
 			}).select(songEntry_selectAllFields);
 			return res.json({
 				success: true,

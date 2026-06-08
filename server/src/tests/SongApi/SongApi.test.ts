@@ -24,7 +24,7 @@ describe("Test Create Song API", function () {
 	});
 	test("create a new song", async function () {
 
-		const newSong: Omit<ISongEntry, "songId" | "searchQuery" | "createdAt"> = {
+		const newSong: ISongEntrySubmission = {
 			title: "Test Song",
 			artist: "Test Artist",
 			album: "Test Album",
@@ -45,7 +45,7 @@ describe("Test Create Song API", function () {
 	});
 
 	test("duplicate song", async () => {
-		const newSong: Omit<ISongEntry, "songId" | "searchQuery" | "createdAt"> = {
+		const newSong: ISongEntrySubmission = {
 			title: "random",
 			artist: "random",
 			album: "random",
@@ -69,7 +69,7 @@ describe("Test Create Song API", function () {
 	});
 
 	test("duplicate subsonicSongId", async () => {
-		const newSong: Omit<ISongEntry, "songId" | "searchQuery" | "createdAt"> = {
+		const newSong: ISongEntrySubmission = {
 			title: "unique title",
 			artist: "unique artist",
 			album: "unique album",
@@ -85,7 +85,7 @@ describe("Test Create Song API", function () {
 		expect(res.status).toBe(200);
 
 
-		const newSong2: Omit<ISongEntry, "songId" | "searchQuery" | "createdAt"> = {
+		const newSong2: ISongEntrySubmission = {
 			title: "another unique title",
 			artist: "another unique artist",
 			album: "another unique album",
