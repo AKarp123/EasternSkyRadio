@@ -3,11 +3,11 @@ FROM node:25-alpine
 WORKDIR /app
 
 
-RUN npm install -g pnpm
+RUN npm install -g pnpm@11.5.1
 RUN pnpm approve-builds esbuild @tsparticles/engine
 
 COPY package*.json pnpm-lock.yaml pnpm-workspace.yaml ./
-RUN pnpm install
+RUN pnpm install 
 
 COPY . .
 
