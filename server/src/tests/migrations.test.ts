@@ -2,9 +2,14 @@ import { $ } from "bun";
 import { describe, beforeAll,afterAll, expect, test } from "bun:test";
 import { clearDatabase, connectToDatabase, db } from "../config/db.js";
 import initializeApp from "../init.js";
-import { Connection } from "mongoose";
+import { Connection, Types } from "mongoose";
 import { migrator } from "../migrations.js";
 import { Migrator } from "ts-migrate-mongoose";
+
+type SiteDataDocument = {
+	_id: Types.ObjectId;
+	[key: string]: unknown;
+};
 
 describe.if(process.env.TEST_MIGRATIONS === "true")("Migrations", () => {
 	let connection : Connection;
@@ -51,6 +56,14 @@ describe.if(process.env.TEST_MIGRATIONS === "true")("Migrations", () => {
 		expect(connection.collection("songentries").countDocuments({ duration: { $gt: 60 } })).resolves.toBeGreaterThan(0);
 	});
 
+	test("Add announcement", async() => {
+		const siteDataCollection = connection.collection<SiteDataDocument>("sitedatas");
+		await localMigrator.run("up", "addAnnouncement");
+
+		const siteData = await siteDataCollection.findOne({});
+		expect(siteData).not.toBeNull();
+		expect(siteData?.announcement).toBeNull();
+	});
 
 
 });
