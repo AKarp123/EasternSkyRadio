@@ -79,4 +79,20 @@ describe("Update Site Data", function() {
 		expect(body.data.showLength).toBe(2);
 		expect(body.data.messageOfTheDay).toBe("We are on break!");
 	});
+
+	test("should timestamp an announcement update", async () => {
+		const beforeRequest = Date.now();
+		const res = await agent
+			.patch("/api/siteInfo")
+			.send({ announcement: { message: "The next show starts soon." } });
+		const afterRequest = Date.now();
+
+		expect(res.status).toBe(200);
+		expect(res.body.success).toBe(true);
+		expect(res.body.data.announcement.message).toBe("The next show starts soon.");
+
+		const timestamp = new Date(res.body.data.announcement.timestamp).getTime();
+		expect(timestamp).toBeGreaterThanOrEqual(beforeRequest);
+		expect(timestamp).toBeLessThanOrEqual(afterRequest);
+	});
 });
