@@ -8,7 +8,26 @@ import { Box, Container, Flex, Grid, Link, Text } from "@radix-ui/themes";
 const Home = React.memo(() => {
 
 	const { siteData, loading } = useContext(SiteDataContext);
-	
+
+	const announcementMessage = () => {
+		if (siteData?.announcement ) {
+			if (
+				siteData.announcement.expires === null ||
+				siteData.announcement.expires > new Date()
+			) {
+				const date = siteData.announcement.timestamp;
+				return `Announcement: ${siteData.announcement.message} (${date
+					.toDateString()
+					.split(" ")
+					.slice(1, 3)
+					.join(" ")})`; // should be month day
+			}
+			else {
+				return "";
+			}
+		}
+		return "";
+	}
 
 	return (
 		<Container size={{
@@ -17,9 +36,11 @@ const Home = React.memo(() => {
 		}}
 		className="px-8 sm:px-0 min-h-screen flex flex-col justify-center items-center Home-Container"
 		>
-			<Text size="4" className="font-pixel text-center w-full mb-4 hidden" >
-				Test Announcement
-			</Text>
+			<Box className="text-center min-h-3 mb-4 ">
+				<Text size="4" className="font-pixel text-center w-full" >
+					{loading ? "..." : announcementMessage()}
+				</Text>
+			</Box>
 			<Grid columns={{xs: "1", sm: "2"}} gap={{xs: "0", sm: "6"}} align="center" justify="center">
 				<Box className="flex font-tiny text-6xl white flex-col text-center">
 					<p className="text-lg font-pixel align-top flex whitespace-nowrap justify-center transition-all duration-300">Next Show Date: {loading ? "..." :  showDateString(siteData!)}</p>

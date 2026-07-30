@@ -34,8 +34,14 @@ export interface SiteData {
 	showHour: number;
 	showLength: number;
 	onBreak: boolean;
-	messageOfTheDay?: string;
+	announcement: {
+		message: string;
+		expires: Date | null;
+		timestamp: Date;
+	} | null
 }
+
+
 
 
 /**
