@@ -10,17 +10,16 @@ type SiteModelType = Model<SiteData, {}, {}, SiteDataVirtuals>;
  */
 const siteDataSchema = new Schema<SiteData, SiteModelType>(
 	{
-		_id: { type: String, default: "siteData" },
 		onBreak: { type: Boolean, required: true, default: false },
 		showDay: { type: Number, required: true, default: 0 },
 		showHour: { type: Number, required: true, default: 0 },
 		timezone: { type: String, required: true, default: "America/New_York" },
 		showLength: { type: Number, required: true, default: 1 },
-		messageOfTheDay: { type: String, required: false },
 		announcement: {
 			type: new Schema<Announcement>(
 				{
 					message: { type: String, required: true },
+					expires: { type: Date, required: false, default: null },
 					timestamp: { type: Date, required: true },
 				},
 				{ _id: false }
@@ -34,7 +33,10 @@ const siteDataSchema = new Schema<SiteData, SiteModelType>(
 
 
 siteDataSchema.pre("validate", function () {
-	if (this.isModified("announcement.message") && this.announcement) {
+	if (this.announcement && this.isModified("announcement")) {
+		if (this.announcement.expires && this.announcement.expires < new Date()) {
+			this.announcement.expires = null;
+		}
 		this.announcement.timestamp = new Date();
 	}
 });
