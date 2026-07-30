@@ -63,7 +63,6 @@ describe("Update Site Data", function() {
 			showHour: 5,
 			timezone: "America/Los_Angeles",
 			showLength: 2,
-			messageOfTheDay: "We are on break!"
 		};
 		const res: request.Response & {body: {success: boolean; data: SiteData}} = await agent
 			.patch("/api/siteInfo")
@@ -77,7 +76,6 @@ describe("Update Site Data", function() {
 		expect(body.data.showHour).toBe(5);
 		expect(body.data.timezone).toBe("America/Los_Angeles");
 		expect(body.data.showLength).toBe(2);
-		expect(body.data.messageOfTheDay).toBe("We are on break!");
 	});
 
 	test("should timestamp an announcement update", async () => {
@@ -90,9 +88,63 @@ describe("Update Site Data", function() {
 		expect(res.status).toBe(200);
 		expect(res.body.success).toBe(true);
 		expect(res.body.data.announcement.message).toBe("The next show starts soon.");
+		expect(res.body.data.announcement.expires).toBeNull();
 
 		const timestamp = new Date(res.body.data.announcement.timestamp).getTime();
 		expect(timestamp).toBeGreaterThanOrEqual(beforeRequest);
 		expect(timestamp).toBeLessThanOrEqual(afterRequest);
+	});
+
+	test("should save an announcement expiration date", async () => {
+		const expires = new Date(Date.now() + 60 * 60 * 1000).toISOString();
+		const res = await agent
+			.patch("/api/siteInfo")
+			.send({ announcement: { message: "Tonight's show is delayed.", expires } });
+
+		expect(res.status).toBe(200);
+		expect(res.body.success).toBe(true);
+		expect(res.body.data.announcement.message).toBe("Tonight's show is delayed.");
+		expect(new Date(res.body.data.announcement.expires).toISOString()).toBe(expires);
+	});
+
+	test("should replace an existing announcement", async () => {
+		await agent
+			.patch("/api/siteInfo")
+			.send({ announcement: { message: "The next show starts soon." } });
+
+		const expires = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
+		const res = await agent
+			.patch("/api/siteInfo")
+			.send({ announcement: { message: "Tonight's show is delayed.", expires } });
+
+		expect(res.status).toBe(200);
+		expect(res.body.success).toBe(true);
+		expect(res.body.data.announcement.message).toBe("Tonight's show is delayed.");
+		expect(new Date(res.body.data.announcement.expires).toISOString()).toBe(expires);
+		expect(res.body.data.announcement.timestamp).toBeDefined();
+	});
+
+	test("should retain an announcement when updating other site data", async () => {
+		const announcement = { message: "The next show starts soon." };
+		await agent.patch("/api/siteInfo").send({ announcement });
+
+		const res = await agent.patch("/api/siteInfo").send({ showHour: 7 });
+
+		expect(res.status).toBe(200);
+		expect(res.body.success).toBe(true);
+		expect(res.body.data.showHour).toBe(7);
+		expect(res.body.data.announcement.message).toBe(announcement.message);
+	});
+
+	test("should clear an existing announcement", async () => {
+		await agent
+			.patch("/api/siteInfo")
+			.send({ announcement: { message: "The next show starts soon." } });
+
+		const res = await agent.patch("/api/siteInfo").send({ announcement: null });
+
+		expect(res.status).toBe(200);
+		expect(res.body.success).toBe(true);
+		expect(res.body.data.announcement).toBeNull();
 	});
 });
