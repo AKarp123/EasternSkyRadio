@@ -13,7 +13,19 @@ const SiteDataProvider = ({ children}: { children: React.ReactNode}) => {
 	useEffect(() => {
 		axios.get<SiteData>("/api/siteInfo")
 			.then((response) => {
-				setSiteData(response.data);
+				let announcement = null;
+				if(response.data.announcement !== null) {
+					let expiresDate = response.data.announcement.expires ? new Date(response.data.announcement.expires) : null;
+					let timestampDate = new Date(response.data.announcement.timestamp);
+					announcement = {
+						message: response.data.announcement?.message,
+						expires: expiresDate,
+						timestamp: timestampDate
+					}
+				}
+
+				
+				setSiteData({ ...response.data, announcement });
 				setLoading(false);
 			})
 			.catch((error) => {

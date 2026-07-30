@@ -29,6 +29,7 @@ export default defineConfig([
             'unicorn/filename-case': 'off',
             'unicorn/prevent-abbreviations': 'off',
             'unicorn/no-null': 'off',
+            'unicorn/no-lonely-if': 'off',
             'no-unused-vars': 'off',
             '@typescript-eslint/no-unused-vars': ['error', {
                 vars: 'all',
