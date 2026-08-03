@@ -1,6 +1,7 @@
+import { Types } from "mongoose";
 
 export interface ISongEntry {
-    _id?: string,
+    _id: Types.ObjectId,
     songId: number,
     elcroId? : string,
     subsonicSongId? : string,
@@ -23,7 +24,7 @@ export interface ISongEntry {
 }
 
 
-export interface ISongEntrySubmission extends Omit<ISongEntry, "songId" | "searchQuery" | "createdAt"> {
+export interface ISongEntrySubmission extends Omit<ISongEntry, "_id" | "songId" | "searchQuery" | "createdAt"> {
 
 }
 

@@ -56,7 +56,7 @@ export const getArtistInfo = async (artistId: string) => {
 
 
 
-export const subsonicToISongEntry = async (song : Child): Promise<Omit<ISongEntry, "songId">> =>  {
+export const subsonicToISongEntry = async (song : Child): Promise<Omit<ISongEntry, "songId" | "_id">> =>  {
 
 	const {
 		artist,

@@ -1,9 +1,8 @@
 import SongEntry from "./models/SongEntry.js";
 import ShowEntry from "./models/ShowEntry.js";
 import Increment from "./models/IncrementModel.js";
-import mongoose from "mongoose";
+import mongoose, { Types } from "mongoose";
 import { ISongEntry } from "./types/SongEntry.js";
-import { ShowEntrySubmission } from "./types/ShowData.js";
 
 export const addSong = async (songData: Omit<ISongEntry, "songId">) => {
 	const nextSongId = await Increment.findOneAndUpdate(
@@ -187,20 +186,17 @@ export const generateSearchQuery = ({
 // addLastPlayed();
 
 export const updateLastPlayed = async (
-	songsList: ShowEntrySubmission["songsList"] | { _id: mongoose.Types.ObjectId }[],
+	songsList: Types.ObjectId[],
 	date: Date
 ) => {
 	
 	for (const song of songsList) {
-
-		await SongEntry.findOneAndUpdate(
-			{ _id: song._id },
-			[{
-				$set: { lastPlayed: { $max: [date, "$lastPlayed"] } }
-			}],
-			{ new: true }
-		);
-	
+		const existingSong = await SongEntry.findById(song).select("+lastPlayed");
+		if (!existingSong || (existingSong.lastPlayed && existingSong.lastPlayed >= date)) {
+			continue;
+		}
+		existingSong.lastPlayed = date;
+		await existingSong.save();
 		
 	}
 };

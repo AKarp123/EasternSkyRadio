@@ -1,4 +1,4 @@
-import { Container, Separator } from "@radix-ui/themes";
+import { Container, Flex, Separator } from "@radix-ui/themes";
 import { useContext, useEffect, useReducer, useState } from "react";
 import { SiteData } from "../../types/global";
 import PageHeader from "../PageHeader";
@@ -11,11 +11,18 @@ import Input from "../Util/Input";
 
 
 
-type ReducerAction = "setShowDay" | "setShowHour" | "setShowLength" | "setOnBreak" | "toggleOnBreak";
+type ReducerAction = "setShowDay" | "setShowHour" | "setShowLength" | "setOnBreak" | "toggleOnBreak" | "setAnnouncement" | "setAnnouncementExpires" | "setAnnouncementMessage" | "clearAnnouncement";
 
+const normalizeAnnouncementExpires = (expires: Date | string | null | undefined): Date | null => {
+	if (!expires) {
+		return null;
+	}
+
+	const date = new Date(expires);
+	return Number.isNaN(date.getTime()) ? null : date;
+};
 
 const reducer = (state: SiteData, action: { type: ReducerAction; payload?: any }) => {
-
 	switch (action.type) {
 		case "setShowDay": {
 			return { ...state, showDay: action.payload };
@@ -32,6 +39,29 @@ const reducer = (state: SiteData, action: { type: ReducerAction; payload?: any }
 		case "toggleOnBreak": {
 			return { ...state, onBreak: !state.onBreak };
 		}
+		case "setAnnouncement": {
+			return { ...state, announcement: action.payload };
+		}
+		case "setAnnouncementExpires": {
+	
+			return { ...state, announcement: { ...state.announcement, expires: normalizeAnnouncementExpires(action.payload) } };
+		}
+		case "setAnnouncementMessage": {
+			return {
+				...state,
+				announcement: {
+					...state.announcement,
+					message: action.payload,
+					expires: normalizeAnnouncementExpires(state.announcement?.expires),
+				},
+			};
+		}
+		case "clearAnnouncement": {
+			if (state.announcement === null) {
+				return { ...state, announcement: { message: "", expires: null } };
+			}
+			return { ...state, announcement: null };
+		}
 		default: {
 			return state;
 		}
@@ -41,7 +71,7 @@ const reducer = (state: SiteData, action: { type: ReducerAction; payload?: any }
 const SiteConfig = () => {
 	const setError = useContext(ErrorContext)
 	const [loading, setLoading] = useState(true);
-	const [state, dispatch] = useReducer(reducer, {} as SiteData);
+	const [state, dispatch] = useReducer(reducer, { announcement: { message: "", expires: null } } as SiteData);
 
 
 
@@ -52,6 +82,8 @@ const SiteConfig = () => {
 				dispatch({ type: "setShowHour", payload: res.data.showHour });
 				dispatch({ type: "setShowLength", payload: res.data.showLength });
 				dispatch({ type: "setOnBreak", payload: res.data.onBreak });
+
+				// We only set announcement when wanting to update it.
 				setLoading(false);
 			})
 			.catch((error) => {
@@ -68,13 +100,16 @@ const SiteConfig = () => {
 			setError("Please enter valid values for all fields");
 			return;
 		}
-
+		
 		const payload = {
 			...state,
 			showDay: Number(state.showDay),
 			showHour: Number(state.showHour),
 			showLength: Number(state.showLength),
 		};
+		if (state.announcement && state.announcement.message.trim() === "") {
+			delete payload.announcement; // means no update to announcement
+		}
 		const res = await axios.patch("/api/siteInfo", payload);
 		if (res.data.success) {
 			setError("Site configuration updated successfully", "success");
@@ -92,6 +127,14 @@ const SiteConfig = () => {
 		if (!Number.isInteger(day) || day < 0 || day > 6) return false;
 		if (!Number.isInteger(hour) || hour < 0 || hour > 23) return false;
 		if (!Number.isInteger(length) || length < 0) return false;
+		if (state.announcement !== null) {
+			if (state.announcement.expires !== null) {
+				const expiresDate = new Date(state.announcement.expires);
+				if (Number.isNaN(expiresDate.getTime())) return false;
+				if (expiresDate < new Date()) return false; // expires date must be in the future
+			}
+		}
+	
 
 		return true;
 	};
@@ -135,12 +178,30 @@ const SiteConfig = () => {
 					<Form.Message className="text-red-500 font-pixel" match="valueMissing">This field is required</Form.Message>
 					<Form.Message className="text-red-500 font-pixel" match="typeMismatch">Please enter a valid number</Form.Message>
 				</Form.Field>
-				<Form.Field className="flex items-center gap-2" name="onBreak">
+				<Form.Field className="flex flex-col gap-1" name="announcementMessage">
 					<Form.Control asChild>
-						<input type="checkbox" checked={state.onBreak} onChange={() => dispatch({ type: "toggleOnBreak" })} className="w-4 h-4" />
+						<Input label="Announcement Message" type="text" value={state.announcement?.message || ""} onChange={(e) => dispatch({ type: "setAnnouncementMessage", payload: e.target.value })} placeholder="Announcement Message" />
 					</Form.Control>
-					<Form.Label className="font-pixel text-lg">On Break</Form.Label>
 				</Form.Field>
+				<Form.Field className="flex flex-col gap-1" name="announcementExpires">
+					<Form.Control asChild>
+						<Input label="Announcement Expires (YYYY-MM-DD)" type="date" value={state.announcement?.expires ? new Date(state.announcement.expires).toISOString().split("T")[0] : ""} onChange={(e) => dispatch({ type: "setAnnouncementExpires", payload: e.target.value ? new Date(e.target.value) : null })} placeholder="Announcement Expires" />
+					</Form.Control>
+				</Form.Field>
+				<Flex gap="4">
+					<Form.Field className="inline-flex items-center gap-2" name="onBreak">
+						<Form.Control asChild>
+							<input type="checkbox" checked={state.onBreak} onChange={() => dispatch({ type: "toggleOnBreak" })} className="w-4 h-4" />
+						</Form.Control>
+						<Form.Label className="font-pixel text-lg">On Break</Form.Label>
+					</Form.Field>
+					<Form.Field className="inline-flex items-center gap-2" name="clearAnnouncement">
+						<Form.Control asChild>
+							<input type="checkbox" checked={state.announcement === null} onChange={() => dispatch({ type: "clearAnnouncement" })} className="w-4 h-4" />
+						</Form.Control>
+						<Form.Label className="font-pixel text-lg">Clear Announcement?</Form.Label>
+					</Form.Field>
+				</Flex>
 				<button type="submit" className="text-white font-pixel  border p-1 rounded-md focus:outline-none focus:shadow-outline  cursor-pointer HoverButtonStyles">Save Configuration</button>
 			</Form.Root>
 

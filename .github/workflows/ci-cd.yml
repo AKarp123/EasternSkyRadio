@@ -39,7 +39,7 @@ jobs:
       - name: "Set up node"
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '25'
       
 
       - name: "Install pnpm"
@@ -114,7 +114,7 @@ jobs:
       - name: "Build Dockerfile"
         run: docker build -f ./client/Dockerfile -t esr-frontend:latest .
   push-dev-backend:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04-arm
     if: github.ref == 'refs/heads/dev'
     needs: [build-server]
     steps:
@@ -133,11 +133,11 @@ jobs:
           context: .
           file: ./server/Dockerfile
           push: true
-          platforms: linux/amd64,linux/arm64
+          platforms: linux/arm64
           tags: ${{ vars.DOCKER_USERNAME }}/esr-backend:dev-latest
 
   push-dev-frontend:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04-arm
     if: github.ref == 'refs/heads/dev'
     needs: [build-client,]
     steps:
@@ -156,11 +156,11 @@ jobs:
           context: .
           file: ./client/Dockerfile
           push: true
-          platforms: linux/amd64,linux/arm64
+          platforms: linux/arm64
           tags: ${{ vars.DOCKER_USERNAME }}/esr-frontend:dev-latest
 
   push-prod-backend:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04-arm
     if: github.ref == 'refs/heads/main'
     needs: [build-server]
     steps:
@@ -179,11 +179,11 @@ jobs:
           context: .
           file: ./server/Dockerfile
           push: true
-          platforms: linux/amd64,linux/arm64
+          platforms: linux/arm64
           tags: ${{ vars.DOCKER_USERNAME }}/esr-backend:latest
 
   push-prod-frontend:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04-arm
     if: github.ref == 'refs/heads/main'
     needs: [build-client]
     steps:
@@ -202,5 +202,5 @@ jobs:
           context: .
           file: ./client/Dockerfile
           push: true
-          platforms: linux/amd64,linux/arm64
+          platforms: linux/arm64
           tags: ${{ vars.DOCKER_USERNAME }}/esr-frontend:latest

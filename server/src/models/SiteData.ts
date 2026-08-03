@@ -1,5 +1,5 @@
 import { Schema, model, Model } from "mongoose";
-import { SiteData, SiteDataVirtuals } from "../types/SiteData.js";
+import { Announcement, SiteData, SiteDataVirtuals } from "../types/SiteData.js";
 
 
 
@@ -15,10 +15,31 @@ const siteDataSchema = new Schema<SiteData, SiteModelType>(
 		showHour: { type: Number, required: true, default: 0 },
 		timezone: { type: String, required: true, default: "America/New_York" },
 		showLength: { type: Number, required: true, default: 1 },
-		messageOfTheDay: { type: String, required: false },
+		announcement: {
+			type: new Schema<Announcement>(
+				{
+					message: { type: String, required: true },
+					expires: { type: Date, required: false, default: null },
+					timestamp: { type: Date, required: true },
+				},
+				{ _id: false }
+			),
+			required: false,
+			default: undefined,
+		}
 	},
 );
 
+
+
+siteDataSchema.pre("validate", function () {
+	if (this.announcement && this.isModified("announcement")) {
+		if (this.announcement.expires && this.announcement.expires < new Date()) {
+			this.announcement.expires = null;
+		}
+		this.announcement.timestamp = new Date();
+	}
+});
 
 siteDataSchema.virtual("lastShowDate").get(function (this: SiteData): Date {
 	const now = new Date();

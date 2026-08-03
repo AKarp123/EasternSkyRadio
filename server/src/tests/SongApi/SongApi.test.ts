@@ -1,4 +1,4 @@
-import { describe, test, expect, beforeAll, beforeEach, afterAll, afterEach} from "bun:test";
+import { describe, test, expect, beforeAll, beforeEach, afterAll, afterEach } from "bun:test";
 
 import { initTest } from "../../init.js";
 import { withUser } from ".././helpers/withUser.js";
@@ -24,7 +24,7 @@ describe("Test Create Song API", function () {
 	});
 	test("create a new song", async function () {
 
-		const newSong: Omit<ISongEntry, "songId" | "searchQuery" | "createdAt"> = {
+		const newSong: ISongEntrySubmission = {
 			title: "Test Song",
 			artist: "Test Artist",
 			album: "Test Album",
@@ -45,7 +45,7 @@ describe("Test Create Song API", function () {
 	});
 
 	test("duplicate song", async () => {
-		const newSong: Omit<ISongEntry, "songId" | "searchQuery" | "createdAt"> = {
+		const newSong: ISongEntrySubmission = {
 			title: "random",
 			artist: "random",
 			album: "random",
@@ -69,7 +69,7 @@ describe("Test Create Song API", function () {
 	});
 
 	test("duplicate subsonicSongId", async () => {
-		const newSong: Omit<ISongEntry, "songId" | "searchQuery" | "createdAt"> = {
+		const newSong: ISongEntrySubmission = {
 			title: "unique title",
 			artist: "unique artist",
 			album: "unique album",
@@ -85,7 +85,7 @@ describe("Test Create Song API", function () {
 		expect(res.status).toBe(200);
 
 
-		const newSong2: Omit<ISongEntry, "songId" | "searchQuery" | "createdAt"> = {
+		const newSong2: ISongEntrySubmission = {
 			title: "another unique title",
 			artist: "another unique artist",
 			album: "another unique album",
@@ -292,7 +292,7 @@ describe("Test Editing song API", () => {
 		expect(res.status).toBe(200);
 		let { searchQuery, ...rest } = res.body.song;
 
-		res = await agent.patch(`/api/song/${rest.songId}`).send({ songData: {...rest, title: "Edited Title" } });
+		res = await agent.patch(`/api/song/${rest.songId}`).send({ songData: { ...rest, title: "Edited Title" } });
 		expect(res.status).toBe(200);
 		expect(res.body).toHaveProperty("success", true);
 
@@ -369,7 +369,7 @@ describe("Test Editing song API", () => {
 		expect(res.body.song.searchQuery).toBe(query);
 
 
-	})
+	});
 
 	test("Partial Song Modify query update", async() => {
 		let res = await createSongSimple("Test2", "Album2", "Artist2", agent);
@@ -380,11 +380,11 @@ describe("Test Editing song API", () => {
 		expect(res.status).toBe(200);
 		
 
-		res = await agent.get(`/api/song/${songId}`)
+		res = await agent.get(`/api/song/${songId}`);
 		expect(res.body.song.searchQuery).toContain("newartist2");
 		expect(res.body.song.searchQuery).toContain("album2");
 
-	})
+	});
 
 
 });

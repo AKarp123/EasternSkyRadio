@@ -10,7 +10,7 @@ SyncRouter.get("/sync", requireLogin, async (req: Request, res: Response) => {
 		res.json({ success: false, message: "No type provided." });
 		return;
 	}
-	const data = await SyncModel.findOne({ type }).lean();
+	const data = await SyncModel.findOne({ type } as { type: string }).lean();
 	if (data === null) {
 		res.json({ success: false, message: "No data found." });
 		return;

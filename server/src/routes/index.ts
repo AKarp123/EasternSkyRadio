@@ -30,13 +30,19 @@ router.get("/siteInfo", async (req, res) => {
 router.patch("/siteInfo", requireLogin, async(req: Request, res: Response) => {
 
 	//TODO: Validate req.body fields with zod
-	SiteData.findOneAndUpdate({}, req.body, { new: true })
-		.then((updatedData) => {
-			res.json({ success: true, data: updatedData });
-		})
-		.catch((error) => {
-			res.status(500).json({ success: false, message: "Error updating site info", error });
-		});
+	try {
+		const siteData = await SiteData.findOne({});
+		if (!siteData) {
+			res.status(404).json({ success: false, message: "Site info not found" });
+			return;
+		}
+
+		siteData.set(req.body);
+		await siteData.save();
+		res.json({ success: true, data: siteData });
+	} catch (error) {
+		res.status(500).json({ success: false, message: "Error updating site info", error });
+	}
 });
 
 router.get("/getStats", async (req, res) => {
