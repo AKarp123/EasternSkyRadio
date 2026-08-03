@@ -38,7 +38,7 @@ const Home = React.memo(() => {
 		>
 			<Box className="text-center min-h-3 mb-4 ">
 				<Text size="4" className="font-pixel text-center w-full" >
-					{loading ? "..." : announcementMessage()}
+					{loading ? "..." : announcementMessage() || "\u00A0"}
 				</Text>
 			</Box>
 			<Grid columns={{xs: "1", sm: "2"}} gap={{xs: "0", sm: "6"}} align="center" justify="center">
