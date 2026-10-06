@@ -45,7 +45,7 @@ const Graphic = () => {
 					{new Date(showData.showDate).toDateString()}
 				</Text>
 			</div>
-			<Grid columns={{ sm: "1", md: "2" }} className="max-w-[800px] mx-auto">
+			<Grid columns={{ sm: "1", md: "2" }} className="max-w-[800px] mx-auto border-black border-[0.5px]">
 
 
 
