@@ -3,6 +3,7 @@ import ShowEntry from "./models/ShowEntry.js";
 import Increment from "./models/IncrementModel.js";
 import mongoose, { Types } from "mongoose";
 import { ISongEntry } from "./types/SongEntry.js";
+import { songEntry_selectAllFields } from "./models/SongEntry.js";
 
 export const addSong = async (songData: Omit<ISongEntry, "songId">) => {
 	const nextSongId = await Increment.findOneAndUpdate(
@@ -191,7 +192,7 @@ export const updateLastPlayed = async (
 ) => {
 	
 	for (const song of songsList) {
-		const existingSong = await SongEntry.findById(song).select("+lastPlayed");
+		const existingSong = await SongEntry.findById(song).select(songEntry_selectAllFields);
 		if (!existingSong || (existingSong.lastPlayed && existingSong.lastPlayed >= date)) {
 			continue;
 		}

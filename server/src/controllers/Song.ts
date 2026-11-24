@@ -1,5 +1,5 @@
 import { generateSearchQuery } from "../dbMethods.js";
-import SongEntry from "../models/SongEntry.js";
+import SongEntry, { songEntry_selectAllFields } from "../models/SongEntry.js";
 import { ISongEntry } from "../types/SongEntry.js";
 
 
@@ -25,7 +25,9 @@ export const updateAlbumIds = async(albumName: string, albumId: string) => {
 export const updateSong = async(songId: number, songData: Partial<ISongEntry>) => {
 
 
-	const curSong = await SongEntry.findOne({ songId }).lean();
+	const curSong = await SongEntry.findOne({ songId })
+		.select(songEntry_selectAllFields)
+		.lean();
 	if (!curSong) {
 		throw new Error("Song not found.");
 	}
