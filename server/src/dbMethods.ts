@@ -9,7 +9,7 @@ export const addSong = async (songData: Omit<ISongEntry, "songId">) => {
 	const nextSongId = await Increment.findOneAndUpdate(
 		{ model: "SongEntry" },
 		{ $inc: { counter: 1 } },
-		{ new: true }
+		{ returnDocument: "after" }
 	);
 	const newSong = new SongEntry({ ...songData, songId: nextSongId!.counter });
 	try {

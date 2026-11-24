@@ -42,7 +42,7 @@ export const updateSong = async(songId: number, songData: Partial<ISongEntry>) =
 	});
 
 	return await SongEntry.findOneAndUpdate({ songId }, { $set: { ...merged } }, {
-		new: true,
+		returnDocument: "after",
 		runValidators: true,
 	}).lean();
 	
