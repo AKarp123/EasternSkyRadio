@@ -460,6 +460,8 @@ describe("Song Date Tests", () => {
 		await clearDatabase();
 	});
 
+	
+
 	test("Check default song date", async() => {
 		const song: ISongEntrySubmission = {
 			title: "Mesmerizer",
@@ -559,6 +561,45 @@ describe("Song Date Tests", () => {
 		
 
 	});
+
+	test("Show update only mutates lastPlayed", async() => {
+		const song: ISongEntrySubmission = {
+			title: "Last Played Song",
+			artist: "Test Artist",
+			album: "Test Album",
+			albumImageLoc: "cover.jpg",
+			genres: ["Rock"],
+			duration: 187,
+			songReleaseLoc: [{ service: "Spotify", link: "https://example.com/track" }],
+		};
+		const songRes = await createSong(song, agent);
+		expect(songRes.status).toBe(200);
+
+		const songResObj = songRes.body.song as ISongEntry & { _id: Types.ObjectId };
+		const songBeforeRes = await agent.get(`/api/song/${songResObj.songId}`);
+		expect(songBeforeRes.status).toBe(200);
+
+		const showRes = await createShowSimple([songResObj], agent);
+		expect(showRes.status).toBe(201);
+		expect(showRes.body.success).toBe(true);
+
+		const songAfterRes = await agent.get(`/api/song/${songResObj.songId}`);
+		expect(songAfterRes.status).toBe(200);
+		const songAfter = songAfterRes.body.song as ISongEntry;
+		expect(songAfter.lastPlayed).toBeDefined();
+		const withoutTimestamps = (song: ISongEntry) => {
+			const songFields = { ...song };
+			delete songFields.lastPlayed;
+			delete songFields.updatedAt;
+			return songFields;
+		};
+		expect(withoutTimestamps(songAfter)).toEqual(
+			withoutTimestamps(songBeforeRes.body.song as ISongEntry)
+		);
+		
+		expect(songAfter.duration).toBe(187);
+	});
+
 });
 
 
