@@ -55,7 +55,7 @@ showRouter.post("/show", requireLogin, async (req : Request, res: Response) => {
 		const nextShowId = await Increment.findOneAndUpdate(
 			{ model: "ShowEntry" },
 			{ $inc: { counter: 1 } },
-			{ new: true, upsert: true, setDefaultsOnInsert: true }
+			{ returnDocument: "after", upsert: true, setDefaultsOnInsert: true }
 		);
 
 		const newShow = new ShowEntry({
